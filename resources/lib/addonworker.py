@@ -12,6 +12,7 @@ import addonutils
 
 
 __addon__ = xbmcaddon.Addon(id='plugin.video.kino.pub' )
+__settings__ = __addon__
 __language__ = __addon__.getLocalizedString
 __plugin__ = "plugin://plugin.video.kino.pub"
 
@@ -20,6 +21,9 @@ xbmcplugin.setContent(handle, 'movie')
 
 
 def api(action, params={}, url="http://dev.kino.pub/api/v1", timeout=600):
+    access_token = __settings__.getSetting('access_token')
+    if access_token:
+        params['access_token'] = access_token
     params = urllib.urlencode(params)
     xbmc.log("API params: %s, call from %s" % (params, sys.argv[0]))
     try:
