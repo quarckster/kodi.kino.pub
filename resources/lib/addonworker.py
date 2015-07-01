@@ -9,13 +9,19 @@ import xbmc
 import xbmcaddon
 import json
 import addonutils
+import time
 
-
-__addon__ = xbmcaddon.Addon(id='plugin.video.kino.pub' )
-__settings__ = __addon__
+__id__ = 'plugin.video.kino.pub'
+__addon__ = xbmcaddon.Addon(id=__id__)
+__settings__ = xbmcaddon.Addon(id=__id__)
+__skinsdir__ = "DefaultSkin"
 __language__ = __addon__.getLocalizedString
-__plugin__ = "plugin://plugin.video.kino.pub"
+__plugin__ = "plugin://%s" % __id__
 
+
+_ADDON_PATH =   xbmc.translatePath(__addon__.getAddonInfo('path'))
+if (sys.platform == 'win32') or (sys.platform == 'win64'):
+    _ADDON_PATH = _ADDON_PATH.decode('utf-8')
 handle = int(sys.argv[1])
 xbmcplugin.setContent(handle, 'movie')
 
@@ -25,10 +31,8 @@ def api(action, params={}, url="http://dev.kino.pub/api/v1", timeout=600):
     if access_token:
         params['access_token'] = access_token
     params = urllib.urlencode(params)
-    xbmc.log("API params: %s, call from %s" % (params, sys.argv[0]))
     try:
         response = urllib2.urlopen("%s/%s?%s" % (url, action, params), timeout=timeout)
-        xbmc.log("API NAV link %s/%s?%s" % (url, action, params))
         #data = json.loads(response.read().decode('string-escape').strip('"'))
         data = json.loads(response.read())
         return data
@@ -62,7 +66,7 @@ def route():
     current = sys.argv[0]
     qs = sys.argv[2]
     action = current.replace(__plugin__, '').lstrip('/')
-    action = action if action else 'index'
+    action = action if action else 'login'
     actionFn = 'action' + action.title()
     qp = get_params(qs)
 
@@ -101,6 +105,31 @@ def add_default_headings(qp, fmt="sl"):
         li = xbmcgui.ListItem('[COLOR FFFFF000]Последние[/COLOR]')
         xbmcplugin.addDirectoryItem(handle, get_internal_link('items', qp), li, True)
 
+def actionLogin(qp):
+    import authwindow as auth
+    au = auth.Auth(__settings__)
+    # check if auth works
+    response = api('types')
+    if response['status'] in [400, 401]:
+        status, response = au.get_token(refresh=True)
+        if status == au.EXPIRED:
+            au.reauth()
+    access_token = __settings__.getSetting('access_token')
+    device_code = __settings__.getSetting('device_code')
+    access_token_expire = __settings__.getSetting('access_token_expire')
+    if device_code or (not device_code and not access_token):
+        wn = auth.AuthWindow("auth.xml", _ADDON_PATH, __skinsdir__, settings=__settings__)
+        wn.doModal()
+        del wn
+    if access_token and not device_code:
+        # Check if our token need refresh
+        access_token_expire = __settings__.getSetting('access_token_expire')
+        if access_token_expire and int(float(access_token_expire)) - int(time.time()) <= 3600:
+            # refresh access token here
+            au.get_token(refresh=True)
+    # quick test api
+    nav_internal_link('index')
+
 # Main screen - show type list
 def actionIndex(qp):
     xbmc.executebuiltin('Container.SetViewMode(0)')
@@ -113,9 +142,6 @@ def actionIndex(qp):
             link = get_internal_link('genres', {'type': i['id']})
             xbmcplugin.addDirectoryItem(handle, link, li, True)
         xbmcplugin.endOfDirectory(handle)
-        xbmc.log("Get types complete!")
-    else:
-        xbmc.log("Get types error! %s" % response)
 
 def actionGenres(qp):
     response = api('genres', {'type': qp.get('type', '')})
@@ -177,7 +203,6 @@ def actionView(qp):
         if item['type'] in ['serial', 'docuserial']:
             if 'season' in qp:
                 for season in response['seasons']:
-                    xbmc.log("Season number: %s = %s" % (season['number'], qp['season']))
                     if int(season['number']) == int(qp['season']):
                         for episode_number, episode in enumerate(season['episodes']):
                             episode_number += 1
@@ -234,7 +259,6 @@ def actionSearch(qp):
     if len(out.decode('utf-8')) >= 3:
         if 'page' in qp:
             qp['page'] = 1
-        xbmc.log('actionSearch: nav to items')
         qp['title'] = out
         nav_internal_link('items', qp)
     else:

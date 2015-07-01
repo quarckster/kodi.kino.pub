@@ -16,7 +16,7 @@ CLIENT_SECRET = ""
 class Auth(object):
     terminated = False
     timer = 0
-    ERROR, PENDING_STATUS, SUCCESS = range(3)
+    ERROR, PENDING_STATUS, SUCCESS, EXPIRED = range(4)
 
     def __init__(self, settings, window=None):
         self.window = window
@@ -58,19 +58,18 @@ class Auth(object):
             req = urllib2.Request(url)
 
             resp = urllib2.urlopen(req, udata).read()
-            xbmc.log("----- RESPONSE: %s" % resp)
             return json.loads(resp)
         except urllib2.URLError, e:
             if e.code == 400:
                 _data = e.read()
-                xbmc.log("400 error: %s" % _data)
                 try:
                     resp = json.loads(_data)
                     return resp
                 except:
-                    xbmc.log('\n\n-------\nCant read json:\n \t %s \n\n------\n' % _data)
+                    pass
         xbmc.executebuiltin("XBMC.Notification(%s,%s)" % ("Internet problems", "Connection timed out!"))
-        self.window.close()
+        if self.window:
+            self.window.close()
 
     def get_device_code(self, url=OAUTH_API_URL):
         data = {
@@ -101,15 +100,14 @@ class Auth(object):
                 'client_id': self.client_id,
                 'code': self.device_code,
             }
-        xbmc.log("DATA IS : %s" % data)
         resp = self.request(url, data)
         error = resp.get('error')
         if error and error == "authorization_pending":
             return self.PENDING_STATUS, resp
+        if error and error in ["invalid_grant", "code_expired", "invalid_client"]:
+            return self.EXPIRED, resp
 
-        xbmc.log("RESP IS %s" % json.dumps(resp))
         expires_in = int(resp.get('expires_in')) + int(time.time())
-        xbmc.log("=============================EXPIRES: %s" % expires_in)
         self.access_token = resp.get('access_token')
         self.settings.setSetting('access_token_expire', str(expires_in))
 
@@ -122,7 +120,6 @@ class Auth(object):
 
     def verify_device_code(self, interval, parent):
         while not parent.stopped.wait(interval):
-            xbmc.log("------------ run verify_device_code")
             success, resp = self.get_token()
             if success == self.SUCCESS:
                 parent.closeWindow()
@@ -130,10 +127,6 @@ class Auth(object):
 
 
 class AuthWindow(xbmcgui.WindowXMLDialog):
-    KEY_BUTTON_BACK = 275
-    KEY_KEYBOARD_ESC = 61467
-    labels = {}
-
     def __init__(self, *args, **kwargs):
         self.stopped = threading.Event()
         self.auth = Auth(kwargs['settings'], window=self)
