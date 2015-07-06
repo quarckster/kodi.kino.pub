@@ -9,7 +9,7 @@ import urllib
 import json
 import time
 
-OAUTH_API_URL = "http://dev.kino.pub/oauth2/device"
+OAUTH_API_URL = "http://kino.pub/oauth2/device"
 CLIENT_ID = "xbmc"
 CLIENT_SECRET = ""
 
