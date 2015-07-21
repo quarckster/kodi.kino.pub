@@ -9,9 +9,9 @@ import urllib
 import json
 import time
 
-OAUTH_API_URL = "http://kino.pub/oauth2/device"
+OAUTH_API_URL = "http://dev.kino.pub/oauth2/device"
 CLIENT_ID = "xbmc"
-CLIENT_SECRET = ""
+CLIENT_SECRET = "cgg3gtifu46urtfp2zp1nqtba0k2ezxh"
 
 class Auth(object):
     terminated = False
@@ -55,13 +55,16 @@ class Auth(object):
     def request(self, url, data):
         try:
             udata = urllib.urlencode(data)
+            xbmc.log(udata)
             req = urllib2.Request(url)
 
             resp = urllib2.urlopen(req, udata).read()
+            xbmc.log("Response: %s" % resp)
             return json.loads(resp)
         except urllib2.URLError, e:
             if e.code == 400:
                 _data = e.read()
+                xbmc.log(_data)
                 try:
                     resp = json.loads(_data)
                     return resp
@@ -72,11 +75,17 @@ class Auth(object):
             self.window.close()
 
     def get_device_code(self, url=OAUTH_API_URL):
+        xbmc.log('Get device code %s - %s' % (self.client_id, self.client_secret))
         data = {
             'grant_type': 'device_code',
-            'client_id': self.client_id
+            'client_id': self.client_id,
+            'client_secret': self.client_secret,
         }
         resp = self.request(url, data)
+        error = resp.get('error')
+        if error:
+            #xbmc.executebuiltin("XBMC.Notification(%s,%s)" % ("Unknown device", "Unknown device. Please visit http://kino.pub/device/support for more details."))
+            return self.ERROR, resp
         self.device_code = resp['code'].encode('utf-8')
         self.user_code = resp['user_code'].encode('utf-8')
         self.verification_uri = resp['verification_uri'].encode('utf8')
@@ -85,20 +94,25 @@ class Auth(object):
         self.settings.setSetting('device_code', str(self.device_code).encode('utf-8'))
         self.settings.setSetting('verification_uri', str(self.verification_uri).encode('utf-8'))
         self.settings.setSetting('interval', str(self.refresh_interval))
-        return resp
+        return self.SUCCESS, resp
 
     def get_token(self, url=OAUTH_API_URL, refresh=False):
+        xbmc.log('Get token')
         if refresh:
+            xbmc.log('Get token: refresh')
             data = {
                 'grant_type': 'refresh_token',
                 'refresh_token': self.refresh_token,
                 'client_id': self.client_id,
+                'client_secret': self.client_secret,
             }
         else:
+            xbmc.log('Get token: device_token')
             data = {
                 'grant_type': 'device_token',
                 'client_id': self.client_id,
                 'code': self.device_code,
+                'client_secret': self.client_secret,
             }
         resp = self.request(url, data)
         error = resp.get('error')
@@ -132,7 +146,11 @@ class AuthWindow(xbmcgui.WindowXMLDialog):
         self.auth = Auth(kwargs['settings'], window=self)
 
     def onInit(self):
-        resp = self.auth.get_device_code()
+        status, resp = self.auth.get_device_code()
+        if status == self.auth.ERROR:
+            label = self.getControl(9111)
+            label.setLabel('Устройство не поддерживается.\nПосетите http://kino.pub/device/support для уточнения деталей.')
+            return
         label = self.getControl(9112)
         label.setLabel(resp['verification_uri'].encode('utf-8'))
         label = self.getControl(9113)

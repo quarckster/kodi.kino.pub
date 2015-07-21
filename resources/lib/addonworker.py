@@ -173,11 +173,20 @@ def actionItems(qp):
             link = get_internal_link('view', {'id': item['id']})
             li = xbmcgui.ListItem(item['title'].encode('utf-8'), iconImage=item['posters']['big'], thumbnailImage=item['posters']['big'])
             li.setInfo('Video', addonutils.video_info(item))
+            # If not serials or multiseries movie, create playable item
             if item['type'] not in ['serial', 'docuserial']:
-                response = api('items/%s' % item['id'])
-                if response['status'] == 200 and 'videos' in response and len(response['videos']) == 1:
-                    link = addonutils.get_mlink(response['videos'][0])
-                    li.setProperty('IsPlayable', 'true')
+                response2 = api('items/%s' % item['id'])
+                if response2['status'] == 200:
+                    full_item = response2['item']
+                    if 'videos' in full_item and len(full_item['videos']) == 1:
+                        link = addonutils.get_mlink(full_item['videos'][0])
+                        li.setProperty('IsPlayable', 'true')
+                        isdir = False
+                        xbmc.log("ADD SINGLE ITEM VIDEO -----------------")
+                    else:
+                        xbmc.log("ADD MULTI ITEM VIDEO -----------------")
+                        link = get_internal_link('view', {'id': item['id']})
+                        isdir = True
             xbmcplugin.addDirectoryItem(handle, link, li, isdir)
 
         # Add "next page" button
@@ -202,10 +211,11 @@ def actionView(qp):
         # If serial instance or multiseries film show navigation, else start play
         if item['type'] in ['serial', 'docuserial']:
             if 'season' in qp:
-                for season in response['seasons']:
+                for season in item['seasons']:
                     if int(season['number']) == int(qp['season']):
                         for episode_number, episode in enumerate(season['episodes']):
                             episode_number += 1
+                            xbmc.log("Add episode for season %s" % episode_number)
                             li = xbmcgui.ListItem("%01d. %s" % (episode_number, episode['title'].encode('utf-8')), iconImage=episode['thumbnail'], thumbnailImage=episode['thumbnail'])
                             li.setInfo('Video', addonutils.video_info(item, {
                                 'season': int(season['number']),
@@ -217,7 +227,7 @@ def actionView(qp):
                         break
                 xbmcplugin.endOfDirectory(handle)
             else:
-                for season in response['seasons']:
+                for season in item['seasons']:
                     season_title = season['title'].encode('utf-8') if len(season['title']) > 0 else "Сезон %s" % int(season['number'])
                     li = xbmcgui.ListItem(season_title, iconImage=item['posters']['big'], thumbnailImage=item['posters']['big'])
                     li.setInfo('Video', addonutils.video_info(item, {
@@ -227,24 +237,27 @@ def actionView(qp):
                     xbmcplugin.addDirectoryItem(handle, link, li, True)
                 xbmcplugin.endOfDirectory(handle)
         elif 'videos' in item and len(item['videos']) > 1:
-            for video_number, video in enumerate(response['videos']):
+            for video_number, video in enumerate(item['videos']):
                 video_number += 1
+                xbmc.log("Add VIDEO TO MOVIE %s" % video_number)
                 li = xbmcgui.ListItem("%01d. %s" % (video_number, video['title'].encode('utf-8')), iconImage=video['thumbnail'], thumbnailImage=video['thumbnail'])
                 li.setInfo('Video', addonutils.video_info(item, {
                     'episode': video_number
                 }))
                 li.setProperty('IsPlayable', 'true')
                 link = addonutils.get_mlink(video)
-                xbmcplugin.addDirectoryItem(handle, "", li, False)
+                xbmc.log("URL IS %s" % link)
+                xbmcplugin.addDirectoryItem(handle, link, li, False)
             xbmcplugin.endOfDirectory(handle)
         else:
-            video = response['videos'][0]
+            video = item['videos'][0]
             video_number = 0
             li = xbmcgui.ListItem("%01d. %s" % (video_number, video['title'].encode('utf-8')), iconImage=video['thumbnail'], thumbnailImage=video['thumbnail'])
             li.setInfo('Video', addonutils.video_info(item, {
                 'episode': video_number
             }))
             link = addonutils.get_mlink(video)
+            xbmc.log("LINK IS = %s" % link)
             li.setProperty('IsPlayable', 'true')
 
 
