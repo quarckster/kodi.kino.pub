@@ -26,7 +26,7 @@ handle = int(sys.argv[1])
 xbmcplugin.setContent(handle, 'movie')
 
 
-def api(action, params={}, url="http://dev.kino.pub/api/v1", timeout=600):
+def api(action, params={}, url="http://kino.pub/api/v1", timeout=600):
     access_token = __settings__.getSetting('access_token')
     if access_token:
         params['access_token'] = access_token
@@ -182,9 +182,7 @@ def actionItems(qp):
                         link = addonutils.get_mlink(full_item['videos'][0])
                         li.setProperty('IsPlayable', 'true')
                         isdir = False
-                        xbmc.log("ADD SINGLE ITEM VIDEO -----------------")
                     else:
-                        xbmc.log("ADD MULTI ITEM VIDEO -----------------")
                         link = get_internal_link('view', {'id': item['id']})
                         isdir = True
             xbmcplugin.addDirectoryItem(handle, link, li, isdir)
@@ -215,7 +213,6 @@ def actionView(qp):
                     if int(season['number']) == int(qp['season']):
                         for episode_number, episode in enumerate(season['episodes']):
                             episode_number += 1
-                            xbmc.log("Add episode for season %s" % episode_number)
                             li = xbmcgui.ListItem("%01d. %s" % (episode_number, episode['title'].encode('utf-8')), iconImage=episode['thumbnail'], thumbnailImage=episode['thumbnail'])
                             li.setInfo('Video', addonutils.video_info(item, {
                                 'season': int(season['number']),
@@ -239,14 +236,12 @@ def actionView(qp):
         elif 'videos' in item and len(item['videos']) > 1:
             for video_number, video in enumerate(item['videos']):
                 video_number += 1
-                xbmc.log("Add VIDEO TO MOVIE %s" % video_number)
                 li = xbmcgui.ListItem("%01d. %s" % (video_number, video['title'].encode('utf-8')), iconImage=video['thumbnail'], thumbnailImage=video['thumbnail'])
                 li.setInfo('Video', addonutils.video_info(item, {
                     'episode': video_number
                 }))
                 li.setProperty('IsPlayable', 'true')
                 link = addonutils.get_mlink(video)
-                xbmc.log("URL IS %s" % link)
                 xbmcplugin.addDirectoryItem(handle, link, li, False)
             xbmcplugin.endOfDirectory(handle)
         else:
@@ -257,7 +252,6 @@ def actionView(qp):
                 'episode': video_number
             }))
             link = addonutils.get_mlink(video)
-            xbmc.log("LINK IS = %s" % link)
             li.setProperty('IsPlayable', 'true')
 
 

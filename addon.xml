@@ -4,7 +4,7 @@
   <extension point="xbmc.python.pluginsource" provides="video" library="default.py"><provides>video</provides></extension>
   <extension point="xbmc.addon.metadata">
     <summary>kino.pub - онлайн-кинотеатр.</summary>
-    <description>Описание площадки</description>
+    <description></description>
     <platform>all</platform>
   </extension>
 </addon>

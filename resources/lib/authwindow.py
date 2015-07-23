@@ -9,7 +9,7 @@ import urllib
 import json
 import time
 
-OAUTH_API_URL = "http://dev.kino.pub/oauth2/device"
+OAUTH_API_URL = "http://kino.pub/oauth2/device"
 CLIENT_ID = "xbmc"
 CLIENT_SECRET = "cgg3gtifu46urtfp2zp1nqtba0k2ezxh"
 
@@ -55,16 +55,13 @@ class Auth(object):
     def request(self, url, data):
         try:
             udata = urllib.urlencode(data)
-            xbmc.log(udata)
             req = urllib2.Request(url)
 
             resp = urllib2.urlopen(req, udata).read()
-            xbmc.log("Response: %s" % resp)
             return json.loads(resp)
         except urllib2.URLError, e:
             if e.code == 400:
                 _data = e.read()
-                xbmc.log(_data)
                 try:
                     resp = json.loads(_data)
                     return resp
@@ -75,7 +72,6 @@ class Auth(object):
             self.window.close()
 
     def get_device_code(self, url=OAUTH_API_URL):
-        xbmc.log('Get device code %s - %s' % (self.client_id, self.client_secret))
         data = {
             'grant_type': 'device_code',
             'client_id': self.client_id,
@@ -97,9 +93,7 @@ class Auth(object):
         return self.SUCCESS, resp
 
     def get_token(self, url=OAUTH_API_URL, refresh=False):
-        xbmc.log('Get token')
         if refresh:
-            xbmc.log('Get token: refresh')
             data = {
                 'grant_type': 'refresh_token',
                 'refresh_token': self.refresh_token,
@@ -107,7 +101,6 @@ class Auth(object):
                 'client_secret': self.client_secret,
             }
         else:
-            xbmc.log('Get token: device_token')
             data = {
                 'grant_type': 'device_token',
                 'client_id': self.client_id,

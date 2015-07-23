@@ -9,12 +9,12 @@ def dict_merge(old, new):
 # Get media link
 #  video - json dict from api call
 #  quality - video quality [480p, 720p, 1080p]
-def get_mlink(video, quality='480p'):
+def get_mlink(video, quality='480p', streamFormat='http'):
     url = ""
     for f in video['files']:
         if f['quality'] == quality:
-            return f['url']
-        url = f['url']
+            return f['url'][streamFormat]
+        url = f['url'][streamFormat]
     return url
 
 # Split title by / and return list with two titles (title, originaltitle)
