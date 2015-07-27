@@ -18,6 +18,9 @@ __skinsdir__ = "DefaultSkin"
 __language__ = __addon__.getLocalizedString
 __plugin__ = "plugin://%s" % __id__
 
+xbmc.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS: %s" % __settings__.getSetting("video_quality"))
+
+DEFAULT_QUALITY = __settings__.getSetting("video_quality")
 
 _ADDON_PATH =   xbmc.translatePath(__addon__.getAddonInfo('path'))
 if (sys.platform == 'win32') or (sys.platform == 'win64'):
@@ -179,7 +182,7 @@ def actionItems(qp):
                 if response2['status'] == 200:
                     full_item = response2['item']
                     if 'videos' in full_item and len(full_item['videos']) == 1:
-                        link = addonutils.get_mlink(full_item['videos'][0])
+                        link = addonutils.get_mlink(full_item['videos'][0], quality=DEFAULT_QUALITY)
                         li.setProperty('IsPlayable', 'true')
                         isdir = False
                     else:
@@ -219,7 +222,7 @@ def actionView(qp):
                                 'episode': episode_number
                             }))
                             li.setProperty('IsPlayable', 'true')
-                            link = addonutils.get_mlink(episode)
+                            link = addonutils.get_mlink(episode, quality=DEFAULT_QUALITY)
                             xbmcplugin.addDirectoryItem(handle, link, li, False)
                         break
                 xbmcplugin.endOfDirectory(handle)
@@ -241,7 +244,7 @@ def actionView(qp):
                     'episode': video_number
                 }))
                 li.setProperty('IsPlayable', 'true')
-                link = addonutils.get_mlink(video)
+                link = addonutils.get_mlink(video, quality=DEFAULT_QUALITY)
                 xbmcplugin.addDirectoryItem(handle, link, li, False)
             xbmcplugin.endOfDirectory(handle)
         else:
@@ -251,7 +254,7 @@ def actionView(qp):
             li.setInfo('Video', addonutils.video_info(item, {
                 'episode': video_number
             }))
-            link = addonutils.get_mlink(video)
+            link = addonutils.get_mlink(video, quality=DEFAULT_QUALITY)
             li.setProperty('IsPlayable', 'true')
 
 
