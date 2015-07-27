@@ -26,7 +26,7 @@ handle = int(sys.argv[1])
 xbmcplugin.setContent(handle, 'movie')
 
 
-def api(action, params={}, url="http://kino.pub/api/v1", timeout=600):
+def api(action, params={}, url="http://api.kino.pub/v1", timeout=600):
     access_token = __settings__.getSetting('access_token')
     if access_token:
         params['access_token'] = access_token
