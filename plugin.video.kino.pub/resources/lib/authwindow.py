@@ -53,6 +53,8 @@ class Auth(object):
         self.device_token = ""
 
     def request(self, url, data):
+        xbmc.log("REQUEST URL=%s" % url)
+        xbmc.log("DATA %s" % data)
         try:
             udata = urllib.urlencode(data)
             req = urllib2.Request(url)
@@ -113,7 +115,10 @@ class Auth(object):
             return self.PENDING_STATUS, resp
         if error and error in ["invalid_grant", "code_expired", "invalid_client"]:
             return self.EXPIRED, resp
+        if error:
+            return self.ERROR, resp
 
+        xbmc.log("ERROR IS %s" % error)
         expires_in = int(resp.get('expires_in')) + int(time.time())
         self.access_token = resp.get('access_token')
         self.settings.setSetting('access_token_expire', str(expires_in))
