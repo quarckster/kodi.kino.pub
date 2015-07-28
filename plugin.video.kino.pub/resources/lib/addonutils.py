@@ -31,15 +31,7 @@ def get_mlink(video, quality='480p', streamFormat='http'):
         url = f['url'][streamFormat]
     return url
 
-# Split title by / and return list with two titles (title, originaltitle)
-#  title - string
-def gen_titles(title):
-    _title = title.split('/')
-    title, originaltitle = title.split('/') if '/' in title else [_title, ""]
-    return [title, originaltitle]
-
 def video_info(item, extend=None):
-    title, originaltitle = gen_titles(item['title'])
     info = {
         'year': int(item['year']),
         'genre': ",".join([x['title'] for x in item['genres']]),
@@ -47,8 +39,7 @@ def video_info(item, extend=None):
         'cast': item['cast'].split(","),
         'director': item['director'],
         'plot': item['plot'],
-        'title': title,
-        'originaltitle': originaltitle,
+        'title': item['title'],
         'playcount': int(item['views']),
     }
     if extend and type(extend) is dict:
