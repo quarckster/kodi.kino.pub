@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import os, xbmc, xbmcaddon
-__id__ = 'plugin.video.kino.pub'
+__id__ = 'video.kino.pub'
 __addon__ = xbmcaddon.Addon(id=__id__)
 __settings__ = xbmcaddon.Addon(id=__id__)
 __skinsdir__ = "DefaultSkin"
