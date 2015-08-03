@@ -227,7 +227,7 @@ def actionView(qp):
                 xbmcplugin.endOfDirectory(handle)
             else:
                 for season in item['seasons']:
-                    season_title = season['title'].encode('utf-8') if len(season['title']) > 0 else "Сезон %s" % int(season['number'])
+                    season_title = "Сезон %s" % int(season['number'])
                     li = xbmcgui.ListItem(season_title, iconImage=item['posters']['big'], thumbnailImage=item['posters']['big'])
                     li.setInfo('Video', addonutils.video_info(item, {
                         'season': int(season['number']),
