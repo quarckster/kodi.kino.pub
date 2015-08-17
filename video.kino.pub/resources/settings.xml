@@ -3,6 +3,7 @@
 	<setting id="video_quality" type="select" label="Качество видео" values="Auto|1080p|720p|480p" default="Auto"/>
 	<setting id="stream_type" type="select" label="Тип стриминга" values="hls|http" default="hls"/>
 	<setting type="sep" />
+	<setting id="reset_auth" type="enum" label="Сбросить авторизацию" values="Нет|Да" default="Нет"/>
     <!--
 	<setting id="logout" type="action" label="Очистить данные и выйти" action="RunPlugin(plugin://plugin.video.megogo.net/?func=logout)" />
 	<setting type="sep" />
