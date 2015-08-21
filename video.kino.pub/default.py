@@ -13,9 +13,12 @@ sys.path.append( os.path.join( _ADDON_PATH, 'resources', 'lib') )
 sys.path.append( os.path.join( _ADDON_PATH, 'resources', 'skins') )
 sys.path.append( os.path.join( _ADDON_PATH, 'resources', 'skins', 'DefaultSkin') )
 
-xbmc.log("RESET : %s" % __settings__.getSetting('reset_auth'))
-if int(__settings__.getSetting('reset_auth')) == 1:
-	xbmc.log('alalala')
+try:
+    reset_auth = int(__settings__.getSetting('reset_auth'))
+except:
+    reset_auth = 0
+
+if reset_auth == 1:
 	__settings__.setSetting('access_token', '')
 	__settings__.setSetting('refresh_token', '')
 	__settings__.setSetting('access_token_expire', '')
