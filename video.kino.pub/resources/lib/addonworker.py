@@ -141,14 +141,12 @@ def actionIndex(qp):
         for i in response['items']:
             li = xbmcgui.ListItem(i['title'].encode('utf-8'))
             #link = get_internal_link('items', {'type': i['id']})
-            xbmc.log("Adding item to index %s - %s" % (i['title'], i['id']))
             link = get_internal_link('genres', {'type': i['id']})
             xbmcplugin.addDirectoryItem(handle, link, li, True)
         xbmcplugin.endOfDirectory(handle)
 
 def actionGenres(qp):
     response = api('genres', {'type': qp.get('type', '')})
-    xbmc.log("Genre types is %s" % qp.get('type'],''))
     if response['status'] == 200:
         add_default_headings(qp)
         for genre in response['items']:

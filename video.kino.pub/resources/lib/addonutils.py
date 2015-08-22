@@ -48,7 +48,6 @@ def video_info(item, extend=None):
         'director': item['director'],
         'plot': item['plot'],
         'title': item['title'],
-        'playcount': int(item['views']),
     }
     if extend and type(extend) is dict:
         n = info.copy()
