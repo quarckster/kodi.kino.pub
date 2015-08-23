@@ -14,6 +14,7 @@ def dict_merge(old, new):
 def get_mlink(video, quality='480p', streamType='http'):
     # Normalize quality param
     def normalize(qual):
+        qual = str(qual)
         return int(qual.lower().replace('p', '').replace('3d', '1080'))
 
     qualities = [480, 720, 1080]
