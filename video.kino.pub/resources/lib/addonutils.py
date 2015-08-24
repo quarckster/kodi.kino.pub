@@ -34,7 +34,7 @@ def get_mlink(video, quality='480p', streamType='http'):
         #url = f['url'][streamType] # if auto quality or other get max quality from available
 
 
-    for f in files:
+    for f in reversed(files):
         if normalize(f['quality']) <= normalize(quality):
             return f['url'][streamType]
         url = f['url'][streamType]

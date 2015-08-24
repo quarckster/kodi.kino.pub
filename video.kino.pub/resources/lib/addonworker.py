@@ -183,6 +183,7 @@ def actionItems(qp):
                     if 'videos' in full_item and len(full_item['videos']) == 1:
                         link = addonutils.get_mlink(full_item['videos'][0], quality=DEFAULT_QUALITY, streamType=DEFAULT_STREAM_TYPE)
                         li.setProperty('IsPlayable', 'true')
+                        li.setInfo('Video', {'playcount': int(full_item['videos'][0]['watched'])})
                         isdir = False
                     else:
                         link = get_internal_link('view', {'id': item['id']})
@@ -220,6 +221,7 @@ def actionView(qp):
                                 'season': int(season['number']),
                                 'episode': episode_number
                             }))
+                            li.setInfo('Video', {'playcount': int(episode['watched'])})
                             li.setProperty('IsPlayable', 'true')
                             link = addonutils.get_mlink(episode, quality=DEFAULT_QUALITY, streamType=DEFAULT_STREAM_TYPE)
                             xbmcplugin.addDirectoryItem(handle, link, li, False)
@@ -243,6 +245,7 @@ def actionView(qp):
                     'episode': video_number
                 }))
                 li.setProperty('IsPlayable', 'true')
+                li.setInfo('Video', {'playcount': int(video['watched'])})
                 link = addonutils.get_mlink(video, quality=DEFAULT_QUALITY, streamType=DEFAULT_STREAM_TYPE)
                 xbmcplugin.addDirectoryItem(handle, link, li, False)
             xbmcplugin.endOfDirectory(handle)
@@ -253,8 +256,9 @@ def actionView(qp):
             li.setInfo('Video', addonutils.video_info(item, {
                 'episode': video_number
             }))
-            link = addonutils.get_mlink(video, quality=DEFAULT_QUALITY, streamType=DEFAULT_STREAM_TYPE)
+            li.setInfo('Video', {'playcount': int(video['watched'])})
             li.setProperty('IsPlayable', 'true')
+            link = addonutils.get_mlink(video, quality=DEFAULT_QUALITY, streamType=DEFAULT_STREAM_TYPE)
 
 
 def actionSearch(qp):
