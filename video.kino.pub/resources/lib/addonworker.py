@@ -57,32 +57,38 @@ def get_internal_link(action, params={}):
     return "%s/%s?%s" % (__plugin__, action, params)
 
 def nav_internal_link(action, params={}):
-    xbmc.executebuiltin('Container.Update(%s)' % get_internal_link(action, params))
+    ret = xbmc.executebuiltin('Container.Update(%s)' % get_internal_link(action, params))
 
 def notice(message, heading):
     xbmc.executebuiltin('XBMC.Notification("%s", "%s")' % (heading, message))
 
-def route():
+def route(fakeSys=None):
     global __plugin__
 
-    current = sys.argv[0]
-    qs = sys.argv[2]
+    if  fakeSys:
+        current = fakeSys.split('?')[0]
+        qs = fakeSys.split('?')['?' in fakeSys]
+    else:
+        current = sys.argv[0]
+        qs = sys.argv[2]
     action = current.replace(__plugin__, '').lstrip('/')
     action = action if action else 'login'
     actionFn = 'action' + action.title()
     qp = get_params(qs)
 
+    xbmc.log("%s : route. %s" % (__plugin__, str(qp)))
     globals()[actionFn](qp)
 
 
 # Parse query string params into dict
 def get_params(qs):
-    qs = qs.replace('?', '').split('/')[-1]
     params = {}
-    for i in qs.split('&'):
-        if '=' in i:
-            k,v = i.split('=')
-            params[k] = v
+    if qs:
+        qs = qs.replace('?', '').split('/')[-1]
+        for i in qs.split('&'):
+            if '=' in i:
+                k,v = i.split('=')
+                params[k] = v
     return params
 
 
@@ -108,6 +114,7 @@ def add_default_headings(qp, fmt="sl"):
         xbmcplugin.addDirectoryItem(handle, get_internal_link('items', qp), li, True)
 
 def actionLogin(qp):
+    xbmc.log("%s : actionLogin. %s" % (__plugin__, str(qp)))
     import authwindow as auth
     au = auth.Auth(__settings__)
     # check if auth works
@@ -120,20 +127,26 @@ def actionLogin(qp):
     device_code = __settings__.getSetting('device_code')
     access_token_expire = __settings__.getSetting('access_token_expire')
     if device_code or (not device_code and not access_token):
+        xbmc.log("%s : actionLogin - no device code or (no device_code and access_token). Show modal auth" % __plugin__)
         wn = auth.AuthWindow("auth.xml", _ADDON_PATH, __skinsdir__, settings=__settings__)
         wn.doModal()
         del wn
+        xbmc.log("%s : actionLogin - Close modal auth" % __plugin__)
     if access_token and not device_code:
+        xbmc.log("%s : actionLogin - have access_token and no device_token." % __plugin__)
         # Check if our token need refresh
         access_token_expire = __settings__.getSetting('access_token_expire')
         if access_token_expire and int(float(access_token_expire)) - int(time.time()) <= 3600:
+            xbmc.log("%s : actionLogin - Access token near expiring. Refresh it.." % __plugin__)
             # refresh access token here
             au.get_token(refresh=True)
     # quick test api
-    nav_internal_link('index')
+    xbmc.log("%s : actionLogin - Redirect to index page" % __plugin__)
+    route(get_internal_link('index'))
 
 # Main screen - show type list
 def actionIndex(qp):
+    xbmc.log("%s : actionIndex. %s" % (__plugin__, str(qp)))
     xbmc.executebuiltin('Container.SetViewMode(0)')
     response = api('types')
     if response['status'] == 200:
