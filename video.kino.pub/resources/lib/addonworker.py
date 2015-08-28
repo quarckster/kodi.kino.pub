@@ -30,6 +30,7 @@ xbmcplugin.setContent(handle, 'movie')
 
 def api(action, params={}, url="http://api.kino.pub/v1", timeout=600):
     access_token = __settings__.getSetting('access_token')
+    xbmc.log("Access token is: %s" % access_token)
     if access_token:
         params['access_token'] = access_token
     params = urllib.urlencode(params)
@@ -49,6 +50,40 @@ def api(action, params={}, url="http://api.kino.pub/v1", timeout=600):
             'message': 'Name not resolved',
             'code': 0
         }
+
+# Show pagination
+def show_pagination(pagination, action, qp):
+    # Add "next page" button
+    if (int(pagination['current'])) + 1 <= int(pagination['total']):
+        qp['page'] = int(pagination['current'])+1
+        li = xbmcgui.ListItem("[COLOR FFFFF000]Вперёд[/COLOR]")
+        link = get_internal_link(action, qp)
+        xbmcplugin.addDirectoryItem(handle, link, li, True)
+    xbmcplugin.endOfDirectory(handle)
+
+# Fill directory for items
+def show_items(items):
+    xbmc.log("%s : show_items. Total items: %s" % (__plugin__, str(len(items))))
+    # Fill list with items
+    for item in items:
+        isdir = True if item['type'] in ['serial', 'docuserial'] else False
+        link = get_internal_link('view', {'id': item['id']})
+        li = xbmcgui.ListItem(item['title'].encode('utf-8'), iconImage=item['posters']['big'], thumbnailImage=item['posters']['big'])
+        li.setInfo('Video', addonutils.video_info(item))
+        # If not serials or multiseries movie, create playable item
+        if item['type'] not in ['serial', 'docuserial']:
+            response = api('items/%s' % item['id'])
+            if response['status'] == 200:
+                full_item = response['item']
+                if 'videos' in full_item and len(full_item['videos']) == 1:
+                    link = addonutils.get_mlink(full_item['videos'][0], quality=DEFAULT_QUALITY, streamType=DEFAULT_STREAM_TYPE)
+                    li.setProperty('IsPlayable', 'true')
+                    li.setInfo('Video', {'playcount': int(full_item['videos'][0]['watched'])})
+                    isdir = False
+                else:
+                    link = get_internal_link('view', {'id': item['id']})
+                    isdir = True
+        xbmcplugin.addDirectoryItem(handle, link, li, isdir)
 
 # Form internal link for plugin navigation
 def get_internal_link(action, params={}):
@@ -151,6 +186,9 @@ def actionIndex(qp):
     response = api('types')
     if response['status'] == 200:
         add_default_headings(qp)
+        # Add bookmarks
+        li = xbmcgui.ListItem('[COLOR FFFFF000]Закладки[/COLOR]')
+        xbmcplugin.addDirectoryItem(handle, get_internal_link('bookmarks'), li, True)
         for i in response['items']:
             li = xbmcgui.ListItem(i['title'].encode('utf-8'))
             #link = get_internal_link('items', {'type': i['id']})
@@ -182,34 +220,8 @@ def actionItems(qp):
         pagination = response['pagination']
         add_default_headings(qp, "s")
 
-        # Fill list with items
-        for item in response['items']:
-            isdir = True if item['type'] in ['serial', 'docuserial'] else False
-            link = get_internal_link('view', {'id': item['id']})
-            li = xbmcgui.ListItem(item['title'].encode('utf-8'), iconImage=item['posters']['big'], thumbnailImage=item['posters']['big'])
-            li.setInfo('Video', addonutils.video_info(item))
-            # If not serials or multiseries movie, create playable item
-            if item['type'] not in ['serial', 'docuserial']:
-                response2 = api('items/%s' % item['id'])
-                if response2['status'] == 200:
-                    full_item = response2['item']
-                    if 'videos' in full_item and len(full_item['videos']) == 1:
-                        link = addonutils.get_mlink(full_item['videos'][0], quality=DEFAULT_QUALITY, streamType=DEFAULT_STREAM_TYPE)
-                        li.setProperty('IsPlayable', 'true')
-                        li.setInfo('Video', {'playcount': int(full_item['videos'][0]['watched'])})
-                        isdir = False
-                    else:
-                        link = get_internal_link('view', {'id': item['id']})
-                        isdir = True
-            xbmcplugin.addDirectoryItem(handle, link, li, isdir)
-
-        # Add "next page" button
-        if (int(pagination['current'])) + 1 <= int(pagination['total']):
-            qp['page'] = int(pagination['current'])+1
-            li = xbmcgui.ListItem("[COLOR FFFFF000]Вперёд[/COLOR]")
-            link = get_internal_link("items", qp)
-            xbmcplugin.addDirectoryItem(handle, link, li, True)
-        xbmcplugin.endOfDirectory(handle)
+        show_items(response['items'])
+        show_pagination(pagination, "items", qp)
     else:
         notice(response['message'], response['name'])
 
@@ -290,3 +302,25 @@ def actionSearch(qp):
     else:
         notice("Введите больше символов для поиска", "Поиск")
         nav_internal_link('index')
+
+
+def actionBookmarks(qp):
+    xbmc.log("%s : actionBookmarks. %s" % (__plugin__, str(qp)))
+    if 'folder-id' not in qp:
+        response = api('bookmarks')
+        if response['status'] == 200:
+            for folder in response['items']:
+                li = xbmcgui.ListItem(folder['title'].encode('utf-8'))
+                li.setProperty('folder-id', str(folder['id']).encode('utf-8'))
+                li.setProperty('views', str(folder['views']).encode('utf-8'))
+                link = get_internal_link('bookmarks', {'folder-id': folder['id']})
+                xbmcplugin.addDirectoryItem(handle, link, li, True)
+            xbmcplugin.endOfDirectory(handle)
+    else:
+        # Show content of the folder
+        response = api('bookmarks/%s' % qp['folder-id'], qp)
+        if response['status'] == 200:
+            show_items(response['items'])
+            show_pagination(response['pagination'], 'bookmarks', qp)
+            xbmcplugin.endOfDirectory(handle)
+
