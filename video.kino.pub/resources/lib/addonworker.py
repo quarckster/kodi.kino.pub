@@ -34,6 +34,7 @@ def api(action, params={}, url="http://api.kino.pub/v1", timeout=600):
     if access_token:
         params['access_token'] = access_token
     params = urllib.urlencode(params)
+    xbmc.log("%s/%s?%s" % (url, action, params))
     try:
         response = urllib2.urlopen("%s/%s?%s" % (url, action, params), timeout=timeout)
         #data = json.loads(response.read().decode('string-escape').strip('"'))
@@ -85,6 +86,31 @@ def show_items(items):
                     isdir = True
         xbmcplugin.addDirectoryItem(handle, link, li, isdir)
 
+# qp - dict, query paramters
+# fmt - show format
+#  s - show search
+#  l - show last
+#  p - show popular
+#  s - show alphabet sorting
+#  g - show genres folder
+def add_default_headings(qp, fmt="slp"):
+    if 's' in fmt:
+        li = xbmcgui.ListItem('[COLOR FFFFF000]Поиск[/COLOR]')
+        xbmcplugin.addDirectoryItem(handle, get_internal_link('search', qp), li, False)
+    if 'l' in fmt:
+        li = xbmcgui.ListItem('[COLOR FFFFF000]Последние[/COLOR]')
+        xbmcplugin.addDirectoryItem(handle, get_internal_link('items', qp), li, True)
+    if 'p' in fmt:
+        li = xbmcgui.ListItem('[COLOR FFFFF000]Популярные[/COLOR]')
+        xbmcplugin.addDirectoryItem(handle, get_internal_link('items', addonutils.dict_merge(qp, {'sort': '-rating'})), li, True)
+    if 'a' in fmt:
+        li = xbmcgui.ListItem('[COLOR FFFFF000]По алфавиту[/COLOR]')
+        xbmcplugin.addDirectoryItem(handle, get_internal_link('alphabet', qp), li, True)
+    if 'g' in fmt:
+        li = xbmcgui.ListItem('[COLOR FFFFF000]Жанры[/COLOR]')
+        xbmcplugin.addDirectoryItem(handle, get_internal_link('genres', qp), li, True)
+
+
 # Form internal link for plugin navigation
 def get_internal_link(action, params={}):
     global __plugin__
@@ -123,7 +149,7 @@ def get_params(qs):
         for i in qs.split('&'):
             if '=' in i:
                 k,v = i.split('=')
-                params[k] = v
+                params[k] = urllib.unquote_plus(v)
     return params
 
 
@@ -135,18 +161,6 @@ def init():
 """
  Actions
 """
-
-# qp - dict, query paramters
-# fmt - show format
-#  s - show search
-#  l - show last
-def add_default_headings(qp, fmt="sl"):
-    if 's' in fmt:
-        li = xbmcgui.ListItem('[COLOR FFFFF000]Поиск[/COLOR]')
-        xbmcplugin.addDirectoryItem(handle, get_internal_link('search', qp), li, False)
-    if 'l' in fmt:
-        li = xbmcgui.ListItem('[COLOR FFFFF000]Последние[/COLOR]')
-        xbmcplugin.addDirectoryItem(handle, get_internal_link('items', qp), li, True)
 
 def actionLogin(qp):
     xbmc.log("%s : actionLogin. %s" % (__plugin__, str(qp)))
@@ -183,23 +197,26 @@ def actionLogin(qp):
 def actionIndex(qp):
     xbmc.log("%s : actionIndex. %s" % (__plugin__, str(qp)))
     xbmc.executebuiltin('Container.SetViewMode(0)')
-    response = api('types')
-    if response['status'] == 200:
-        add_default_headings(qp)
-        # Add bookmarks
-        li = xbmcgui.ListItem('[COLOR FFFFF000]Закладки[/COLOR]')
-        xbmcplugin.addDirectoryItem(handle, get_internal_link('bookmarks'), li, True)
-        for i in response['items']:
-            li = xbmcgui.ListItem(i['title'].encode('utf-8'))
-            #link = get_internal_link('items', {'type': i['id']})
-            link = get_internal_link('genres', {'type': i['id']})
-            xbmcplugin.addDirectoryItem(handle, link, li, True)
-        xbmcplugin.endOfDirectory(handle)
+    if 'type' in qp:
+        add_default_headings(qp, "slpga")
+    else:
+        response = api('types')
+        if response['status'] == 200:
+            add_default_headings(qp)
+            # Add bookmarks
+            li = xbmcgui.ListItem('[COLOR FFFFF000]Закладки[/COLOR]')
+            xbmcplugin.addDirectoryItem(handle, get_internal_link('bookmarks'), li, True)
+            for i in response['items']:
+                li = xbmcgui.ListItem(i['title'].encode('utf-8'))
+                #link = get_internal_link('items', {'type': i['id']})
+                link = get_internal_link('index', {'type': i['id']})
+                xbmcplugin.addDirectoryItem(handle, link, li, True)
+    xbmcplugin.endOfDirectory(handle)
 
 def actionGenres(qp):
     response = api('genres', {'type': qp.get('type', '')})
     if response['status'] == 200:
-        add_default_headings(qp)
+        add_default_headings(qp, "")
         for genre in response['items']:
             li = xbmcgui.ListItem(genre['title'].encode('utf-8'))
             link = get_internal_link('items', {'type': qp.get('type'), 'genre': genre['id']})
@@ -323,4 +340,17 @@ def actionBookmarks(qp):
             show_items(response['items'])
             show_pagination(response['pagination'], 'bookmarks', qp)
             xbmcplugin.endOfDirectory(handle)
+
+def actionAlphabet(qp):
+    alpha = [
+        "А,Б,В,Г,Д,Е,Ё,Ж,З,И,Й,К,Л,М,Н,О,П,Р,С,Т,У,Ф,Х,Ц,Ч,Ш,Щ,Ы,Э,Ю,Я",
+        "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z"
+    ]
+    for al in alpha:
+        letters = al.split(",")
+        for letter in letters:
+            li = xbmcgui.ListItem(letter)
+            link = get_internal_link('items', addonutils.dict_merge(qp, {'letter': letter}))
+            xbmcplugin.addDirectoryItem(handle, link, li, True)
+    xbmcplugin.endOfDirectory(handle)
 
