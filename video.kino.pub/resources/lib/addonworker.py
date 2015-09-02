@@ -79,6 +79,7 @@ def show_items(items):
                 if 'videos' in full_item and len(full_item['videos']) == 1:
                     link = addonutils.get_mlink(full_item['videos'][0], quality=DEFAULT_QUALITY, streamType=DEFAULT_STREAM_TYPE)
                     li.setInfo('Video', {'playcount': int(full_item['videos'][0]['watched'])})
+                    li.setProperty('IsPlayable', 'true')
                     isdir = False
                 else:
                     link = get_internal_link('view', {'id': item['id']})
@@ -257,14 +258,13 @@ def actionView(qp):
                     if int(season['number']) == int(qp['season']):
                         for episode_number, episode in enumerate(season['episodes']):
                             episode_number += 1
-                            li = xbmcgui.ListItem("%01d. %s" % (episode_number, episode['title'].encode('utf-8')), iconImage=episode['thumbnail'], thumbnailImage=episode['thumbnail'])
+                            li = xbmcgui.ListItem("S%sE%s | %s" % (season['number'], episode_number, episode['title']), iconImage=episode['thumbnail'], thumbnailImage=episode['thumbnail'])
                             li.setInfo('Video', addonutils.video_info(item, {
                                 'season': int(season['number']),
                                 'episode': episode_number
                             }))
                             li.setInfo('Video', {'playcount': int(episode['watched'])})
                             li.setProperty('IsPlayable', 'true')
-                            #link = addonutils.get_mlink(episode, quality=DEFAULT_QUALITY, streamType=DEFAULT_STREAM_TYPE)
                             link = get_internal_link('play', {'id': item['id'], 'season': int(season['number']), 'episode': episode_number})
                             xbmcplugin.addDirectoryItem(handle, link, li, False)
                         break
@@ -282,27 +282,17 @@ def actionView(qp):
         elif 'videos' in item and len(item['videos']) > 1:
             for video_number, video in enumerate(item['videos']):
                 video_number += 1
-                li = xbmcgui.ListItem("%01d. %s" % (video_number, video['title'].encode('utf-8')), iconImage=video['thumbnail'], thumbnailImage=video['thumbnail'])
+                li = xbmcgui.ListItem("E%%s | %s" % (video_number, video['title'].encode('utf-8')), iconImage=video['thumbnail'], thumbnailImage=video['thumbnail'])
                 li.setInfo('Video', addonutils.video_info(item, {
                     'episode': video_number
                 }))
-                li.setProperty('IsPlayable', 'true')
                 li.setInfo('Video', {'playcount': int(video['watched'])})
-                #link = addonutils.get_mlink(video, quality=DEFAULT_QUALITY, streamType=DEFAULT_STREAM_TYPE)
+                li.setProperty('IsPlayable', 'true')
                 link = get_internal_link('play', {'id': item['id'], 'video': video_number})
                 xbmcplugin.addDirectoryItem(handle, link, li, False)
             xbmcplugin.endOfDirectory(handle)
         else:
             return
-            #video = item['videos'][0]
-            #video_number = 0
-            #li = xbmcgui.ListItem("%01d. %s" % (video_number, video['title'].encode('utf-8')), iconImage=video['thumbnail'], thumbnailImage=video['thumbnail'])
-            #li.setInfo('Video', addonutils.video_info(item, {
-            #    'episode': video_number
-            #}))
-            #li.setInfo('Video', {'playcount': int(video['watched'])})
-            #li.setProperty('IsPlayable', 'true')
-            #link = addonutils.get_mlink(video, quality=DEFAULT_QUALITY, streamType=DEFAULT_STREAM_TYPE)
 
 def actionPlay(qp):
     response = api('items/%s' % qp['id'])
@@ -319,21 +309,30 @@ def actionPlay(qp):
                     episode_number+=1
                     if episode_number == int(qp['episode']):
                         videoObject = episode
-                        liObject = xbmcgui.ListItem("%s.s%01de%01d" % (item['title'], season['number'], episode_number))
+                        title = "S%sE%s | %s" % (season['number'], episode_number, episode['title'])
+                        liObject = xbmcgui.ListItem(title)
+                        liObject.setInfo("video", {
+                            'season': season['number'],
+                            'episode': episode_number
+                        })
         elif 'video' in qp:
             # process video
-            for video_number, video in item['videos']:
+            for video_number, video in enumerate(item['videos']):
                 video_number+=1
                 if video_number == int(qp['video']):
                     videoObject = video
-                    if len(item['videos'] > 1:
-                        liObject = xbmcgui.ListItem("%s.e%01d" % (item['title'], video_number))
+                    if len(item['videos']) > 1:
+                        title = "E%01d" % (video_number)
+                        liObject = xbmcgui.ListItem(title)
+                    else:
+                        liObject = xbmcgui.ListItem(item['title'])
         else:
             pass
 
         url = addonutils.get_mlink(videoObject, quality=DEFAULT_QUALITY, streamType=DEFAULT_STREAM_TYPE)
-        player = xbmc.Player()
-        player.play(url, liObject)
+        #liObject.setProperty("url", url)
+        liObject.setPath(url)
+        xbmcplugin.setResolvedUrl(handle, True, liObject)
 
 def actionSearch(qp):
     kbd = xbmc.Keyboard()
