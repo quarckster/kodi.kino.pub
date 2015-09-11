@@ -282,7 +282,7 @@ def actionView(qp):
         elif 'videos' in item and len(item['videos']) > 1:
             for video_number, video in enumerate(item['videos']):
                 video_number += 1
-                li = xbmcgui.ListItem("E%%s | %s" % (video_number, video['title'].encode('utf-8')), iconImage=video['thumbnail'], thumbnailImage=video['thumbnail'])
+                li = xbmcgui.ListItem("E%02d | %s" % (video_number, video['title'].encode('utf-8')), iconImage=video['thumbnail'], thumbnailImage=video['thumbnail'])
                 li.setInfo('Video', addonutils.video_info(item, {
                     'episode': video_number
                 }))
