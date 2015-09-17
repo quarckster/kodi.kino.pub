@@ -126,7 +126,7 @@ class Auth(object):
         if self.access_token:
             for key, val in resp.items():
                 self.settings.setSetting(key.encode('utf-8'), str(val).encode('utf-8'))
-            self.settings.setSetting('device_code', None)
+            self.settings.setSetting('device_code', '')
             return self.SUCCESS, resp
         return self.ERROR
 
