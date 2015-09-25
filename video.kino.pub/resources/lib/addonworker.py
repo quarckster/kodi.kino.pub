@@ -28,6 +28,8 @@ handle = int(sys.argv[1])
 xbmcplugin.setContent(handle, 'movie')
 
 
+import authwindow as auth
+Auth = auth.Auth(__settings__)
 def api(action, params={}, url="http://api.kino.pub/v1", timeout=600):
     access_token = __settings__.getSetting('access_token')
     xbmc.log("Access token is: %s" % access_token)
@@ -36,8 +38,14 @@ def api(action, params={}, url="http://api.kino.pub/v1", timeout=600):
     params = urllib.urlencode(params)
     xbmc.log("%s/%s?%s" % (url, action, params))
     try:
+        access_token_expire = __settings__.getSetting('access_token_expire')
+        if int(access_token_expire) - int(time.time()) <= 15 * 60:
+            # try to refresh token
+            status, resp = Auth.get_token(refresh=True)
+            if status != Auth.SUCCESS:
+                nav_internal_link()
+
         response = urllib2.urlopen("%s/%s?%s" % (url, action, params), timeout=timeout)
-        #data = json.loads(response.read().decode('string-escape').strip('"'))
         data = json.loads(response.read())
         return data
     except urllib2.HTTPError as e:
@@ -161,34 +169,39 @@ def init():
 
 def actionLogin(qp):
     xbmc.log("%s : actionLogin. %s" % (__plugin__, str(qp)))
-    import authwindow as auth
-    au = auth.Auth(__settings__)
-    # check if auth works
-    response = api('types')
-    if response['status'] in [400, 401]:
-        status, response = au.get_token(refresh=True)
-        if status == au.EXPIRED:
-            au.reauth()
+
     access_token = __settings__.getSetting('access_token')
     device_code = __settings__.getSetting('device_code')
     access_token_expire = __settings__.getSetting('access_token_expire')
-    if device_code or (not device_code and not access_token):
-        xbmc.log("%s : actionLogin - no device code or (no device_code and access_token). Show modal auth" % __plugin__)
+
+    def showActivationWindow():
+        xbmc.log("%s : actionLogin - No acess_token. Show modal auth" % __plugin__)
         wn = auth.AuthWindow("auth.xml", _ADDON_PATH, __skinsdir__, settings=__settings__)
         wn.doModal()
         del wn
         xbmc.log("%s : actionLogin - Close modal auth" % __plugin__)
-    if access_token and not device_code:
-        xbmc.log("%s : actionLogin - have access_token and no device_token." % __plugin__)
-        # Check if our token need refresh
-        access_token_expire = __settings__.getSetting('access_token_expire')
-        if access_token_expire and int(float(access_token_expire)) - int(time.time()) <= 3600:
-            xbmc.log("%s : actionLogin - Access token near expiring. Refresh it.." % __plugin__)
-            # refresh access token here
-            au.get_token(refresh=True)
-    # quick test api
-    xbmc.log("%s : actionLogin - Redirect to index page" % __plugin__)
-    route(get_internal_link('index'))
+
+    # if no access_token exists
+    if not access_token:
+        showActivationWindow()
+        nav_internal_link('')
+        return
+    else:
+        if int(access_token_expire) - int(time.time()) <= 15 * 60:
+            # try to refresh token
+            status, resp = Auth.get_token(refresh=True)
+
+        # test API call
+        response = api('types')
+        if int(response['status']) == 401:
+            status, resp = Auth.get_token(refresh=True)
+            if status != Auth.SUCCESS:
+                # reset access_token
+                Auth.settings.setSetting('access_token', '')
+                showActivationWindow()
+                nav_internal_link('')
+
+        nav_internal_link('index')
 
 # Main screen - show type list
 def actionIndex(qp):

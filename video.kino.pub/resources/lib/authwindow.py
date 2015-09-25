@@ -128,7 +128,7 @@ class Auth(object):
                 self.settings.setSetting(key.encode('utf-8'), str(val).encode('utf-8'))
             self.settings.setSetting('device_code', '')
             return self.SUCCESS, resp
-        return self.ERROR
+        return self.ERROR, resp
 
     def verify_device_code(self, interval, parent):
         while not parent.stopped.wait(interval):
