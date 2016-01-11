@@ -9,7 +9,7 @@ import urllib
 import json
 import time
 
-OAUTH_API_URL = "http://api.kino.pub/oauth2/device"
+OAUTH_API_URL = "http://api.service-kp.com/oauth2/device"
 CLIENT_ID = "xbmc"
 CLIENT_SECRET = "cgg3gtifu46urtfp2zp1nqtba0k2ezxh"
 
@@ -170,3 +170,4 @@ class AuthWindow(xbmcgui.WindowXMLDialog):
             if (thread.isAlive() and thread != threading.currentThread()):
                 thread.join(1)
         self.close()
+

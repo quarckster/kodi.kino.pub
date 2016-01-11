@@ -30,7 +30,7 @@ xbmcplugin.setContent(handle, 'movie')
 
 import authwindow as auth
 Auth = auth.Auth(__settings__)
-def api(action, params={}, url="http://api.kino.pub/v1", timeout=600):
+def api(action, params={}, url="http://api.service-kp.com/v1", timeout=600):
     access_token = __settings__.getSetting('access_token')
     xbmc.log("Access token is: %s" % access_token)
     if access_token:
@@ -184,7 +184,7 @@ def actionLogin(qp):
     # if no access_token exists
     if not access_token:
         showActivationWindow()
-        nav_internal_link('')
+        nav_internal_link('login')
         return
     else:
         if int(access_token_expire) - int(time.time()) <= 15 * 60:
@@ -199,7 +199,7 @@ def actionLogin(qp):
                 # reset access_token
                 Auth.settings.setSetting('access_token', '')
                 showActivationWindow()
-                nav_internal_link('')
+                nav_internal_link('login')
 
         nav_internal_link('index')
 

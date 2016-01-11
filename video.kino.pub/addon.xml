@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="video.kino.pub" name="kino.pub" version="1.1.2" provider-name="kino.pub">
+<addon id="video.kino.pub" name="kino.pub" version="1.1.3" provider-name="kino.pub">
   <requires><import addon="xbmc.python" version="2.1.0"/></requires>
   <extension point="xbmc.python.pluginsource" provides="video" library="default.py"><provides>video</provides></extension>
   <extension point="xbmc.addon.metadata">
@@ -9,8 +9,9 @@
   </extension>
   <extension point="xbmc.addon.repository"
               name="Official kino.pub Add-On Repository">
-    <info compressed="true">http://kino.pub/plugins/kodi/addons.xml</info>
-    <checksum>http://kino.pub/plugins/kodi/addons.xml.md5</checksum>
-    <datadir zip="true">http://kino.pub/plugins/kodi</datadir>
+    <info compressed="true">http://plugins.service-kp.com/kodi/addons.xml</info>
+    <checksum>http://plugins.service-kp.com/kodi/addons.xml.md5</checksum>
+    <datadir zip="true">http://plugins.service-kp.com/kodi</datadir>
   </extension>
 </addon>
+
