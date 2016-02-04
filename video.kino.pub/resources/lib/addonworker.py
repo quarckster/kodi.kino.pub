@@ -63,7 +63,7 @@ def api(action, params={}, url="http://api.service-kp.com/v1", timeout=600):
 # Show pagination
 def show_pagination(pagination, action, qp):
     # Add "next page" button
-    if (int(pagination['current'])) + 1 <= int(pagination['total']):
+    if (pagination and int(pagination['current'])) + 1 <= int(pagination['total']):
         qp['page'] = int(pagination['current'])+1
         li = xbmcgui.ListItem("[COLOR FFFFF000]Вперёд[/COLOR]")
         link = get_internal_link(action, qp)
@@ -125,7 +125,7 @@ def get_internal_link(action, params={}):
 def nav_internal_link(action, params={}):
     ret = xbmc.executebuiltin('Container.Update(%s)' % get_internal_link(action, params))
 
-def notice(message, heading, time=4000):
+def notice(message, heading="", time=4000):
     xbmc.executebuiltin('XBMC.Notification("%s", "%s", "%s")' % (heading, message, time))
 
 def route(fakeSys=None):
@@ -184,7 +184,8 @@ def actionLogin(qp):
     # if no access_token exists
     if not access_token:
         showActivationWindow()
-        nav_internal_link('login')
+        #nav_internal_link('login')
+        actionLogin()
         return
     else:
         if int(access_token_expire) - int(time.time()) <= 15 * 60:
@@ -199,9 +200,11 @@ def actionLogin(qp):
                 # reset access_token
                 Auth.settings.setSetting('access_token', '')
                 showActivationWindow()
-                nav_internal_link('login')
+                #nav_internal_link('login')
+                actionLogin()
 
-        nav_internal_link('index')
+        #
+        actionIndex(qp)
 
 # Main screen - show type list
 def actionIndex(qp):
@@ -216,6 +219,9 @@ def actionIndex(qp):
             # Add bookmarks
             li = xbmcgui.ListItem('[COLOR FFFFF000]Закладки[/COLOR]')
             xbmcplugin.addDirectoryItem(handle, get_internal_link('bookmarks'), li, True)
+            li = xbmcgui.ListItem('[COLOR FFFFF000]Я смотрю[/COLOR] [COLOR FFFF0000]!! NEW !![/COLOR]')
+            xbmcplugin.addDirectoryItem(handle, get_internal_link('watching'), li, True)
+
             for i in response['items']:
                 li = xbmcgui.ListItem(i['title'].encode('utf-8'))
                 #link = get_internal_link('items', {'type': i['id']})
@@ -261,11 +267,14 @@ def actionView(qp):
     response = api('items/%s' % qp['id'])
     if response['status'] == 200:
         item = response['item']
+        watchingInfo = api('watching', {'id': item['id']})['item']
         # If serial instance or multiseries film show navigation, else start play
         if item['type'] in ['serial', 'docuserial']:
             if 'season' in qp:
                 for season in item['seasons']:
                     if int(season['number']) == int(qp['season']):
+                        watching_season = watchingInfo['seasons'][season['number']-1]
+                        selectedEpisode = False
                         for episode_number, episode in enumerate(season['episodes']):
                             episode_number += 1
                             episode_title = "s%02de%02d" % (season['number'], episode_number)
@@ -277,17 +286,25 @@ def actionView(qp):
                             }))
                             li.setInfo('Video', {'playcount': int(episode['watched'])})
                             li.setProperty('IsPlayable', 'true')
+                            if watching_season['episodes'][episode_number-1]['status'] < 1 and not selectedEpisode:
+                                selectedEpisode = True
+                                li.select(selectedEpisode)
                             link = get_internal_link('play', {'id': item['id'], 'season': int(season['number']), 'episode': episode_number})
                             xbmcplugin.addDirectoryItem(handle, link, li, False)
                         break
                 xbmcplugin.endOfDirectory(handle)
             else:
+                selectedSeason = False
                 for season in item['seasons']:
                     season_title = "Сезон %s" % int(season['number'])
+                    watching_season = watchingInfo['seasons'][season['number']-1]
                     li = xbmcgui.ListItem(season_title, iconImage=item['posters']['big'], thumbnailImage=item['posters']['big'])
                     li.setInfo('Video', addonutils.video_info(item, {
                         'season': int(season['number']),
                     }))
+                    if watching_season['status'] < 1 and not selectedSeason:
+                        selectedSeason = True
+                        li.select(selectedSeason)
                     link = get_internal_link('view', {'id': qp['id'], 'season': season['number']})
                     xbmcplugin.addDirectoryItem(handle, link, li, True)
                 xbmcplugin.endOfDirectory(handle)
@@ -315,11 +332,13 @@ def actionPlay(qp):
         item = response['item']
         videoObject = None
         liObject = None
+        season_number = 0
         if 'season' in qp:
             # process episode
             for season in item['seasons']:
                 if int(qp['season']) != int(season['number']):
                     continue
+                season_number = season['number']
                 for episode_number, episode in enumerate(season['episodes']):
                     episode_number+=1
                     if episode_number == int(qp['episode']):
@@ -354,6 +373,7 @@ def actionPlay(qp):
             notice("Видео обновляется и временно не доступно!", "Видео в обработке", time=8000)
             return
         url = addonutils.get_mlink(videoObject, quality=DEFAULT_QUALITY, streamType=DEFAULT_STREAM_TYPE)
+        api("watching/marktime", {'id': qp['id'], 'video': videoObject['number'], 'time': videoObject['duration'], 'season': season_number})
         liObject.setPath(url)
         xbmcplugin.setResolvedUrl(handle, True, liObject)
 
@@ -394,6 +414,20 @@ def actionBookmarks(qp):
             show_items(response['items'])
             show_pagination(response['pagination'], 'bookmarks', qp)
             xbmcplugin.endOfDirectory(handle)
+
+def actionWatching(qp):
+    response = api('watching/serials', {'subscribed': 1})
+    xbmc.log("Log : %s" % response)
+    if response['status'] == 200:
+        for item in response['items']:
+            li = xbmcgui.ListItem("%s : [COLOR FFFFF000]+%s[/COLOR]" % (item['title'].encode('utf-8'), str(item['new']).encode('utf-8')))
+            li.setLabel2(str(item['new']).encode('utf-8'))
+            li.setThumbnailImage(item['posters']['medium'])
+            link = get_internal_link('view', {'id': item['id']})
+            xbmcplugin.addDirectoryItem(handle, link, li, True)
+        xbmcplugin.endOfDirectory(handle)
+    else:
+        notice("При загрузке сериалов произошла ошибка. Попробуйте позже.", "Я смотрю")
 
 def actionAlphabet(qp):
     alpha = [
