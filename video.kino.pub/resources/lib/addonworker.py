@@ -436,6 +436,15 @@ def actionCollections(qp):
     if 'id' not in qp:
         response = api('collections/index', qp)
         if response['status'] == 200:
+            li = xbmcgui.ListItem('[COLOR FFFFF000]Последние[/COLOR]')
+            qp['sort'] = '-created'
+            xbmcplugin.addDirectoryItem(handle, get_internal_link('collections', qp), li, True)
+            li = xbmcgui.ListItem('[COLOR FFFFF000]Просматриваемые[/COLOR]')
+            qp['sort'] = '-watchers'
+            xbmcplugin.addDirectoryItem(handle, get_internal_link('collections', qp), li, True)
+            li = xbmcgui.ListItem('[COLOR FFFFF000]Ппопулярные[/COLOR]')
+            qp['sort'] = '-views'
+            xbmcplugin.addDirectoryItem(handle, get_internal_link('collections', qp), li, True)
             for item in response['items']:
                 li = xbmcgui.ListItem("%s" % (item['title'].encode('utf-8')))
                 li.setThumbnailImage(item['posters']['medium'])
