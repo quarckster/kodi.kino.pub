@@ -71,13 +71,15 @@ def show_pagination(pagination, action, qp):
     xbmcplugin.endOfDirectory(handle)
 
 # Fill directory for items
-def show_items(items):
+def show_items(items, options={}):
     xbmc.log("%s : show_items. Total items: %s" % (__plugin__, str(len(items))))
     # Fill list with items
-    for item in items:
+    for index, item in enumerate(items):
         isdir = True if item['type'] in ['serial', 'docuserial'] else False
         link = get_internal_link('view', {'id': item['id']})
         li = xbmcgui.ListItem(item['title'].encode('utf-8'), iconImage=item['posters']['big'], thumbnailImage=item['posters']['big'])
+        if 'enumerate' in options:
+            li.setLabel("%s. %s" % (index+1, li.getLabel()))
         li.setInfo('Video', addonutils.video_info(item))
         # If not serials or multiseries movie, create playable item
         if item['type'] not in ['serial', 'docuserial']:
@@ -221,6 +223,8 @@ def actionIndex(qp):
             xbmcplugin.addDirectoryItem(handle, get_internal_link('bookmarks'), li, True)
             li = xbmcgui.ListItem('[COLOR FFFFF000]Я смотрю[/COLOR] [COLOR FFFF0000]!! NEW !![/COLOR]')
             xbmcplugin.addDirectoryItem(handle, get_internal_link('watching'), li, True)
+            li = xbmcgui.ListItem('[COLOR FFFFF000]Подборки[/COLOR] [COLOR FFFF0000]!! NEW !![/COLOR]')
+            xbmcplugin.addDirectoryItem(handle, get_internal_link('collections'), li, True)
 
             for i in response['items']:
                 li = xbmcgui.ListItem(i['title'].encode('utf-8'))
@@ -417,7 +421,6 @@ def actionBookmarks(qp):
 
 def actionWatching(qp):
     response = api('watching/serials', {'subscribed': 1})
-    xbmc.log("Log : %s" % response)
     if response['status'] == 200:
         for item in response['items']:
             li = xbmcgui.ListItem("%s : [COLOR FFFFF000]+%s[/COLOR]" % (item['title'].encode('utf-8'), str(item['new']).encode('utf-8')))
@@ -428,6 +431,27 @@ def actionWatching(qp):
         xbmcplugin.endOfDirectory(handle)
     else:
         notice("При загрузке сериалов произошла ошибка. Попробуйте позже.", "Я смотрю")
+
+def actionCollections(qp):
+    if 'id' not in qp:
+        response = api('collections/index', qp)
+        if response['status'] == 200:
+            for item in response['items']:
+                li = xbmcgui.ListItem("%s" % (item['title'].encode('utf-8')))
+                li.setThumbnailImage(item['posters']['medium'])
+                link = get_internal_link('collections', {'id': item['id']})
+                xbmcplugin.addDirectoryItem(handle, link, li, True)
+            xbmcplugin.endOfDirectory(handle)
+        else:
+            notice("При загрузке подборок произошла ошибка. Попробуйте позже.", "Подборки")
+    else:
+        response = api('collections/view', qp)
+        xbmc.log("%s" % response)
+        if response['status'] == 200:
+            show_items(response['items'], options={'enumerate': True})
+            xbmcplugin.endOfDirectory(handle)
+        else:
+            notice("При загрузке произошла ошибка. Попробуйте позже.", "Подборки / Просмотр")
 
 def actionAlphabet(qp):
     alpha = [
