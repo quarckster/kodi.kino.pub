@@ -9,7 +9,7 @@ import urllib
 import json
 import time
 
-OAUTH_API_URL = "http://api.service-kp.com/oauth2/device"
+OAUTH_API_URL = "http://kpub.local/oauth2/device"
 CLIENT_ID = "xbmc"
 CLIENT_SECRET = "cgg3gtifu46urtfp2zp1nqtba0k2ezxh"
 

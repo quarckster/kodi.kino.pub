@@ -30,29 +30,45 @@ xbmcplugin.setContent(handle, 'movie')
 
 import authwindow as auth
 Auth = auth.Auth(__settings__)
-def api(action, params={}, url="http://api.service-kp.com/v1", timeout=600):
+def api(action, params={}, url="http://kpub.local/api/v1", timeout=600, method="get"):
+    method = "post" if method == "post" else "get"
     access_token = __settings__.getSetting('access_token')
-    xbmc.log("Access token is: %s" % access_token)
-    if access_token:
-        params['access_token'] = access_token
+    #params['access_token'] = access_token
     params = urllib.urlencode(params)
     xbmc.log("%s/%s?%s" % (url, action, params))
     try:
         access_token_expire = __settings__.getSetting('access_token_expire')
-        if int(access_token_expire) - int(time.time()) <= 15 * 60:
+        if int(access_token_expire) < int(time.time()):
             # try to refresh token
             status, resp = Auth.get_token(refresh=True)
             if status != Auth.SUCCESS:
-                nav_internal_link()
+                xbmc.log("Refresh access token because it expired")
+                xbmc.log("%s" % resp)
+                if resp['status'] == 400:
+                    xbmc.log("Status is 400, we need to reauth")
+                    Auth.reauth()
+                    actionLogin({})
+                    #nav_internal_link()
+                else:
+                    notice("Повторите попытку позже.", "Ошибка", time=10000);
 
-        response = urllib2.urlopen("%s/%s?%s" % (url, action, params), timeout=timeout)
+        if method == "get":
+            xbmc.log("GET REQUEST")
+            request = urllib2.Request("%s/%s?%s" % (url, action, params))
+            #response = urllib2.urlopen("%s/%s?%s" % (url, action, params), timeout=timeout)
+        else:
+            xbmc.log("POST REQUEST")
+            request = urllib2.Request("%s/%s" % (url, action), data=params)
+
+        request.add_header('Authorization', 'Bearer %s' % __settings__.getSetting('access_token'))
+        response = urllib2.urlopen(request, timeout=timeout)
         data = json.loads(response.read())
         return data
     except urllib2.HTTPError as e:
         data = json.loads(e.read())
         return data
     except Exception as e:
-        print e
+        xbmc.log("%s" % e)
         return {
             'status': 105,
             'name': 'Name Not Resolved',
@@ -187,7 +203,7 @@ def actionLogin(qp):
     if not access_token:
         showActivationWindow()
         #nav_internal_link('login')
-        actionLogin()
+        actionLogin(qp)
         return
     else:
         if int(access_token_expire) - int(time.time()) <= 15 * 60:
@@ -203,9 +219,28 @@ def actionLogin(qp):
                 Auth.settings.setSetting('access_token', '')
                 showActivationWindow()
                 #nav_internal_link('login')
-                actionLogin()
+                actionLogin(qp)
 
-        #
+        # Update device info
+        deviceInfoUpdate = __settings__.getSetting('device_info_update')
+        if not deviceInfoUpdate or int(deviceInfoUpdate)+1800 < int(float(time.time())):
+            infoLabels = [
+                '"System.BuildVersion"',
+                '"System.FriendlyName"',
+                '"System.KernelVersion"',
+            ]
+            result = "Busy"
+            while "Busy" in result:
+                result = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "XBMC.GetInfoLabels", "id": 1, "params": {"labels": [%s]}}' % ",".join(infoLabels))
+            try:
+                result = json.loads(result)['result']
+                title = result['System.FriendlyName']
+                hardware = result['System.KernelVersion']
+                software = "Kodi/%s" % result['System.BuildVersion']
+                result = api("device/notify", params={'title': title, 'hardware': hardware, 'software': software}, method="post")
+                __settings__.setSetting('device_info_update', str(int(float(time.time()))))
+            except:
+                pass
         actionIndex(qp)
 
 # Main screen - show type list
@@ -243,7 +278,7 @@ def actionGenres(qp):
             xbmcplugin.addDirectoryItem(handle, link, li, True)
         xbmcplugin.endOfDirectory(handle)
     else:
-        notice(response['message'], response['name'])
+        notice(response['message'], response['name'], )
 
 # List items with pagination
 #  qp - dict, query parameters for item filtering
