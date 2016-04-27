@@ -13,16 +13,21 @@ OAUTH_API_URL = "http://api.service-kp.com/oauth2/device"
 CLIENT_ID = "xbmc"
 CLIENT_SECRET = "cgg3gtifu46urtfp2zp1nqtba0k2ezxh"
 
+__id__ = 'video.kino.pub'
+__addon__ = xbmcaddon.Addon(id=__id__)
+__settings__ = xbmcaddon.Addon(id=__id__)
+
 class Auth(object):
     terminated = False
     timer = 0
     ERROR, PENDING_STATUS, SUCCESS, EXPIRED = range(4)
 
-    def __init__(self, settings, window=None):
+    def __init__(self, settings, window=None, afterAuth=None):
         self.window = window
         self.client_id = CLIENT_ID
         self.client_secret = CLIENT_SECRET
         self.settings = settings
+        self.afterAuth = afterAuth
 
     def close(self):
         if self.window is not None:
@@ -134,6 +139,7 @@ class Auth(object):
         while not parent.stopped.wait(interval):
             success, resp = self.get_token()
             if success == self.SUCCESS:
+                self.afterAuth(force=True)
                 parent.closeWindow()
                 return True
 
@@ -141,7 +147,7 @@ class Auth(object):
 class AuthWindow(xbmcgui.WindowXMLDialog):
     def __init__(self, *args, **kwargs):
         self.stopped = threading.Event()
-        self.auth = Auth(kwargs['settings'], window=self)
+        self.auth = Auth(kwargs['settings'], window=self, afterAuth=kwargs['afterAuth'])
 
     def onInit(self):
         status, resp = self.auth.get_device_code()

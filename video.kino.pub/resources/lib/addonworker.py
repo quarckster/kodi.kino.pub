@@ -193,17 +193,42 @@ def actionLogin(qp):
     device_code = __settings__.getSetting('device_code')
     access_token_expire = __settings__.getSetting('access_token_expire')
 
+    def update_device_info(force=False):
+        try:
+            # Update device info
+            deviceInfoUpdate = __settings__.getSetting('device_info_update')
+            if force or (not deviceInfoUpdate or int(deviceInfoUpdate)+1800 < int(float(time.time()))):
+                infoLabels = [
+                    '"System.BuildVersion"',
+                    '"System.FriendlyName"',
+                    '"System.KernelVersion"',
+                ]
+                result = "Busy"
+                while "Busy" in result:
+                    result = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "XBMC.GetInfoLabels", "id": 1, "params": {"labels": [%s]}}' % ",".join(infoLabels))
+                try:
+                    result = json.loads(result)['result']
+                    title = result['System.FriendlyName']
+                    hardware = result['System.KernelVersion']
+                    software = "Kodi/%s" % result['System.BuildVersion']
+                    result = api("device/notify", params={'title': title, 'hardware': hardware, 'software': software}, method="post")
+                    __settings__.setSetting('device_info_update', str(int(float(time.time()))))
+                except:
+                    pass
+        except:
+            pass
+
     def showActivationWindow():
         xbmc.log("%s : actionLogin - No acess_token. Show modal auth" % __plugin__)
-        wn = auth.AuthWindow("auth.xml", _ADDON_PATH, __skinsdir__, settings=__settings__)
+        wn = auth.AuthWindow("auth.xml", _ADDON_PATH, __skinsdir__, settings=__settings__, afterAuth=update_device_info)
         wn.doModal()
         del wn
         xbmc.log("%s : actionLogin - Close modal auth" % __plugin__)
 
+
     # if no access_token exists
     if not access_token:
         showActivationWindow()
-        #nav_internal_link('login')
         actionLogin(qp)
         return
     else:
@@ -219,30 +244,12 @@ def actionLogin(qp):
                 # reset access_token
                 Auth.settings.setSetting('access_token', '')
                 showActivationWindow()
-                #nav_internal_link('login')
                 actionLogin(qp)
-
-        # Update device info
-        deviceInfoUpdate = __settings__.getSetting('device_info_update')
-        if not deviceInfoUpdate or int(deviceInfoUpdate)+1800 < int(float(time.time())):
-            infoLabels = [
-                '"System.BuildVersion"',
-                '"System.FriendlyName"',
-                '"System.KernelVersion"',
-            ]
-            result = "Busy"
-            while "Busy" in result:
-                result = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "XBMC.GetInfoLabels", "id": 1, "params": {"labels": [%s]}}' % ",".join(infoLabels))
-            try:
-                result = json.loads(result)['result']
-                title = result['System.FriendlyName']
-                hardware = result['System.KernelVersion']
-                software = "Kodi/%s" % result['System.BuildVersion']
-                result = api("device/notify", params={'title': title, 'hardware': hardware, 'software': software}, method="post")
-                __settings__.setSetting('device_info_update', str(int(float(time.time()))))
-            except:
-                pass
-        actionIndex(qp)
+        elif int(response['status']) == 200:
+            update_device_info()
+            actionIndex(qp)
+        else:
+            notice("Повторите попытку позже (%s)." % response['status'], "Ошибка", time=10000);
 
 # Main screen - show type list
 def actionIndex(qp):
