@@ -30,12 +30,13 @@ xbmcplugin.setContent(handle, 'movie')
 
 import authwindow as auth
 Auth = auth.Auth(__settings__)
-def api(action, params={}, url="http://kpub.local/api/v1", timeout=600, method="get"):
+def api(action, params={}, url="http://api.service-kp.com/v1", timeout=600, method="get"):
     method = "post" if method == "post" else "get"
     access_token = __settings__.getSetting('access_token')
-    #params['access_token'] = access_token
+    xbmc.log("api) Access token %s" % access_token)
+    params['access_token'] = access_token
     params = urllib.urlencode(params)
-    xbmc.log("%s/%s?%s" % (url, action, params))
+    xbmc.log("api) url = %s/%s?%s" % (url, action, params))
     try:
         access_token_expire = __settings__.getSetting('access_token_expire')
         if int(access_token_expire) < int(time.time()):
@@ -304,8 +305,10 @@ def actionItems(qp):
 # Otherwise play content
 def actionView(qp):
     response = api('items/%s' % qp['id'])
+    xbmc.log("%s" % response)
     if response['status'] == 200:
         item = response['item']
+        xbmc.log("%s" % item)
         watchingInfo = api('watching', {'id': item['id']})['item']
         # If serial instance or multiseries film show navigation, else start play
         if item['type'] in ['serial', 'docuserial']:
@@ -335,6 +338,7 @@ def actionView(qp):
             else:
                 selectedSeason = False
                 for season in item['seasons']:
+                    xbmc.log("%s" % season)
                     season_title = "Сезон %s" % int(season['number'])
                     watching_season = watchingInfo['seasons'][season['number']-1]
                     li = xbmcgui.ListItem(season_title, iconImage=item['posters']['big'], thumbnailImage=item['posters']['big'])
