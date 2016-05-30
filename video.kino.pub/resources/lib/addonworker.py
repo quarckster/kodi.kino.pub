@@ -504,7 +504,8 @@ def actionCollections(qp):
         xbmc.log("%s" % response)
         if response['status'] == 200:
             show_items(response['items'], options={'enumerate': True})
-            xbmcplugin.endOfDirectory(handle)
+            show_pagination(pagination, "collections", qp)
+            #xbmcplugin.endOfDirectory(handle)
         else:
             notice("При загрузке произошла ошибка. Попробуйте позже.", "Подборки / Просмотр")
 
