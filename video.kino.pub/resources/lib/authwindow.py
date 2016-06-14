@@ -74,6 +74,7 @@ class Auth(object):
                     return resp
                 except:
                     pass
+            return {'status': e.code, 'error': 'unknown error'}
         xbmc.executebuiltin("XBMC.Notification(%s,%s)" % ("Internet problems", "Connection timed out!"))
         if self.window:
             self.window.close()
@@ -115,6 +116,7 @@ class Auth(object):
                 'client_secret': self.client_secret,
             }
         resp = self.request(url, data)
+
         error = resp.get('error')
         if error and error == "authorization_pending":
             return self.PENDING_STATUS, resp

@@ -66,7 +66,11 @@ def api(action, params={}, url="http://api.service-kp.com/v1", timeout=600, meth
         data = json.loads(response.read())
         return data
     except urllib2.HTTPError as e:
-        data = json.loads(e.read())
+        try:
+            data = json.loads(e.read())
+        except:
+            data = {'status': e.code, 'error': 'unknown server error'}
+
         return data
     except Exception as e:
         xbmc.log("%s" % e)
@@ -261,12 +265,15 @@ def actionIndex(qp):
         response = api('types')
         if response['status'] == 200:
             add_default_headings(qp)
+            # Football euro 2016
+            li = xbmcgui.ListItem('[COLOR FFFFF000]ЕВРО 2016[/COLOR] [COLOR FFFF0000]!! NEW !![/COLOR]')
+            xbmcplugin.addDirectoryItem(handle, "http://185.104.10.17/atv/euro/playlist.m3u8", li, False)
             # Add bookmarks
             li = xbmcgui.ListItem('[COLOR FFFFF000]Закладки[/COLOR]')
             xbmcplugin.addDirectoryItem(handle, get_internal_link('bookmarks'), li, True)
-            li = xbmcgui.ListItem('[COLOR FFFFF000]Я смотрю[/COLOR] [COLOR FFFF0000]!! NEW !![/COLOR]')
+            li = xbmcgui.ListItem('[COLOR FFFFF000]Я смотрю[/COLOR]')
             xbmcplugin.addDirectoryItem(handle, get_internal_link('watching'), li, True)
-            li = xbmcgui.ListItem('[COLOR FFFFF000]Подборки[/COLOR] [COLOR FFFF0000]!! NEW !![/COLOR]')
+            li = xbmcgui.ListItem('[COLOR FFFFF000]Подборки[/COLOR]')
             xbmcplugin.addDirectoryItem(handle, get_internal_link('collections'), li, True)
 
             for i in response['items']:
