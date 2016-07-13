@@ -54,11 +54,11 @@ def api(action, params={}, url="http://api.service-kp.com/v1", timeout=600, meth
                     notice("Повторите попытку позже.", "Ошибка", time=10000);
 
         if method == "get":
-            xbmc.log("GET REQUEST")
+            #xbmc.log("GET REQUEST")
             request = urllib2.Request("%s/%s?%s" % (url, action, params))
             #response = urllib2.urlopen("%s/%s?%s" % (url, action, params), timeout=timeout)
         else:
-            xbmc.log("POST REQUEST")
+            #xbmc.log("POST REQUEST")
             request = urllib2.Request("%s/%s" % (url, action), data=params)
 
         request.add_header('Authorization', 'Bearer %s' % __settings__.getSetting('access_token'))
@@ -265,9 +265,6 @@ def actionIndex(qp):
         response = api('types')
         if response['status'] == 200:
             add_default_headings(qp)
-            # Football euro 2016
-            li = xbmcgui.ListItem('[COLOR FFFFF000]ЕВРО 2016[/COLOR] [COLOR FFFF0000]!! NEW !![/COLOR]')
-            xbmcplugin.addDirectoryItem(handle, "http://185.104.10.17/atv/euro/playlist.m3u8", li, False)
             # Add bookmarks
             li = xbmcgui.ListItem('[COLOR FFFFF000]Закладки[/COLOR]')
             xbmcplugin.addDirectoryItem(handle, get_internal_link('bookmarks'), li, True)
@@ -319,10 +316,10 @@ def actionItems(qp):
 # Otherwise play content
 def actionView(qp):
     response = api('items/%s' % qp['id'])
-    xbmc.log("%s" % response)
+    #xbmc.log("%s" % response)
     if response['status'] == 200:
         item = response['item']
-        xbmc.log("%s" % item)
+        #xbmc.log("%s" % item)
         watchingInfo = api('watching', {'id': item['id']})['item']
         # If serial instance or multiseries film show navigation, else start play
         if item['type'] in ['serial', 'docuserial']:
@@ -352,7 +349,7 @@ def actionView(qp):
             else:
                 selectedSeason = False
                 for season in item['seasons']:
-                    xbmc.log("%s" % season)
+                    #xbmc.log("%s" % season)
                     season_title = "Сезон %s" % int(season['number'])
                     watching_season = watchingInfo['seasons'][season['number']-1]
                     li = xbmcgui.ListItem(season_title, iconImage=item['posters']['big'], thumbnailImage=item['posters']['big'])
@@ -503,16 +500,16 @@ def actionCollections(qp):
                 li.setThumbnailImage(item['posters']['medium'])
                 link = get_internal_link('collections', {'id': item['id']})
                 xbmcplugin.addDirectoryItem(handle, link, li, True)
+            show_pagination(response['pagination'], "collections", qp)
             xbmcplugin.endOfDirectory(handle)
         else:
             notice("При загрузке подборок произошла ошибка. Попробуйте позже.", "Подборки")
     else:
         response = api('collections/view', qp)
-        xbmc.log("%s" % response)
         if response['status'] == 200:
             show_items(response['items'], options={'enumerate': True})
-            show_pagination(pagination, "collections", qp)
-            #xbmcplugin.endOfDirectory(handle)
+            #show_pagination(response['pagination'], "collections", qp)
+            xbmcplugin.endOfDirectory(handle)
         else:
             notice("При загрузке произошла ошибка. Попробуйте позже.", "Подборки / Просмотр")
 
