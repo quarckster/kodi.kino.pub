@@ -265,6 +265,9 @@ def actionIndex(qp):
         response = api('types')
         if response['status'] == 200:
             add_default_headings(qp)
+            # Temporary Rio 2016
+            li = xbmcgui.ListItem('[COLOR FFFFF000]Рио 2016[/COLOR] [COLOR FFFF0000]!! NEW !![/COLOR]')
+            xbmcplugin.addDirectoryItem(handle, get_internal_link('rio'), li, True)
             # Add bookmarks
             li = xbmcgui.ListItem('[COLOR FFFFF000]Закладки[/COLOR]')
             xbmcplugin.addDirectoryItem(handle, get_internal_link('bookmarks'), li, True)
@@ -278,6 +281,14 @@ def actionIndex(qp):
                 #link = get_internal_link('items', {'type': i['id']})
                 link = get_internal_link('index', {'type': i['id']})
                 xbmcplugin.addDirectoryItem(handle, link, li, True)
+    xbmcplugin.endOfDirectory(handle)
+
+def actionRio(qp):
+    response = api('tv/index')
+    if response['status'] == 200:
+        for ch in response['channels']:
+            li = xbmcgui.ListItem(ch['title'].encode('utf-8'), iconImage=ch['logos']['s'])
+            xbmcplugin.addDirectoryItem(handle, ch['stream'], li, False)
     xbmcplugin.endOfDirectory(handle)
 
 def actionGenres(qp):
@@ -492,7 +503,7 @@ def actionCollections(qp):
             li = xbmcgui.ListItem('[COLOR FFFFF000]Просматриваемые[/COLOR]')
             qp['sort'] = '-watchers'
             xbmcplugin.addDirectoryItem(handle, get_internal_link('collections', qp), li, True)
-            li = xbmcgui.ListItem('[COLOR FFFFF000]Ппопулярные[/COLOR]')
+            li = xbmcgui.ListItem('[COLOR FFFFF000]Популярные[/COLOR]')
             qp['sort'] = '-views'
             xbmcplugin.addDirectoryItem(handle, get_internal_link('collections', qp), li, True)
             for item in response['items']:
