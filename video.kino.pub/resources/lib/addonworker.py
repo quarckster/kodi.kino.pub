@@ -25,7 +25,8 @@ _ADDON_PATH =   xbmc.translatePath(__addon__.getAddonInfo('path'))
 if (sys.platform == 'win32') or (sys.platform == 'win64'):
     _ADDON_PATH = _ADDON_PATH.decode('utf-8')
 handle = int(sys.argv[1])
-xbmcplugin.setContent(handle, 'movie')
+# New kodi skin hangs with this type
+#xbmcplugin.setContent(handle, 'movie')
 
 
 import authwindow as auth
