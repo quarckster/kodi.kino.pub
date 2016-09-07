@@ -96,14 +96,14 @@ def show_items(items, options={}):
     xbmc.log("%s : show_items. Total items: %s" % (__plugin__, str(len(items))))
     # Fill list with items
     for index, item in enumerate(items):
-        isdir = True if item['type'] in ['serial', 'docuserial'] else False
+        isdir = True if item['type'] in ['serial', 'docuserial', 'tvshow'] else False
         link = get_internal_link('view', {'id': item['id']})
         li = xbmcgui.ListItem(item['title'].encode('utf-8'), iconImage=item['posters']['big'], thumbnailImage=item['posters']['big'])
         if 'enumerate' in options:
             li.setLabel("%s. %s" % (index+1, li.getLabel()))
         li.setInfo('Video', addonutils.video_info(item))
         # If not serials or multiseries movie, create playable item
-        if item['type'] not in ['serial', 'docuserial']:
+        if item['type'] not in ['serial', 'docuserial', 'tvshow']:
             if item['subtype'] == '':
                 link = get_internal_link('play', {'id': item['id'], 'video': 1})
                 #li.setInfo('Video', {'playcount': int(full_item['videos'][0]['watched'])})
@@ -266,8 +266,8 @@ def actionIndex(qp):
         if response['status'] == 200:
             add_default_headings(qp)
             # Temporary Rio 2016
-            li = xbmcgui.ListItem('[COLOR FFFFF000]Рио 2016[/COLOR] [COLOR FFFF0000]!! NEW !![/COLOR]')
-            xbmcplugin.addDirectoryItem(handle, get_internal_link('rio'), li, True)
+            li = xbmcgui.ListItem('[COLOR FFFFF000]ТВ[/COLOR] [COLOR FFFF0000]!! NEW !![/COLOR]')
+            xbmcplugin.addDirectoryItem(handle, get_internal_link('tv'), li, True)
             # Add bookmarks
             li = xbmcgui.ListItem('[COLOR FFFFF000]Закладки[/COLOR]')
             xbmcplugin.addDirectoryItem(handle, get_internal_link('bookmarks'), li, True)
@@ -283,7 +283,7 @@ def actionIndex(qp):
                 xbmcplugin.addDirectoryItem(handle, link, li, True)
     xbmcplugin.endOfDirectory(handle)
 
-def actionRio(qp):
+def actionTv(qp):
     response = api('tv/index')
     if response['status'] == 200:
         for ch in response['channels']:
@@ -322,7 +322,7 @@ def actionItems(qp):
 
 # Show items
 # If item type is movie with more than 1 episodes - show those episodes
-# If item type is serial, docuserial - show seasons
+# If item type is serial, docuserial, tvshow - show seasons
 #  if parameter season is set - show episodes
 # Otherwise play content
 def actionView(qp):
@@ -333,7 +333,7 @@ def actionView(qp):
         #xbmc.log("%s" % item)
         watchingInfo = api('watching', {'id': item['id']})['item']
         # If serial instance or multiseries film show navigation, else start play
-        if item['type'] in ['serial', 'docuserial']:
+        if item['type'] in ['serial', 'docuserial', 'tvshow']:
             if 'season' in qp:
                 for season in item['seasons']:
                     if int(season['number']) == int(qp['season']):
