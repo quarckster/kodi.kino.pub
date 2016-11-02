@@ -92,6 +92,13 @@ def show_pagination(pagination, action, qp):
         xbmcplugin.addDirectoryItem(handle, link, li, True)
     xbmcplugin.endOfDirectory(handle)
 
+
+# Get trailer link
+def trailer_link(item):
+    if 'trailer' in item and item['trailer']:
+        return get_internal_link('trailer', {'id': item['id']})
+    return None
+
 # Fill directory for items
 def show_items(items, options={}):
     xbmc.log("%s : show_items. Total items: %s" % (__plugin__, str(len(items))))
@@ -102,7 +109,7 @@ def show_items(items, options={}):
         li = xbmcgui.ListItem(item['title'].encode('utf-8'), iconImage=item['posters']['big'], thumbnailImage=item['posters']['big'])
         if 'enumerate' in options:
             li.setLabel("%s. %s" % (index+1, li.getLabel()))
-        li.setInfo('Video', addonutils.video_info(item))
+        li.setInfo('Video', addonutils.video_info(item, {'trailer': trailer_link(item)}))
         # If not serials or multiseries movie, create playable item
         if item['type'] not in ['serial', 'docuserial', 'tvshow']:
             if item['subtype'] == '':
@@ -442,6 +449,17 @@ def actionPlay(qp):
         api("watching/marktime", {'id': qp['id'], 'video': videoObject['number'], 'time': videoObject['duration'], 'season': season_number})
         liObject.setPath(url)
         xbmcplugin.setResolvedUrl(handle, True, liObject)
+
+def actionTrailer(qp):
+    response = api('items/trailer', params={'id': qp['id']})
+    if response['status'] == 200:
+        trailer = None
+        trailer = response['trailer']
+        url = addonutils.get_mlink(trailer, quality=DEFAULT_QUALITY, streamType=DEFAULT_STREAM_TYPE)
+        liObject = xbmcgui.ListItem('Трейлер')
+        liObject.setPath(url)
+        xbmcplugin.setResolvedUrl(handle, True, liObject)
+
 
 def actionSearch(qp):
     kbd = xbmc.Keyboard()
