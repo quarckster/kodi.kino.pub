@@ -25,8 +25,6 @@ _ADDON_PATH =   xbmc.translatePath(__addon__.getAddonInfo('path'))
 if (sys.platform == 'win32') or (sys.platform == 'win64'):
     _ADDON_PATH = _ADDON_PATH.decode('utf-8')
 handle = int(sys.argv[1])
-# New kodi skin hangs with this type
-#xbmcplugin.setContent(handle, 'movie')
 
 
 import authwindow as auth
@@ -102,14 +100,16 @@ def trailer_link(item):
 # Fill directory for items
 def show_items(items, options={}):
     xbmc.log("%s : show_items. Total items: %s" % (__plugin__, str(len(items))))
+    xbmcplugin.setContent(handle, 'movies')
     # Fill list with items
     for index, item in enumerate(items):
         isdir = True if item['type'] in ['serial', 'docuserial', 'tvshow'] else False
         link = get_internal_link('view', {'id': item['id']})
-        li = xbmcgui.ListItem(item['title'].encode('utf-8'), iconImage=item['posters']['big'], thumbnailImage=item['posters']['big'])
+        li = xbmcgui.ListItem(item['title'].encode('utf-8'))
         if 'enumerate' in options:
             li.setLabel("%s. %s" % (index+1, li.getLabel()))
         li.setInfo('Video', addonutils.video_info(item, {'trailer': trailer_link(item)}))
+        li.setArt({'poster': item['posters']['big']})
         # If not serials or multiseries movie, create playable item
         if item['type'] not in ['serial', 'docuserial', 'tvshow']:
             if item['subtype'] == '':
@@ -347,6 +347,7 @@ def actionView(qp):
                     if int(season['number']) == int(qp['season']):
                         watching_season = watchingInfo['seasons'][season['number']-1]
                         selectedEpisode = False
+                        xbmcplugin.setContent(handle, 'episodes')
                         for episode_number, episode in enumerate(season['episodes']):
                             episode_number += 1
                             episode_title = "s%02de%02d" % (season['number'], episode_number)
@@ -357,6 +358,7 @@ def actionView(qp):
                                 'episode': episode_number
                             }))
                             li.setInfo('Video', {'playcount': int(episode['watched'])})
+                            li.setArt({'poster': item['posters']['big']})
                             li.setProperty('IsPlayable', 'true')
                             if watching_season['episodes'][episode_number-1]['status'] < 1 and not selectedEpisode:
                                 selectedEpisode = True
@@ -367,14 +369,16 @@ def actionView(qp):
                 xbmcplugin.endOfDirectory(handle)
             else:
                 selectedSeason = False
+                xbmcplugin.setContent(handle, 'tvshows')
                 for season in item['seasons']:
                     #xbmc.log("%s" % season)
                     season_title = "Сезон %s" % int(season['number'])
                     watching_season = watchingInfo['seasons'][season['number']-1]
-                    li = xbmcgui.ListItem(season_title, iconImage=item['posters']['big'], thumbnailImage=item['posters']['big'])
+                    li = xbmcgui.ListItem(season_title)
                     li.setInfo('Video', addonutils.video_info(item, {
                         'season': int(season['number']),
                     }))
+                    li.setArt({'poster': item['posters']['big']})
                     if watching_season['status'] < 1 and not selectedSeason:
                         selectedSeason = True
                         li.select(selectedSeason)
@@ -382,6 +386,7 @@ def actionView(qp):
                     xbmcplugin.addDirectoryItem(handle, link, li, True)
                 xbmcplugin.endOfDirectory(handle)
         elif 'videos' in item and len(item['videos']) > 1:
+            xbmcplugin.setContent(handle, 'episodes')
             for video_number, video in enumerate(item['videos']):
                 video_number += 1
                 episode_title = "e%02d" % video_number
@@ -392,6 +397,7 @@ def actionView(qp):
                     'episode': video_number
                 }))
                 li.setInfo('Video', {'playcount': int(video['watched'])})
+                li.setArt({'poster': item['posters']['big']})
                 li.setProperty('IsPlayable', 'true')
                 link = get_internal_link('play', {'id': item['id'], 'video': video_number})
                 xbmcplugin.addDirectoryItem(handle, link, li, False)
