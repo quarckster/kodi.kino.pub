@@ -52,6 +52,7 @@ def video_info(item, extend=None):
         'director': item['director'],
         'plot': item['plot'],
         'title': item['title'],
+        'duration': item['duration']['average'] if 'duration' in item else None
     }
     if extend and type(extend) is dict:
         n = info.copy()

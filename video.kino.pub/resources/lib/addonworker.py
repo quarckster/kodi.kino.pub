@@ -355,7 +355,8 @@ def actionView(qp):
                             li = xbmcgui.ListItem(episode_title, iconImage=episode['thumbnail'], thumbnailImage=episode['thumbnail'])
                             li.setInfo('Video', addonutils.video_info(item, {
                                 'season': int(season['number']),
-                                'episode': episode_number
+                                'episode': episode_number,
+                                'duration': int(episode['duration']),
                             }))
                             li.setInfo('Video', {'playcount': int(episode['watched'])})
                             li.setArt({'poster': item['posters']['big']})
@@ -427,7 +428,8 @@ def actionPlay(qp):
                         liObject = xbmcgui.ListItem(episode_title)
                         liObject.setInfo("video", {
                             'season': season['number'],
-                            'episode': episode_number
+                            'episode': episode_number,
+                            'duration': videoObject['duration'] if 'duration' in videoObject else None
                         })
         elif 'video' in qp:
             # process video
