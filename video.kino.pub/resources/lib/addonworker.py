@@ -450,6 +450,14 @@ def actionPlay(qp):
         else:
             pass
 
+        subtitles = list()
+
+        for subtitle in videoObject['subtitles']:
+            subtitles.append(subtitle['url'])
+
+        if len(subtitles) > 0:
+            liObject.setSubtitles(subtitles)
+
         if 'files' not in videoObject:
             notice("Видео обновляется и временно не доступно!", "Видео в обработке", time=8000)
             return
