@@ -17,6 +17,9 @@ def get_mlink(video, quality='480p', streamType='http'):
         qual = str(qual)
         return int(qual.lower().replace('p', '').replace('3d', '1080'))
 
+    def geturl(url, streamType='http'):
+        return url[streamType] if isinstance(url, dict) else url
+
     qualities = [480, 720, 1080]
     url = ""
     files = video['files']
@@ -24,20 +27,20 @@ def get_mlink(video, quality='480p', streamType='http'):
 
     #check if auto quality
     if quality.lower() == 'auto':
-        return files[-1]['url'][streamType]
+        return geturl(files[-1]['url'], streamType)
 
     # manual param quality
     for f in files:
         f['quality'] = normalize(f['quality'])
         if f['quality'] == quality:
-            return f['url'][streamType]
+            return geturl(f['url'], streamType)
         #url = f['url'][streamType] # if auto quality or other get max quality from available
 
 
     for f in reversed(files):
         if normalize(f['quality']) <= normalize(quality):
-            return f['url'][streamType]
-        url = f['url'][streamType]
+            return geturl(f['url'], streamType)
+        url = geturl(f['url'], streamType)
     return url
 
 def video_info(item, extend=None):
@@ -49,6 +52,7 @@ def video_info(item, extend=None):
         'director': item['director'],
         'plot': item['plot'],
         'title': item['title'],
+        'duration': item['duration']['average'] if 'duration' in item else None
     }
     if extend and type(extend) is dict:
         n = info.copy()

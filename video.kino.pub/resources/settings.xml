@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
 	<setting id="video_quality" type="select" label="Качество видео" values="Auto|1080p|720p|480p" default="Auto"/>
-	<setting id="stream_type" type="select" label="Тип стриминга" values="hls|http" default="hls"/>
+	<setting id="stream_type" type="select" label="Тип стриминга" values="hls|http|hls4" default="hls"/>
 	<setting type="sep" />
 	<setting id="reset_auth" type="enum" label="Сбросить авторизацию" values="Нет|Да" default="Нет"/>
     <!--
