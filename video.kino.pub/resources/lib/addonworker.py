@@ -522,10 +522,11 @@ def actionBookmarks(qp):
 def actionWatching(qp):
     response = api('watching/serials', {'subscribed': 1})
     if response['status'] == 200:
+        xbmcplugin.setContent(handle, 'tvshows')
         for item in response['items']:
             li = xbmcgui.ListItem("%s : [COLOR FFFFF000]+%s[/COLOR]" % (item['title'].encode('utf-8'), str(item['new']).encode('utf-8')))
             li.setLabel2(str(item['new']).encode('utf-8'))
-            li.setThumbnailImage(item['posters']['medium'])
+            li.setArt({'poster': item['posters']['big']})
             link = get_internal_link('view', {'id': item['id']})
             xbmcplugin.addDirectoryItem(handle, link, li, True)
         xbmcplugin.endOfDirectory(handle)
@@ -536,6 +537,7 @@ def actionCollections(qp):
     if 'id' not in qp:
         response = api('collections/index', qp)
         if response['status'] == 200:
+            xbmcplugin.setContent(handle, 'movies')
             li = xbmcgui.ListItem('[COLOR FFFFF000]Последние[/COLOR]')
             qp['sort'] = '-created'
             xbmcplugin.addDirectoryItem(handle, get_internal_link('collections', qp), li, True)
