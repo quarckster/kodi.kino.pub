@@ -50,9 +50,14 @@ def video_info(item, extend=None):
         'rating': float(item['rating']),
         'cast': item['cast'].split(","),
         'director': item['director'],
-        'plot': item['plot'],
+        'plot': item['plot'] + "\n" 
+            + u"Кинопоиск: " + (str(round(item['kinopoisk_rating'],1)) + "\n"  if item['kinopoisk_rating'] not in (None,0) else u"нет\n")
+            + u"IMDB: " + (str(round(item['imdb_rating'],1)) if item['imdb_rating'] not in (None,0) else u"нет"),
         'title': item['title'],
-        'duration': item['duration']['average'] if 'duration' in item else None
+        'duration': item['duration']['average'] if 'duration' in item else None,
+        'code': item['imdb'],
+        'status': "окончен" if item['finished'] and item['type'] == "serial" else "в эфире" if item['type'] == "serial" else None,
+        'votes': item['rating_votes']
     }
     if extend and type(extend) is dict:
         n = info.copy()
