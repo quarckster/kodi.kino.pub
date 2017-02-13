@@ -94,7 +94,8 @@ def show_pagination(pagination, action, qp):
 # Get trailer link
 def trailer_link(item):
     if 'trailer' in item and item['trailer']:
-        return get_internal_link('trailer', {'id': item['id']})
+        trailer = item['trailer']
+        return get_internal_link('trailer', {'id': item['id'], 'sid': trailer['id']})
     return None
 
 # Fill directory for items
@@ -471,7 +472,10 @@ def actionTrailer(qp):
     if response['status'] == 200:
         trailer = None
         trailer = response['trailer']
-        url = addonutils.get_mlink(trailer, quality=DEFAULT_QUALITY, streamType=DEFAULT_STREAM_TYPE)
+        if 'files' in trailer:
+            url = addonutils.get_mlink(trailer, quality=DEFAULT_QUALITY, streamType=DEFAULT_STREAM_TYPE)
+        elif 'sid' in qp:
+            url = 'plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=%s' % qp['sid']
         liObject = xbmcgui.ListItem('Трейлер')
         liObject.setPath(url)
         xbmcplugin.setResolvedUrl(handle, True, liObject)
@@ -518,10 +522,11 @@ def actionBookmarks(qp):
 def actionWatching(qp):
     response = api('watching/serials', {'subscribed': 1})
     if response['status'] == 200:
+        xbmcplugin.setContent(handle, 'tvshows')
         for item in response['items']:
             li = xbmcgui.ListItem("%s : [COLOR FFFFF000]+%s[/COLOR]" % (item['title'].encode('utf-8'), str(item['new']).encode('utf-8')))
             li.setLabel2(str(item['new']).encode('utf-8'))
-            li.setThumbnailImage(item['posters']['medium'])
+            li.setArt({'poster': item['posters']['big']})
             link = get_internal_link('view', {'id': item['id']})
             xbmcplugin.addDirectoryItem(handle, link, li, True)
         xbmcplugin.endOfDirectory(handle)
@@ -532,6 +537,7 @@ def actionCollections(qp):
     if 'id' not in qp:
         response = api('collections/index', qp)
         if response['status'] == 200:
+            xbmcplugin.setContent(handle, 'movies')
             li = xbmcgui.ListItem('[COLOR FFFFF000]Последние[/COLOR]')
             qp['sort'] = '-created'
             xbmcplugin.addDirectoryItem(handle, get_internal_link('collections', qp), li, True)
