@@ -58,7 +58,7 @@ def video_info(item, extend=None):
         'code': item['imdb'],
         'status': "окончен" if item['finished'] and item['type'] == "serial" else "в эфире" if item['type'] == "serial" else None,
         'votes': item['rating_votes'],
-		'country': ", ".join([x['title'] for x in item['countries']])
+	'country': ", ".join([x['title'] for x in item['countries']])
     }
     if extend and type(extend) is dict:
         n = info.copy()
