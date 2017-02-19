@@ -46,9 +46,9 @@ def get_mlink(video, quality='480p', streamType='http'):
 def video_info(item, extend=None):
     info = {
         'year': int(item['year']),
-        'genre': ",".join([x['title'] for x in item['genres']]),
+        'genre': ", ".join([x['title'] for x in item['genres']]),
         'rating': float(item['rating']),
-        'cast': item['cast'].split(","),
+        'cast': [x.strip() for x in item['cast'].split(",")],
         'director': item['director'],
         'plot': item['plot'] + "\n" 
             + u"Кинопоиск: " + (str(round(item['kinopoisk_rating'],1)) + "\n"  if item['kinopoisk_rating'] not in (None,0) else u"нет\n")
@@ -57,7 +57,8 @@ def video_info(item, extend=None):
         'duration': item['duration']['average'] if 'duration' in item else None,
         'code': item['imdb'],
         'status': "окончен" if item['finished'] and item['type'] == "serial" else "в эфире" if item['type'] == "serial" else None,
-        'votes': item['rating_votes']
+        'votes': item['rating_votes'],
+		'country': ", ".join([x['title'] for x in item['countries']])
     }
     if extend and type(extend) is dict:
         n = info.copy()
