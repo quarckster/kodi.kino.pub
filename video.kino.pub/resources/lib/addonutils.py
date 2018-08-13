@@ -70,16 +70,17 @@ def video_info(item, extend=None):
 
     info = {
         "year": int(item["year"]),
-        "genre": ",".join([x["title"] for x in item["genres"]]),
+        "genre": ", ".join([x["title"] for x in item["genres"]]),
         "rating": float(item["rating"]),
-        "cast": item["cast"].split(","),
+        "cast": [x.strip() for x in item["cast"].split(",")],
         "director": item["director"],
         "plot": get_plot(),
         "title": item["title"],
         "duration": item.get("duration", {}).get("average"),
         "code": item["imdb"],
         "status": get_status(),
-        "votes": item["rating_votes"]
+        "votes": item["rating_votes"],
+        "country": ", ".join([x["title"] for x in item["countries"]])
     }
     if extend and isinstance(extend, dict):
         info.update(extend)
