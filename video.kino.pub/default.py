@@ -8,8 +8,7 @@ __settings__ = xbmcaddon.Addon(id=__id__)
 
 
 def main():
-    reset_auth = bool(int(__settings__.getSetting("reset_auth")))
-    if reset_auth:
+    if __settings__.getSetting("reset_auth") == "false":
         __settings__.setSetting("access_token", "")
         __settings__.setSetting("refresh_token", "")
         __settings__.setSetting("access_token_expire", "")
