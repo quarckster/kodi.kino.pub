@@ -27,8 +27,8 @@ class Auth(object):
             self.window.close()
 
     @property
-    def is_token_valid(self):
-        return self.access_token_expire > int(time.time())
+    def is_token_expired(self):
+        return self.access_token_expire < int(time.time())
 
     @property
     def access_token(self):
