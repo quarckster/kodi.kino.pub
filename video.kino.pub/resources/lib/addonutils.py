@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+import json
+import time
 import urllib
 import xbmc
+from data import __settings__
 
 
 def dict_merge(old, new):
@@ -106,3 +109,34 @@ def trailer_link(item):
         trailer = item["trailer"]
         return get_internal_link("trailer", {"id": item["id"], "sid": trailer["id"]})
     return None
+
+
+def update_device_info(force=False):
+    from client import KinoPubClient
+    # Update device info
+    deviceInfoUpdate = __settings__.getSetting("device_info_update")
+    if force or not deviceInfoUpdate or int(deviceInfoUpdate) + 1800 < int(time.time()):
+        infoLabels = [
+            '"System.BuildVersion"',
+            '"System.FriendlyName"',
+            '"System.KernelVersion"'
+        ]
+        result = "Busy"
+        payload = {
+            "jsonrpc": "2.0",
+            "method": "XBMC.GetInfoLabels",
+            "id": 1,
+            "params": {"labels": [",".join(infoLabels)]}
+        }
+        while "Busy" in result:
+            result = xbmc.executeJSONRPC(json.dumps(payload))
+        result = json.loads(result)["result"]
+        title = result.get("System.FriendlyName")
+        hardware = result.get("System.KernelVersion")
+        software = "Kodi/{}".format(result.get("System.BuildVersion"))
+        KinoPubClient("device/notify").post(data={
+            "title": title,
+            "hardware": hardware,
+            "software": software
+        })
+        __settings__.setSetting("device_info_update", str(int(float(time.time()))))

@@ -1,10 +1,6 @@
 #!/usr/bin/python
-import xbmcaddon
 from resources.lib import addonworker
-
-
-__id__ = "video.kino.pub"
-__settings__ = xbmcaddon.Addon(id=__id__)
+from resources.lib.data import __settings__
 
 
 def main():

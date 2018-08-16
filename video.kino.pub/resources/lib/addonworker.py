@@ -1,82 +1,20 @@
 # -*- coding: utf-8 -*-
-import authwindow as auth
-import json
 import sys
-import time
-import urllib
-import urllib2
 import urlparse
 import xbmcplugin
 import xbmcgui
 import xbmc
-import xbmcaddon
 from addonutils import (dict_merge, get_internal_link, get_mlink, nav_internal_link, notice,
                         trailer_link, video_info)
+from authwindow import auth
+from client import KinoPubClient
+from data import __settings__, __plugin__
 
-
-__id__ = "video.kino.pub"
-__addon__ = xbmcaddon.Addon(id=__id__)
-__settings__ = xbmcaddon.Addon(id=__id__)
-__skinsdir__ = "DefaultSkin"
-__language__ = __addon__.getLocalizedString
-__plugin__ = "plugin://{}".format(__id__)
 
 DEFAULT_QUALITY = __settings__.getSetting("video_quality")
 DEFAULT_STREAM_TYPE = __settings__.getSetting("stream_type")
 
-_ADDON_PATH = xbmc.translatePath(__addon__.getAddonInfo("path"))
-if sys.platform in ("win32", "win64"):
-    _ADDON_PATH = _ADDON_PATH.decode("utf-8")
-
 handle = int(sys.argv[1])
-Auth = auth.Auth(__settings__)
-
-
-class KinoPubClient(object):
-    url = "http://api.service-kp.com/v1"
-
-    def __init__(self, action):
-        self.action = action
-
-    def _make_request(self, request, timeout=600):
-        request.add_header("Authorization", "Bearer {}".format(Auth.access_token))
-        try:
-            response = urllib2.urlopen(request, timeout=timeout)
-        except urllib2.HTTPError as e:
-            xbmc.log("{}. HTTPError. Code: {}. Message: {}".format(
-                     __plugin__, e.code, e.message), level=xbmc.LOGERROR)
-            if e.code in [400, 401]:
-                status, __ = Auth.get_token(refresh=True)
-                if status != Auth.SUCCESS:
-                    # reset access_token
-                    Auth.reauth()
-                    xbmc.executebuiltin("RunPlugin({}/login)".format(__plugin__))
-                else:
-                    self._make_request(request)
-            else:
-                notice("Код ответа сервера {}".format(e.code), "Неизвестная ошибка")
-        except Exception as e:
-            xbmc.log("{}. {}. Message: {}".format(
-                     __plugin__, e.__class__.__name__, e.message), level=xbmc.LOGERROR)
-            notice(e.message, "Ошибка")
-        else:
-            response = json.loads(response.read())
-            if response["status"] == 200:
-                return response
-            else:
-                xbmc.log("{}. Unknown error. Code: {}".format(
-                         __plugin__, response["status"]), level=xbmc.LOGERROR)
-                notice("Код ответа сервера {}".format(response["status"]), "Неизвестная ошибка")
-
-    def get(self, data=""):
-        data = "?{}".format(urllib.urlencode(data)) if data else ""
-        request = urllib2.Request("{}/{}{}".format(self.url, self.action, data))
-        return self._make_request(request)
-
-    def post(self, data=""):
-        data = urllib.urlencode(data)
-        request = urllib2.Request("{}/{}".format(self.url, self.action), data=data)
-        return self._make_request(request)
 
 
 def show_pagination(pagination, action, qp):
@@ -156,58 +94,15 @@ def init():
     route()
 
 
-def update_device_info(force=False):
-    # Update device info
-    deviceInfoUpdate = __settings__.getSetting("device_info_update")
-    if force or not deviceInfoUpdate or int(deviceInfoUpdate) + 1800 < int(time.time()):
-        infoLabels = [
-            '"System.BuildVersion"',
-            '"System.FriendlyName"',
-            '"System.KernelVersion"'
-        ]
-        result = "Busy"
-        payload = {
-            "jsonrpc": "2.0",
-            "method": "XBMC.GetInfoLabels",
-            "id": 1,
-            "params": {"labels": [",".join(infoLabels)]}
-        }
-        while "Busy" in result:
-            result = xbmc.executeJSONRPC(json.dumps(payload))
-        result = json.loads(result)["result"]
-        title = result.get("System.FriendlyName")
-        hardware = result.get("System.KernelVersion")
-        software = "Kodi/{}".format(result.get("System.BuildVersion"))
-        KinoPubClient("device/notify").post(data={
-            "title": title,
-            "hardware": hardware,
-            "software": software
-        })
-        __settings__.setSetting("device_info_update", str(int(float(time.time()))))
-
-
-def showActivationWindow():
-    xbmc.log("{}: actionLogin - No acess_token. Show modal auth".format(__plugin__))
-    wn = auth.AuthWindow(
-        "auth.xml",
-        _ADDON_PATH,
-        __skinsdir__,
-        settings=__settings__,
-        afterAuth=update_device_info
-    )
-    wn.doModal()
-    xbmc.log("{}: actionLogin - Close modal auth".format(__plugin__))
-
-
 # Actions
 def actionLogin(qp):
     xbmc.log("{} : actionLogin. {}".format(__plugin__, str(qp)))
     # if no access token exists
-    if not Auth.access_token:
-        showActivationWindow()
-    if Auth.is_token_expired:
+    if not auth.access_token:
+        auth.reauth()
+    if auth.is_token_expired:
         # try to refresh token
-        Auth.get_token(refresh=True)
+        auth.get_token(refresh=True)
     actionIndex(qp)
 
 
@@ -479,7 +374,6 @@ def actionCollections(qp):
     else:
         response = KinoPubClient("collections/view").get(data=qp)
         show_items(response["items"], add_indexes=True)
-        #show_pagination(response["pagination"], "collections", qp)
         xbmcplugin.endOfDirectory(handle)
 
 
