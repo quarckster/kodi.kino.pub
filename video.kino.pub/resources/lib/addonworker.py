@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import sys
 import urlparse
 import xbmcplugin
@@ -110,20 +111,23 @@ def actionIndex(qp):
     """Main screen - show type list"""
     xbmc.log("{}: actionIndex. {}".format(__plugin__, str(qp)))
     xbmc.executebuiltin("Container.SetViewMode(0)")
-    response = KinoPubClient("types").get()
-    add_default_headings(qp)
-    li = xbmcgui.ListItem("[COLOR FFFFF000]ТВ[/COLOR]")
-    xbmcplugin.addDirectoryItem(handle, get_internal_link("tv"), li, True)
-    li = xbmcgui.ListItem("[COLOR FFFFF000]Закладки[/COLOR]")
-    xbmcplugin.addDirectoryItem(handle, get_internal_link("bookmarks"), li, True)
-    li = xbmcgui.ListItem("[COLOR FFFFF000]Я смотрю[/COLOR]")
-    xbmcplugin.addDirectoryItem(handle, get_internal_link("watching"), li, True)
-    li = xbmcgui.ListItem("[COLOR FFFFF000]Подборки[/COLOR]")
-    xbmcplugin.addDirectoryItem(handle, get_internal_link("collections"), li, True)
-    for i in response["items"]:
-        li = xbmcgui.ListItem(i["title"].encode("utf-8"))
-        link = get_internal_link("index", {"type": i["id"]})
-        xbmcplugin.addDirectoryItem(handle, link, li, True)
+    if "type" in qp:
+        add_default_headings(qp, "slpga")
+    else:
+        response = KinoPubClient("types").get()
+        add_default_headings(qp)
+        li = xbmcgui.ListItem("[COLOR FFFFF000]ТВ[/COLOR]")
+        xbmcplugin.addDirectoryItem(handle, get_internal_link("tv"), li, True)
+        li = xbmcgui.ListItem("[COLOR FFFFF000]Закладки[/COLOR]")
+        xbmcplugin.addDirectoryItem(handle, get_internal_link("bookmarks"), li, True)
+        li = xbmcgui.ListItem("[COLOR FFFFF000]Я смотрю[/COLOR]")
+        xbmcplugin.addDirectoryItem(handle, get_internal_link("watching"), li, True)
+        li = xbmcgui.ListItem("[COLOR FFFFF000]Подборки[/COLOR]")
+        xbmcplugin.addDirectoryItem(handle, get_internal_link("collections"), li, True)
+        for i in response["items"]:
+            li = xbmcgui.ListItem(i["title"].encode("utf-8"))
+            link = get_internal_link("index", {"type": i["id"]})
+            xbmcplugin.addDirectoryItem(handle, link, li, True)
     xbmcplugin.endOfDirectory(handle)
 
 

@@ -4,7 +4,7 @@ from resources.lib.data import __settings__
 
 
 def main():
-    if __settings__.getSetting("reset_auth") == "false":
+    if __settings__.getSetting("reset_auth") == "true":
         __settings__.setSetting("access_token", "")
         __settings__.setSetting("refresh_token", "")
         __settings__.setSetting("access_token_expire", "")
