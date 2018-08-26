@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 import itertools
+import json
 import os
 import sys
 import pytest
 import time
 from urllib import urlencode
 
-from responses import actionIndex_response, actionItems_response, actionPlay_response
+from responses import (actionIndex_response, actionItems_response, actionPlay_response,
+                       actionView_seasons_response, actionView_without_seasons_response)
 
 
 cwd = os.path.dirname(os.path.abspath(__file__))
@@ -73,33 +75,35 @@ def fake_kodi_api(mocker):
     mocker.patch("resources.lib.addonworker.auth")
 
 
-@pytest.fixture
-def actionIndex(mocker):
+@pytest.fixture(params=["seasons_view", "episodes_in_season_view", "standalone_episodes_view"])
+def actionView_seasons_view(mocker):
     mock_KinoPubClient = mocker.Mock()
-    mock_KinoPubClient("types").get = mocker.Mock(return_value=actionIndex_response)
+    mock_KinoPubClient("watching").get.side_effect = mocker.Mock()
+    if request.param == "seasons_view":
+        id_ = actionView_seasons_response["item"]["id"]
+        mock_KinoPubClient("items/{}".format(id_)).get = mocker.Mock(
+            return_value=actionView_seasons_response)
+        mocker.patch.object(sys, "argv", [plugin.format("view"), handle, "?id={}".format(id_)])
+    elif request.param == "episodes_in_season_view":
+        id_ = actionView_seasons_response["item"]["id"]
+        mock_KinoPubClient("items/{}".format(id_)).get = mocker.Mock(
+            return_value=actionView_seasons_response)
+        mocker.patch.object(sys, "argv", [
+            plugin.format("view"),
+            handle,
+            "?id={}".format(id_)
+        ])
+    elif request.param == "standalone_episodes_view":
+        id_ = actionView_without_seasons_response["item"]["id"]
+        mock_KinoPubClient("items/{}".format(id_)).get = mocker.Mock(
+            return_value=actionView_without_seasons_response)
+        mocker.patch.object(sys, "argv", [
+            plugin.format("view"),
+            handle,
+            "?id={}&season={}".format(id_, 1)
+        ])
     mocker.patch("resources.lib.addonworker.KinoPubClient", mock_KinoPubClient)
-    mocker.patch.object(sys, "argv", [plugin.format(""), handle, ""])
-
-
-@pytest.fixture(params=list(itertools.product(streams, qualities)), ids=lambda ids: "-".join(ids))
-def actionPlay(request, mocker, settings):
-    orig_video_quality = settings.getSetting("video_quality")
-    orig_stream = settings.getSetting("stream_type")
-    settings.setSetting("stream_type", request.param[0])
-    settings.setSetting("video_quality", request.param[1])
-    mock_KinoPubClient = mocker.Mock()
-    mock_KinoPubClient("items/12345").get = mocker.Mock(return_value=actionPlay_response)
-    mocker.patch("resources.lib.addonworker.KinoPubClient", mock_KinoPubClient)
-    title = actionPlay_response["item"]["title"].encode("utf-8")
-    id = actionPlay_response["item"]["id"]
-    mocker.patch.object(sys, "argv", [
-        plugin.format("play"),
-        handle,
-        "?{}".format(urlencode({"title": title, "id": id}))
-    ])
-    yield request.param[0], request.param[1]
-    settings.setSetting("video_quality", orig_video_quality)
-    settings.setSetting("stream_type", orig_stream)
+    return request.param
 
 
 @pytest.fixture
@@ -138,6 +142,27 @@ def test_actionIndex(mocker, actionIndex, main, xbmcplugin, xbmcgui):
     xbmcplugin.endOfDirectory.assert_called_once_with(handle)
 
 
+@pytest.fixture(params=itertools.product(streams, qualities), ids=lambda ids: "-".join(ids))
+def actionPlay(request, mocker, settings):
+    orig_video_quality = settings.getSetting("video_quality")
+    orig_stream = settings.getSetting("stream_type")
+    settings.setSetting("stream_type", request.param[0])
+    settings.setSetting("video_quality", request.param[1])
+    mock_KinoPubClient = mocker.Mock()
+    id_ = actionPlay_response["item"]["id"]
+    mock_KinoPubClient("items/{}".format(id_)).get = mocker.Mock(return_value=actionPlay_response)
+    mocker.patch("resources.lib.addonworker.KinoPubClient", mock_KinoPubClient)
+    title = actionPlay_response["item"]["title"].encode("utf-8")
+    mocker.patch.object(sys, "argv", [
+        plugin.format("play"),
+        handle,
+        "?{}".format(urlencode({"title": title, "id": id_}))
+    ])
+    yield request.param
+    settings.setSetting("video_quality", orig_video_quality)
+    settings.setSetting("stream_type", orig_stream)
+
+
 def test_actionPlay(actionPlay, main, xbmcgui, xbmcplugin):
     stream, video_quality = actionPlay
     main()
@@ -147,6 +172,14 @@ def test_actionPlay(actionPlay, main, xbmcgui, xbmcplugin):
     link = "https://example.com/{}/{}".format(stream, video_quality.rstrip("p"))
     li.setPath.assert_called_once_with(link)
     xbmcplugin.setResolvedUrl.assert_called_once_with(handle, True, li)
+
+
+@pytest.fixture
+def actionIndex(mocker):
+    mock_KinoPubClient = mocker.Mock()
+    mock_KinoPubClient("types").get = mocker.Mock(return_value=actionIndex_response)
+    mocker.patch("resources.lib.addonworker.KinoPubClient", mock_KinoPubClient)
+    mocker.patch.object(sys, "argv", [plugin.format(""), handle, ""])
 
 
 def test_actionItems(main, actionItems, xbmcgui, xbmcplugin):
@@ -166,4 +199,40 @@ def test_actionItems(main, actionItems, xbmcgui, xbmcplugin):
         xbmcgui.ListItem.assert_any_call(title)
         li = xbmcgui.ListItem()
         xbmcplugin.addDirectoryItem.assert_any_call(handle_, link, li, is_directory)
+    xbmcplugin.endOfDirectory.assert_called_once_with(handle)
+
+
+def test_actionView(request, main, actionView, xbmcgui, xbmcplugin):
+    main()
+    s = plugin
+    if actionView == "seasons_view":
+        i = actionView_seasons_response["item"]["id"]
+        t = actionView_seasons_response["item"]["title"].encode("utf-8")
+        seasons = actionView_seasons_response["item"]["seasons"]
+        link = s.format("view?id={}&season={}".format(i, seasons["number"]))
+        xbmcgui.ListItem.assert_any_call(t)
+        xbmcplugin.addDirectoryItem.assert_any_call(handle, link, xbmcgui.ListItem(), True)
+    elif actionView == "episodes_in_season_view":
+        i = actionView_seasons_response["item"]["id"]
+        t = actionView_seasons_response["item"]["title"].encode("utf-8")
+        v = actionView_seasons_response["item"]["season"]["episodes"][0]
+        link = s.format("play?".format(urlencode({
+            "id": i,
+            "title": "s01e01 | {}".format(v.title),
+            "season": actionView_seasons_response["item"]["season"]["number"],
+            "number": v["number"],
+            "video": json.dumps(v)
+        })))
+        xbmcplugin.setContent.assert_called_once_with(handle, "episodes")
+        xbmcgui.ListItem.assert_any_call(t)
+        xbmcplugin.addDirectoryItem.assert_any_call(handle, link, xbmcgui.ListItem(), False)
+    elif actionView == "standalone_episodes_view":
+        # r = actionView_without_seasons_response
+        # i = [video["id"] for video in r["item"]["video"]]
+        # t = [video["title"].encode("utf-8") for video in r["item"]["videos"]]
+        # expected_results = [
+        #     (handle, s.format("play?{}".format(urlencode({"id": i[0], "title": t[0]}))), t[0], False),
+        #     (handle, s.format("play?{}".format(urlencode({"id": i[1], "title": t[1]}))), t[1], False),
+        # ]
+        pass
     xbmcplugin.endOfDirectory.assert_called_once_with(handle)

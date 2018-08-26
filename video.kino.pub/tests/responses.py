@@ -422,3 +422,232 @@ actionItems_response = {
         u"perpage": 20
     }
 }
+
+
+actionView_seasons_response = {
+    u"status": 200,
+    u"item": {
+        u"rating": 11,
+        u"seasons": [
+            {
+                u"episodes": [
+                    {
+                        u"files": [
+                            {
+                                u"url": {
+                                    u"hls": u"https://example.com/hls/480p",
+                                    u"hls2": u"https://example.com/hls2/480p",
+                                    u"http": u"https://example.com/http/480p",
+                                    u"hls4": u"https://example.com/hls4/480p"
+                                },
+                                u"h": 406,
+                                u"quality": u"480p",
+                                u"w": 720
+                            },
+                            {
+                                u"url": {
+                                    u"hls": u"https://example.com/hls/720p",
+                                    u"hls2": u"https://example.com/hls2/720p",
+                                    u"http": u"https://example.com/http/720p",
+                                    u"hls4": u"https://example.com/hls4/720p"
+                                },
+                                u"h": 406,
+                                u"quality": u"720p",
+                                u"w": 960
+                            }
+                        ],
+                        u"title": u"Большой взрыв",
+                        u"watching": {
+                            u"status": -1,
+                            u"time": 0
+                        },
+                        u"number": 1,
+                        u"id": 128671,
+                        u"ac3": 0,
+                        u"tracks": 1,
+                        u"duration": 2628,
+                        u"watched": -1,
+                        u"thumbnail": u"https://example.com/480x270.jpg",
+                        u"subtitles": []
+                    }
+                ],
+                u"watching": {
+                    u"status": -1
+                },
+                u"number": 1,
+                u"title": u"1 сезон"
+            }
+        ],
+        u"imdb": 1832668,
+        u"year": 2010,
+        u"duration": {
+            u"average": 2601.9166666666665,
+            u"total": 124892
+        },
+        u"bookmarks": [],
+        u"ac3": 0,
+        u"quality": 480,
+        u"id": 9475,
+        u"kinopoisk": 615680,
+        u"plot": u"Это история о создании всего в этом мире. Программа исследует, как Вселенная возникла из ничего, и как она выросла с точки незначительно меньше, чем атомные частицы, до огромного космоса.",
+        u"genres": [
+            {
+                u"id": 60,
+                u"title": u"Космос"
+            },
+            {
+                u"id": 81,
+                u"title": u"Вселенная"
+            }
+        ],
+        u"subscribed": False,
+        u"title": u"Как устроена Вселенная / How the Universe Works",
+        u"comments": 0,
+        u"in_watchlist": False,
+        u"advert": False,
+        u"imdb_votes": 4238,
+        u"subtype": u"",
+        u"type": u"docuserial",
+        u"views": 3213,
+        u"director": u"Адам Уорнер, Питер Чинн, Луиз Сай, Лорни Тауненд, Шон Тревисик, Кейт Дарт, Джордж Харрис, Алекс Хирл",
+        u"finished": False,
+        u"posters": {
+            u"small": u"https://example.com/small/9475.jpg",
+            u"big": u"https://example.com/big/9475.jpg",
+            u"medium": u"https://example.com/medium/9475.jpg"
+        },
+        u"langs": 49,
+        u"kinopoisk_votes": 2848,
+        u"rating_votes": u"13",
+        u"subtitles": u"",
+        u"kinopoisk_rating": 8.739,
+        u"countries": [
+            {
+                u"id": 1,
+                u"title": u"США"
+            }
+        ],
+        u"tracklist": [],
+        u"rating_percentage": u"92.31",
+        u"cast": u"Фил Плейт, Майк Роу, Мишель Таллер, Лоуренс Краусс, Мичио Каку, Ричард Линтерн, Дэн Дарда, Джофф Марси, Эрик Деллумс, Крис МакКэй, Дэвид Гринспун, Алекс Филиппенко, Дэвид Спергел, Питер Шульц, Шон Кэрролл",
+        u"poor_quality": False,
+        u"imdb_rating": 9,
+        u"voice": u"",
+        u"trailer": None
+    }
+}
+
+actionView_without_seasons_response = {
+    u"status": 200,
+    u"item": {
+        u"rating": 1,
+        u"videos": [
+            {
+                u"files": [
+                    {
+                        u"url": {
+                            u"hls": u"https://example.com/hls/480",
+                            u"hls2": u"https://example.com/hls2/480",
+                            u"http": u"https://example.com/http/480",
+                            u"hls4": u"https://example.com/hls4/480"
+                        },
+                        u"h": 400,
+                        u"quality": u"480p",
+                        u"w": 720
+                    }
+                ],
+                u"title": u"От пещерных людей до королей",
+                u"watching": {
+                    u"status": -1,
+                    u"time": 0
+                },
+                u"number": 1,
+                u"id": 520081,
+                u"ac3": 0,
+                u"tracks": 1,
+                u"duration": 2635,
+                u"watched": -1,
+                u"thumbnail": u"https://example.com/480x270.jpg",
+                u"subtitles": []
+            },
+            {
+                u"files": [
+                    {
+                        u"url": {
+                            u"hls": u"https://example.com/hls/480",
+                            u"hls2": u"https://example.com/hls2/480",
+                            u"http": u"https://example.com/http/480",
+                            u"hls4": u"https://example.com/hls4/480"
+                        },
+                        u"h": 400,
+                        u"quality": u"480p",
+                        u"w": 720
+                    }
+                ],
+                u"title": u"Яблоко раздора",
+                u"watching": {
+                    u"status": -1,
+                    u"time": 0
+                },
+                u"number": 2,
+                u"id": 520078,
+                u"ac3": 0,
+                u"tracks": 1,
+                u"duration": 2615,
+                u"watched": -1,
+                u"thumbnail": u"https://example.com/480x270.jpg",
+                u"subtitles": []
+            }
+        ],
+        u"imdb": 5848928,
+        u"year": 2016,
+        u"duration": {
+            u"average": 5250,
+            u"total": 5250
+        },
+        u"bookmarks": [],
+        u"ac3": 0,
+        u"quality": 480,
+        u"id": 35467,
+        u"kinopoisk": None,
+        u"plot": u"Это были удивительные люди, рождённые белыми скалами и синем морем. Они изобрели демократию, отделили логику от разума, они передали глубочайшие душевные переживания в своих драмах, а совершенство человеческого тела - в спорте и искусствах. Греки - это люди, которые создали наш мир.",
+        u"genres": [
+            {
+                u"id": 51,
+                u"title": u"История"
+            }
+        ],
+        u"title": u"NG: Древние греки / The Greeks",
+        u"comments": 0,
+        u"advert": False,
+        u"imdb_votes": None,
+        u"subtype": u"multi",
+        u"type": u"documovie",
+        u"views": 41,
+        u"director": u"Кэтрин Еллоз",
+        u"finished": False,
+        u"posters": {
+            u"small": u"https://example.com/small/35467.jpg",
+            u"big": u"https://example.com/big/35467.jpg",
+            u"medium": u"https://example.com/medium/35467.jpg"
+        },
+        u"langs": 2,
+        u"kinopoisk_votes": None,
+        u"rating_votes": u"1",
+        u"subtitles": u"0",
+        u"kinopoisk_rating": None,
+        u"countries": [
+            {
+                u"id": 1,
+                u"title": u"США"
+            }
+        ],
+        u"tracklist": [],
+        u"rating_percentage": u"100",
+        u"cast": u"Беттани Хьюз",
+        u"poor_quality": False,
+        u"imdb_rating": u"None",
+        u"voice": None,
+        u"trailer": None
+    }
+}
