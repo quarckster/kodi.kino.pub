@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import itertools
 import os
 import sys
 import pytest
@@ -8,10 +9,12 @@ from urllib import urlencode
 from responses import actionIndex_response, actionItems_response, actionPlay_response
 
 
+cwd = os.path.dirname(os.path.abspath(__file__))
+handle = 1
 plugin = "plugin://video.kino.pub/{}"
 pytestmark = pytest.mark.usefixtures("fake_kodi_api")
-handle = 1
-cwd = os.path.dirname(os.path.abspath(__file__))
+qualities = ["480p", "720p", "1080p"]
+streams = ["hls", "hls4", "http"]
 
 
 class FakeAddon(object):
@@ -55,10 +58,16 @@ def xbmcplugin():
 
 
 @pytest.fixture
+def settings():
+    from resources.lib.data import __settings__
+    return __settings__
+
+
+@pytest.fixture
 def fake_kodi_api(mocker):
     """Mock Kodi Python API"""
     mock_xbmcaddon = mocker.Mock()
-    mock_xbmcaddon.Addon = mocker.Mock(wraps=FakeAddon)
+    mock_xbmcaddon.Addon.side_effect = FakeAddon
     mocker.patch.dict("sys.modules", xbmcaddon=mock_xbmcaddon, xbmc=mocker.Mock(),
                       xbmcplugin=mocker.Mock(), xbmcgui=mocker.Mock())
     mocker.patch("resources.lib.addonworker.auth")
@@ -72,8 +81,12 @@ def actionIndex(mocker):
     mocker.patch.object(sys, "argv", [plugin.format(""), handle, ""])
 
 
-@pytest.fixture
-def actionPlay(mocker):
+@pytest.fixture(params=list(itertools.product(streams, qualities)), ids=lambda ids: "-".join(ids))
+def actionPlay(request, mocker, settings):
+    orig_video_quality = settings.getSetting("video_quality")
+    orig_stream = settings.getSetting("stream_type")
+    settings.setSetting("stream_type", request.param[0])
+    settings.setSetting("video_quality", request.param[1])
     mock_KinoPubClient = mocker.Mock()
     mock_KinoPubClient("items/12345").get = mocker.Mock(return_value=actionPlay_response)
     mocker.patch("resources.lib.addonworker.KinoPubClient", mock_KinoPubClient)
@@ -84,6 +97,9 @@ def actionPlay(mocker):
         handle,
         "?{}".format(urlencode({"title": title, "id": id}))
     ])
+    yield request.param[0], request.param[1]
+    settings.setSetting("video_quality", orig_video_quality)
+    settings.setSetting("stream_type", orig_stream)
 
 
 @pytest.fixture
@@ -122,12 +138,15 @@ def test_actionIndex(mocker, actionIndex, main, xbmcplugin, xbmcgui):
     xbmcplugin.endOfDirectory.assert_called_once_with(handle)
 
 
-def test_actionPlay(actionPlay, main, xbmcgui):
+def test_actionPlay(actionPlay, main, xbmcgui, xbmcplugin):
+    stream, video_quality = actionPlay
     main()
     title = actionPlay_response["item"]["title"].encode("utf-8")
     xbmcgui.ListItem.assert_called_with(title)
-    setPath = xbmcgui.ListItem(title).setPath
-    setPath.assert_called_with("https://example.com/hls4/720")
+    li = xbmcgui.ListItem(title)
+    link = "https://example.com/{}/{}".format(stream, video_quality.rstrip("p"))
+    li.setPath.assert_called_once_with(link)
+    xbmcplugin.setResolvedUrl.assert_called_once_with(handle, True, li)
 
 
 def test_actionItems(main, actionItems, xbmcgui, xbmcplugin):

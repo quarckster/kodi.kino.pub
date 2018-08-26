@@ -271,8 +271,8 @@ def actionPlay(qp):
         return
     url = get_mlink(
         videoObject,
-        quality=qp.get("quality", DEFAULT_QUALITY),
-        streamType=qp.get("stream_type", DEFAULT_STREAM_TYPE)
+        quality=__settings__.getSetting("video_quality"),
+        streamType=__settings__.getSetting("stream_type")
     )
     KinoPubClient("watching/marktime").get(data={
         "id": qp["id"],
@@ -291,8 +291,8 @@ def actionTrailer(qp):
     if "files" in trailer:
         url = get_mlink(
             trailer,
-            quality=DEFAULT_QUALITY,
-            streamType=DEFAULT_STREAM_TYPE
+            quality=__settings__.getSetting("video_quality"),
+            streamType=__settings__.getSetting("stream_type")
         )
     elif "sid" in qp:
         url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid={}"
