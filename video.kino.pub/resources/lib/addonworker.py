@@ -15,8 +15,6 @@ from data import __settings__, __plugin__
 DEFAULT_QUALITY = __settings__.getSetting("video_quality")
 DEFAULT_STREAM_TYPE = __settings__.getSetting("stream_type")
 
-handle = int(sys.argv[1])
-
 
 def show_pagination(pagination, action, qp):
     # Add "next page" button
@@ -24,13 +22,13 @@ def show_pagination(pagination, action, qp):
         qp["page"] = int(pagination["current"]) + 1
         li = xbmcgui.ListItem("[COLOR FFFFF000]Вперёд[/COLOR]")
         link = get_internal_link(action, qp)
-        xbmcplugin.addDirectoryItem(handle, link, li, True)
-    xbmcplugin.endOfDirectory(handle)
+        xbmcplugin.addDirectoryItem(int(sys.argv[1]), link, li, True)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 
 def show_items(items, add_indexes=False):
     xbmc.log("{} : show_items. Total items: {}".format(__plugin__, str(len(items))))
-    xbmcplugin.setContent(handle, "movies")
+    xbmcplugin.setContent(int(sys.argv[1]), "movies")
     # Fill list with items
     for index, item in enumerate(items, 1):
         title = item["title"].encode("utf-8")
@@ -47,7 +45,7 @@ def show_items(items, add_indexes=False):
         else:
             link = get_internal_link("view", {"id": item["id"]})
             isdir = True
-        xbmcplugin.addDirectoryItem(handle, link, li, isdir)
+        xbmcplugin.addDirectoryItem(int(sys.argv[1]), link, li, isdir)
 
 
 def add_default_headings(qp, fmt="slp"):
@@ -60,20 +58,20 @@ def add_default_headings(qp, fmt="slp"):
     # g - show genres folder
     if "s" in fmt:
         li = xbmcgui.ListItem("[COLOR FFFFF000]Поиск[/COLOR]")
-        xbmcplugin.addDirectoryItem(handle, get_internal_link("search", qp), li, False)
+        xbmcplugin.addDirectoryItem(int(sys.argv[1]), get_internal_link("search", qp), li, False)
     if "l" in fmt:
         li = xbmcgui.ListItem("[COLOR FFFFF000]Последние[/COLOR]")
-        xbmcplugin.addDirectoryItem(handle, get_internal_link("items", qp), li, True)
+        xbmcplugin.addDirectoryItem(int(sys.argv[1]), get_internal_link("items", qp), li, True)
     if "p" in fmt:
         li = xbmcgui.ListItem("[COLOR FFFFF000]Популярные[/COLOR]")
-        xbmcplugin.addDirectoryItem(handle, get_internal_link(
+        xbmcplugin.addDirectoryItem(int(sys.argv[1]), get_internal_link(
             "items", dict_merge(qp, {"sort": "-rating"})), li, True)
     if "a" in fmt:
         li = xbmcgui.ListItem("[COLOR FFFFF000]По алфавиту[/COLOR]")
-        xbmcplugin.addDirectoryItem(handle, get_internal_link("alphabet", qp), li, True)
+        xbmcplugin.addDirectoryItem(int(sys.argv[1]), get_internal_link("alphabet", qp), li, True)
     if "g" in fmt:
         li = xbmcgui.ListItem("[COLOR FFFFF000]Жанры[/COLOR]")
-        xbmcplugin.addDirectoryItem(handle, get_internal_link("genres", qp), li, True)
+        xbmcplugin.addDirectoryItem(int(sys.argv[1]), get_internal_link("genres", qp), li, True)
 
 
 def route(fakeSys=None):
@@ -117,26 +115,26 @@ def actionIndex(qp):
         response = KinoPubClient("types").get()
         add_default_headings(qp)
         li = xbmcgui.ListItem("[COLOR FFFFF000]ТВ[/COLOR]")
-        xbmcplugin.addDirectoryItem(handle, get_internal_link("tv"), li, True)
+        xbmcplugin.addDirectoryItem(int(sys.argv[1]), get_internal_link("tv"), li, True)
         li = xbmcgui.ListItem("[COLOR FFFFF000]Закладки[/COLOR]")
-        xbmcplugin.addDirectoryItem(handle, get_internal_link("bookmarks"), li, True)
+        xbmcplugin.addDirectoryItem(int(sys.argv[1]), get_internal_link("bookmarks"), li, True)
         li = xbmcgui.ListItem("[COLOR FFFFF000]Я смотрю[/COLOR]")
-        xbmcplugin.addDirectoryItem(handle, get_internal_link("watching"), li, True)
+        xbmcplugin.addDirectoryItem(int(sys.argv[1]), get_internal_link("watching"), li, True)
         li = xbmcgui.ListItem("[COLOR FFFFF000]Подборки[/COLOR]")
-        xbmcplugin.addDirectoryItem(handle, get_internal_link("collections"), li, True)
+        xbmcplugin.addDirectoryItem(int(sys.argv[1]), get_internal_link("collections"), li, True)
         for i in response["items"]:
             li = xbmcgui.ListItem(i["title"].encode("utf-8"))
             link = get_internal_link("index", {"type": i["id"]})
-            xbmcplugin.addDirectoryItem(handle, link, li, True)
-    xbmcplugin.endOfDirectory(handle)
+            xbmcplugin.addDirectoryItem(int(sys.argv[1]), link, li, True)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 
 def actionTv(qp):
     response = KinoPubClient("tv/index").get()
     for ch in response["channels"]:
         li = xbmcgui.ListItem(ch["title"].encode("utf-8"), iconImage=ch["logos"]["s"])
-        xbmcplugin.addDirectoryItem(handle, ch["stream"], li, False)
-    xbmcplugin.endOfDirectory(handle)
+        xbmcplugin.addDirectoryItem(int(sys.argv[1]), ch["stream"], li, False)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 
 def actionGenres(qp):
@@ -145,8 +143,8 @@ def actionGenres(qp):
     for genre in response["items"]:
         li = xbmcgui.ListItem(genre["title"].encode("utf-8"))
         link = get_internal_link("items", {"type": qp.get("type"), "genre": genre["id"]})
-        xbmcplugin.addDirectoryItem(handle, link, li, True)
-    xbmcplugin.endOfDirectory(handle)
+        xbmcplugin.addDirectoryItem(int(sys.argv[1]), link, li, True)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 
 def actionItems(qp):
@@ -283,7 +281,7 @@ def actionPlay(qp):
         "season": qp.get("season")
     })
     liObject.setPath(url)
-    xbmcplugin.setResolvedUrl(handle, True, liObject)
+    xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, liObject)
 
 
 def actionTrailer(qp):
@@ -301,7 +299,7 @@ def actionTrailer(qp):
         url = url.format(qp["sid"])
     liObject = xbmcgui.ListItem("Трейлер")
     liObject.setPath(url)
-    xbmcplugin.setResolvedUrl(handle, True, liObject)
+    xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, liObject)
 
 
 def actionSearch(qp):
@@ -333,30 +331,31 @@ def actionBookmarks(qp):
             li.setProperty("folder-id", str(folder["id"]).encode("utf-8"))
             li.setProperty("views", str(folder["views"]).encode("utf-8"))
             link = get_internal_link("bookmarks", {"folder-id": folder["id"]})
-            xbmcplugin.addDirectoryItem(handle, link, li, True)
-        xbmcplugin.endOfDirectory(handle)
+            xbmcplugin.addDirectoryItem(int(sys.argv[1]), link, li, True)
+        xbmcplugin.endOfDirectory(int(sys.argv[1]))
     else:
         # Show content of the folder
         response = KinoPubClient("bookmarks/{}".format(qp["folder-id"])).get(data=qp)
         show_items(response["items"])
         show_pagination(response["pagination"], "bookmarks", qp)
-        xbmcplugin.endOfDirectory(handle)
+        xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 
 def actionWatching(qp):
     response = KinoPubClient("watching/serials").get(data={"subscribed": 1})
-    xbmcplugin.setContent(handle, "tvshows")
+    xbmcplugin.setContent(int(sys.argv[1]), "tvshows")
     for item in response["items"]:
         li = xbmcgui.ListItem("{} : [COLOR FFFFF000]+{}[/COLOR]".format(
             item["title"].encode("utf-8"), str(item["new"])))
         li.setLabel2(str(item["new"]))
         li.setArt({"poster": item["posters"]["big"]})
         link = get_internal_link("view", {"id": item["id"]})
-        xbmcplugin.addDirectoryItem(handle, link, li, True)
-    xbmcplugin.endOfDirectory(handle)
+        xbmcplugin.addDirectoryItem(int(sys.argv[1]), link, li, True)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 
 def actionCollections(qp):
+    handle = int(sys.argv[1])
     if "id" not in qp:
         response = KinoPubClient("collections/index").get(data=qp)
         xbmcplugin.setContent(handle, "movies")
@@ -392,5 +391,5 @@ def actionAlphabet(qp):
         for letter in letters:
             li = xbmcgui.ListItem(letter)
             link = get_internal_link("items", dict_merge(qp, {"letter": letter}))
-            xbmcplugin.addDirectoryItem(handle, link, li, True)
-    xbmcplugin.endOfDirectory(handle)
+            xbmcplugin.addDirectoryItem(int(sys.argv[1]), link, li, True)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
