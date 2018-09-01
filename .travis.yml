@@ -1,0 +1,9 @@
+sudo: false
+language: python
+python:
+  - "2.7"
+install:
+  - pip install -U pip flake8 pytest pytest-mock
+script:
+  - flake8 . --max-line-length=100 --exclude=video.kino.pub/tests/responses.py
+  - pytest -v video.kino.pub/tests/tests.py
