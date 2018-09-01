@@ -5,7 +5,7 @@ import urllib2
 import xbmc
 from addonutils import notice
 from authwindow import auth
-from data import __plugin__, __settings__
+from data import __plugin__
 
 
 class KinoPubClient(object):
