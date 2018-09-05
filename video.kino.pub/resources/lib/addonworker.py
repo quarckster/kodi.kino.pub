@@ -2,9 +2,11 @@
 import json
 import sys
 import urlparse
-import xbmcplugin
-import xbmcgui
+
 import xbmc
+import xbmcgui
+import xbmcplugin
+import context_menu
 from addonutils import (dict_merge, get_internal_link, get_mlink, nav_internal_link, notice,
                         trailer_link, video_info)
 from authwindow import auth
@@ -14,6 +16,18 @@ from data import __settings__, __plugin__
 
 DEFAULT_QUALITY = __settings__.getSetting("video_quality")
 DEFAULT_STREAM_TYPE = __settings__.getSetting("stream_type")
+
+
+mediatype_map = {
+    "serial": "tvshow",
+    "docuserial": "tvshow",
+    "tvshow": "tvshow",
+    "concert": "musicvideo",
+    "3d": "movie",
+    "documovie": "movie",
+    "movie": "movie",
+    "4k": "movie"
+}
 
 
 def show_pagination(pagination, action, qp):
@@ -35,16 +49,22 @@ def show_items(items, add_indexes=False):
         li = xbmcgui.ListItem(title)
         if add_indexes:
             li.setLabel("{}. {}".format(index, li.getLabel()))
-        li.setInfo("Video", video_info(item, {"trailer": trailer_link(item)}))
         li.setArt({"poster": item["posters"]["big"]})
+        li.setProperty("id", str(item["id"]))
+        if "in_watchlist" in item:
+            li.setProperty("in_watchlist", str(int(item["in_watchlist"])))
+        extra_info = {"trailer": trailer_link(item), "mediatype": mediatype_map[item["type"]]}
         # If not serials or multiseries movie, create playable item
         if item["type"] not in ["serial", "docuserial", "tvshow"] and not item["subtype"]:
+            watched = KinoPubClient("watching").get(data={"id": item["id"]})["item"]
+            extra_info.update({"playcount": watched["status"]})
             link = get_internal_link("play", {"id": item["id"], "title": title})
-            li.setProperty("IsPlayable", "true")
             isdir = False
         else:
             link = get_internal_link("view", {"id": item["id"]})
             isdir = True
+        li.setInfo("Video", video_info(item, extra_info))
+        context_menu.add_items(li)
         xbmcplugin.addDirectoryItem(int(sys.argv[1]), link, li, isdir)
 
 
@@ -170,7 +190,7 @@ def actionView(qp):
     response = KinoPubClient("items/{}".format(qp["id"])).get()
     item = response["item"]
     if "videos" in item:
-        xbmcplugin.setContent(handle, "episodes")
+        xbmcplugin.setContent(int(sys.argv[1]), "episodes")
         for video_number, video in enumerate(item["videos"], 1):
             episode_title = "e{:02d}".format(video_number)
             if video["title"]:
@@ -182,11 +202,12 @@ def actionView(qp):
             )
             li.setInfo("Video", video_info(item, {
                 "season": 1,
-                "episode": video_number
+                "episode": video_number,
+                "playcount": video["watched"],
+                "mediatype": "episode"
             }))
-            li.setInfo("Video", {"playcount": video["watched"]})
             li.setArt({"poster": item["posters"]["big"]})
-            li.setProperty("IsPlayable", "true")
+            li.setProperty("id", str(item["id"]))
             qp = {
                 "id": item["id"],
                 "title": episode_title,
@@ -194,11 +215,12 @@ def actionView(qp):
                 "video": json.dumps(video)
             }
             link = get_internal_link("play", qp)
-            xbmcplugin.addDirectoryItem(handle, link, li, False)
+            context_menu.add_items(li)
+            xbmcplugin.addDirectoryItem(int(sys.argv[1]), link, li, False)
     else:
         watching_info = KinoPubClient("watching").get(data={"id": item["id"]})["item"]
         selectedSeason = False
-        xbmcplugin.setContent(handle, "tvshows")
+        xbmcplugin.setContent(int(sys.argv[1]), "tvshows")
         for season in item["seasons"]:
             season_title = "Сезон {}".format(season["number"])
             watching_season = watching_info["seasons"][season["number"] - 1]
@@ -210,8 +232,8 @@ def actionView(qp):
                 li.select(selectedSeason)
             qp = {"id": qp["id"], "season": season["number"]}
             link = get_internal_link("view_season_episodes", qp)
-            xbmcplugin.addDirectoryItem(handle, link, li, True)
-    xbmcplugin.endOfDirectory(handle)
+            xbmcplugin.addDirectoryItem(int(sys.argv[1]), link, li, True)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 
 def actionView_Season_Episodes(qp):
@@ -222,7 +244,7 @@ def actionView_Season_Episodes(qp):
     season = item["seasons"][season_number - 1]
     watching_season = watching_info["seasons"][season_number - 1]
     selectedEpisode = False
-    xbmcplugin.setContent(handle, "episodes")
+    xbmcplugin.setContent(int(sys.argv[1]), "episodes")
     for episode in season["episodes"]:
         episode_title = "s{:02d}e{:02d}".format(season_number, episode["number"])
         if episode["title"]:
@@ -234,12 +256,13 @@ def actionView_Season_Episodes(qp):
         )
         li.setInfo("Video", video_info(item, {
             "season": season_number,
-            "episode": episode["number"],
+            "episode": episode_number,
             "duration": episode["duration"],
+            "playcount": episode["watched"],
+            "mediatype": "episode"
         }))
-        li.setInfo("Video", {"playcount": episode["watched"]})
         li.setArt({"poster": item["posters"]["big"]})
-        li.setProperty("IsPlayable", "true")
+        li.setProperty("id", str(item["id"]))
         status = watching_season["episodes"][episode["number"] - 1]["status"]
         if status < 1 and not selectedEpisode:
             selectedEpisode = True
@@ -252,8 +275,9 @@ def actionView_Season_Episodes(qp):
             "video": json.dumps(episode)
         }
         link = get_internal_link("play", qp)
-        xbmcplugin.addDirectoryItem(handle, link, li, False)
-    xbmcplugin.endOfDirectory(handle)
+        context_menu.add_items(li)
+        xbmcplugin.addDirectoryItem(int(sys.argv[1]), link, li, False)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 
 def actionPlay(qp):
@@ -349,7 +373,11 @@ def actionWatching(qp):
             item["title"].encode("utf-8"), str(item["new"])))
         li.setLabel2(str(item["new"]))
         li.setArt({"poster": item["posters"]["big"]})
+        li.setProperty("id", str(item["id"]))
+        li.setProperty("in_watchlist", "1")
+        li.setInfo("Video", {"mediatype": mediatype_map[item["type"]]})
         link = get_internal_link("view", {"id": item["id"]})
+        context_menu.add_items(li)
         xbmcplugin.addDirectoryItem(int(sys.argv[1]), link, li, True)
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
@@ -393,3 +421,18 @@ def actionAlphabet(qp):
             link = get_internal_link("items", dict_merge(qp, {"letter": letter}))
             xbmcplugin.addDirectoryItem(int(sys.argv[1]), link, li, True)
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
+
+
+def actionToggle_Watched(qp):
+    KinoPubClient("watching/toggle").get(qp)
+    xbmc.executebuiltin("Container.Refresh")
+
+
+def actionToggle_Watchlist(qp):
+    added = bool(qp.pop("added"))
+    KinoPubClient("watching/togglewatchlist").get(qp)
+    if added:
+        notice("Сериал добавлен в список \"Буду смотреть\"")
+    else:
+        notice("Сериал удалён из списка \"Буду смотреть\"")
+    xbmc.executebuiltin("Container.Refresh")
