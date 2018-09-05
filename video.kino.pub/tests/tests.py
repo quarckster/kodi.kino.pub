@@ -208,7 +208,7 @@ def test_actionView_seasons(main, actionView_seasons, xbmcgui, xbmcplugin):
     seasons = actionView_seasons_response["item"]["seasons"]
     for season in seasons:
         xbmcgui.ListItem.assert_any_call("Сезон {}".format(season["number"]))
-        link = plugin.format("view?season={}&id={}".format(season["number"], i))
+        link = plugin.format("view_season_episodes?season={}&id={}".format(season["number"], i))
         xbmcplugin.addDirectoryItem.assert_any_call(handle, link, xbmcgui.ListItem(), True)
     xbmcplugin.endOfDirectory.assert_called_once_with(handle)
 
@@ -216,7 +216,7 @@ def test_actionView_seasons(main, actionView_seasons, xbmcgui, xbmcplugin):
 @pytest.fixture
 def actionView_episodes(mocker, actionView):
     mocker.patch.object(sys, "argv", [
-        plugin.format("view"),
+        plugin.format("view_season_episodes"),
         handle,
         "?id={}&season={}".format(actionView, 1)
     ])
@@ -226,29 +226,29 @@ def test_actionView_episodes(request, main, actionView_episodes, xbmcgui, xbmcpl
     main()
     item = actionView_seasons_response["item"]
     i = item["id"]
-    for season in item["seasons"]:
-        for episode in season["episodes"]:
-            episode_title = "s{:02d}e{:02d}".format(season["number"], episode["number"])
-            if episode["title"]:
-                episode_title = "{} | {}".format(
-                    episode_title, episode["title"].encode("utf-8"))
-            link = plugin.format("play?{}".format(urlencode({
-                "id": i,
-                "title": episode_title,
-                "season": season["number"],
-                "number": episode["number"],
-                "video": json.dumps(episode)
-            })))
-            xbmcgui.ListItem.assert_any_call(
-                episode_title,
-                iconImage=episode["thumbnail"],
-                thumbnailImage=episode["thumbnail"]
-            )
-            li = xbmcgui.ListItem()
-            li.setInfo.assert_any_call("Video", {"playcount": episode["watched"]})
-            li.setArt.assert_called_once_with({"poster": item["posters"]["big"]})
-            li.setProperty.assert_called_once_with("IsPlayable", "true")
-            xbmcplugin.addDirectoryItem.assert_any_call(handle, link, xbmcgui.ListItem(), False)
+    season = item["seasons"][0]
+    for episode in season["episodes"]:
+        episode_title = "s{:02d}e{:02d}".format(season["number"], episode["number"])
+        if episode["title"]:
+            episode_title = "{} | {}".format(
+                episode_title, episode["title"].encode("utf-8"))
+        link = plugin.format("play?{}".format(urlencode({
+            "id": i,
+            "title": episode_title,
+            "season": season["number"],
+            "number": episode["number"],
+            "video": json.dumps(episode)
+        })))
+        xbmcgui.ListItem.assert_any_call(
+            episode_title,
+            iconImage=episode["thumbnail"],
+            thumbnailImage=episode["thumbnail"]
+        )
+        li = xbmcgui.ListItem()
+        li.setInfo.assert_any_call("Video", {"playcount": episode["watched"]})
+        li.setArt.assert_called_once_with({"poster": item["posters"]["big"]})
+        li.setProperty.assert_called_once_with("IsPlayable", "true")
+        xbmcplugin.addDirectoryItem.assert_any_call(handle, link, xbmcgui.ListItem(), False)
     xbmcplugin.setContent.assert_called_once_with(handle, "episodes")
     xbmcplugin.endOfDirectory.assert_called_once_with(handle)
 
