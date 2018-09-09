@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
+import sys
 import time
 import urllib
+import urlparse
+from collections import namedtuple
+from functools import wraps
+
 import xbmc
-from data import __settings__
+from data import __id__, __settings__, __plugin__
 
 
 def dict_merge(old, new):
@@ -69,7 +74,7 @@ def video_info(item, extend=None):
             return u"окончен"
         else:
             if item["type"] == "serial":
-                return "в эфире"
+                return u"в эфире"
 
     info = {
         "year": int(item["year"]),
@@ -90,14 +95,13 @@ def video_info(item, extend=None):
     return info
 
 
-def get_internal_link(action, params=None):
+def get_internal_link(path, **params):
     """Form internal link for plugin navigation"""
-    params = "?{}".format(urllib.urlencode(params)) if params else ""
-    return "plugin://video.kino.pub/{}{}".format(action, params)
+    return urlparse.urlunsplit(("plugin", __id__, path, urllib.urlencode(params), ""))
 
 
-def nav_internal_link(action, params):
-    xbmc.executebuiltin("Container.Update({})".format(get_internal_link(action, params)))
+def nav_internal_link(action, **params):
+    xbmc.executebuiltin("Container.Update({})".format(get_internal_link(action, **params)))
 
 
 def notice(message, heading="", time=4000):
@@ -107,7 +111,7 @@ def notice(message, heading="", time=4000):
 def trailer_link(item):
     if item.get("trailer"):
         trailer = item["trailer"]
-        return get_internal_link("trailer", {"id": item["id"], "sid": trailer["id"]})
+        return get_internal_link("trailer", id=item["id"], sid=trailer["id"])
     return None
 
 
@@ -140,3 +144,26 @@ def update_device_info(force=False):
             "software": software
         })
         __settings__.setSetting("device_info_update", str(int(float(time.time()))))
+
+
+Request = namedtuple("Request", ["handle", "path", "args"])
+request = Request(
+    int(sys.argv[1]),
+    sys.argv[0].replace(__plugin__, ""),
+    dict(urlparse.parse_qsl(sys.argv[2].lstrip("?")))
+)
+
+
+ROUTES = dict()
+
+
+def route(path):
+    def decorator_route(f):
+        ROUTES[path] = f
+
+        @wraps(f)
+        def wrapper_route(*args, **kwargs):
+            xbmc.log("{} : {}. {}".format(__plugin__, f.__name__, str(request.args)))
+            return f(*args, **kwargs)
+        return wrapper_route
+    return decorator_route

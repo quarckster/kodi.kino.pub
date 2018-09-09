@@ -16,9 +16,10 @@ def _toggle_watchlist(list_item, menu_items):
     label = u"Не буду смотреть" if int(in_watchlist) else u"Буду смотреть"
     link = get_internal_link(
         "toggle_watchlist",
-        {"id": list_item.getProperty("id"), "added": not int(in_watchlist)}
+        id=list_item.getProperty("id"),
+        added=not int(in_watchlist)
     )
-    menu_items.append((label, "RunPlugin({})".format(link)))
+    menu_items.append((label, "Container.Update({})".format(link)))
 
 
 def _toggle_watched(list_item, menu_items):
@@ -28,12 +29,12 @@ def _toggle_watched(list_item, menu_items):
     watched = int(list_item.getVideoInfoTag().getPlayCount()) > 0
     label = u"Отметить как непросмотренное" if watched else u"Отметить как просмотренное"
     if episode_number != -1 and season_number != -1:
-        qp = {"id": item_id, "season": season_number, "video": episode_number}
+        kwargs = {"id": item_id, "season": season_number, "video": episode_number}
     elif season_number != -1:
-        qp = {"id": item_id, "season": season_number}
+        kwargs = {"id": item_id, "season": season_number}
     elif list_item.getVideoInfoTag().getMediaType() == "tvshow":
         return
     else:
-        qp = {"id": item_id}
-    link = get_internal_link("toggle_watched", qp)
-    menu_items.append((label, "RunPlugin({})".format(link)))
+        kwargs = {"id": item_id}
+    link = get_internal_link("toggle_watched", **kwargs)
+    menu_items.append((label, "Container.Update({})".format(link)))
