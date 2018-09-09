@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import sys
 import urllib
 import urllib2
 import xbmc
@@ -26,7 +27,9 @@ class KinoPubClient(object):
                 if status != auth.SUCCESS:
                     # reset access_token
                     auth.reauth()
-                return self._make_request(request)
+                if auth.access_token:
+                    return self._make_request(request)
+                sys.exit()
             else:
                 notice("Код ответа сервера {}".format(e.code), "Неизвестная ошибка")
         except Exception as e:

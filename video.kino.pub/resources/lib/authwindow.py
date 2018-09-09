@@ -1,46 +1,40 @@
 # -*- coding: utf-8 -*-
 import json
-import sys
 import time
-import xbmc
-import xbmcgui
 import urllib
 import urllib2
-from addonutils import update_device_info
-from data import __addon__, __plugin__, __settings__, __skinsdir__
 
-_ADDON_PATH = xbmc.translatePath(__addon__.getAddonInfo("path"))
+import xbmc
+import xbmcgui
 
-if sys.platform in ("win32", "win64"):
-    _ADDON_PATH = _ADDON_PATH.decode("utf-8")
+from addonutils import nav_internal_link, update_device_info
+from data import __plugin__, __settings__
 
 
-class AuthWindow(xbmcgui.WindowXMLDialog):
-    def __init__(self, *args, **kwargs):
-        self.auth = kwargs["auth"]
+class AuthDialog(object):
+    def __init__(self):
+        self.total = 0
+        self.position = 1
+        self._dialog = xbmcgui.DialogProgress()
 
-    def onInit(self):
-        status, resp = self.auth.get_device_code()
-        if status == self.auth.ERROR:
-            label = self.getControl(9111)
-            label.setLabel(
-                "Устройство не поддерживается.\n"
-                "Посетите http://kino.pub/device/support для уточнения деталей."
-            )
-            return
-        label = self.getControl(9112)
-        label.setLabel(resp["verification_uri"].encode("utf-8"))
-        label = self.getControl(9113)
-        label.setLabel(resp["user_code"].encode("utf-8"))
-        self.auth.verify_device_code(int(resp["interval"]))
+    def close(self, cancel=False):
+        if self._dialog:
+            self._dialog.close()
+            self._dialog = None
+        if cancel:
+            nav_internal_link("/")
 
-    def onAction(self, action):
-        actionID = action.getId()
-        if actionID in [9, 10, 13, 14, 15]:
-            self.closeWindow()
+    def update(self, steps=1):
+        self.position += steps
+        position = int(float((100.0 // self.total)) * self.position)
+        self._dialog.update(position)
 
-    def closeWindow(self):
-        self.close()
+    def show(self, text):
+        self._dialog.create("Активация устройства", text)
+
+    @property
+    def iscanceled(self):
+        return self._dialog.iscanceled() if self._dialog else True
 
 
 class Auth(object):
@@ -53,11 +47,7 @@ class Auth(object):
     ERROR, PENDING_STATUS, SUCCESS, EXPIRED = range(4)
 
     def __init__(self):
-        self.window = AuthWindow("auth.xml", _ADDON_PATH, __skinsdir__, auth=self)
-
-    def close(self):
-        if self.window is not None:
-            self.window.close()
+        self.window = AuthDialog()
 
     @property
     def is_token_expired(self):
@@ -96,7 +86,7 @@ class Auth(object):
     def reauth(self):
         self.access_token = ""
         self.device_token = ""
-        self.showActivationWindow()
+        self.do_login()
 
     def request(self, url, data):
         xbmc.log("REQUEST URL={}".format(url))
@@ -178,17 +168,37 @@ class Auth(object):
         return self.ERROR, resp
 
     def verify_device_code(self, interval):
-        while True:
-            success, resp = self.get_token()
-            if success == self.SUCCESS:
-                update_device_info(force=True)
-                self.window.closeWindow()
+        steps = (10 * 60) // interval
+        self.window.total = steps
+        for _ in range(steps):
+            if self.window.iscanceled:
+                self.window.close(cancel=True)
                 break
-            time.sleep(interval)
+            else:
+                success, resp = self.get_token()
+                if success == self.SUCCESS:
+                    update_device_info(force=True)
+                    self.window.close()
+                    break
+                self.window.update()
+                time.sleep(interval)
+        else:
+            self.window.close(cancel=True)
 
-    def showActivationWindow(self):
+    def do_login(self):
         xbmc.log("{}: No access_token. Show modal auth".format(__plugin__))
-        self.window.doModal()
+        status, resp = self.get_device_code()
+        if status == self.ERROR:
+            self.window.show("\n".join([
+                "Устройство не поддерживается.",
+                "Посетите http://kino.pub/device/support для уточнения деталей."
+            ]))
+            self.window.close(cancel=True)
+        self.window.show("\n".join([
+            "Откройте [B]{}[/B]".format(resp["verification_uri"].encode("utf-8")),
+            "и введите следующий код: [B]{}[/B]".format(resp["user_code"].encode("utf-8"))
+        ]))
+        self.verify_device_code(int(resp["interval"]))
         xbmc.log("{}: Close modal auth".format(__plugin__))
 
 
