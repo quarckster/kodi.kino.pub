@@ -7,6 +7,7 @@ import xbmcplugin
 import context_menu
 from addonutils import (get_internal_link, get_mlink, nav_internal_link, notice, request, route,
                         ROUTES, trailer_link, video_info)
+from authwindow import auth
 from client import KinoPubClient
 from data import __settings__, __plugin__
 
@@ -99,25 +100,35 @@ def add_default_headings(type=None, fmt="slp"):
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
 
 
+@route("/login")
+def login():
+    auth.reauth()
+
+
 @route("/")
 def index():
     """Main screen - show type list"""
-    xbmc.executebuiltin("Container.SetViewMode(0)")
-    response = KinoPubClient("types").get()
-    add_default_headings()
-    li = xbmcgui.ListItem("[COLOR FFFFF000]ТВ[/COLOR]")
-    xbmcplugin.addDirectoryItem(request.handle, get_internal_link("tv"), li, True)
-    li = xbmcgui.ListItem("[COLOR FFFFF000]Закладки[/COLOR]")
-    xbmcplugin.addDirectoryItem(request.handle, get_internal_link("bookmarks"), li, True)
-    li = xbmcgui.ListItem("[COLOR FFFFF000]Я смотрю[/COLOR]")
-    xbmcplugin.addDirectoryItem(request.handle, get_internal_link("watching"), li, True)
-    li = xbmcgui.ListItem("[COLOR FFFFF000]Подборки[/COLOR]")
-    xbmcplugin.addDirectoryItem(request.handle, get_internal_link("collections"), li, True)
-    for i in response["items"]:
-        li = xbmcgui.ListItem(i["title"].encode("utf-8"))
-        link = get_internal_link("item_index", type=i["id"])
-        xbmcplugin.addDirectoryItem(request.handle, link, li, True)
-    xbmcplugin.endOfDirectory(request.handle)
+    if not auth.access_token:
+        li = xbmcgui.ListItem("Активировать устройство")
+        xbmcplugin.addDirectoryItem(request.handle, get_internal_link("login"), li, False)
+        xbmcplugin.endOfDirectory(request.handle)
+    else:
+        response = KinoPubClient("types").get()
+        xbmc.executebuiltin("Container.SetViewMode(0)")
+        add_default_headings()
+        li = xbmcgui.ListItem("[COLOR FFFFF000]ТВ[/COLOR]")
+        xbmcplugin.addDirectoryItem(request.handle, get_internal_link("tv"), li, True)
+        li = xbmcgui.ListItem("[COLOR FFFFF000]Закладки[/COLOR]")
+        xbmcplugin.addDirectoryItem(request.handle, get_internal_link("bookmarks"), li, True)
+        li = xbmcgui.ListItem("[COLOR FFFFF000]Я смотрю[/COLOR]")
+        xbmcplugin.addDirectoryItem(request.handle, get_internal_link("watching"), li, True)
+        li = xbmcgui.ListItem("[COLOR FFFFF000]Подборки[/COLOR]")
+        xbmcplugin.addDirectoryItem(request.handle, get_internal_link("collections"), li, True)
+        for i in response["items"]:
+            li = xbmcgui.ListItem(i["title"].encode("utf-8"))
+            link = get_internal_link("item_index", type=i["id"])
+            xbmcplugin.addDirectoryItem(request.handle, link, li, True)
+        xbmcplugin.endOfDirectory(request.handle)
 
 
 @route("/item_index")
