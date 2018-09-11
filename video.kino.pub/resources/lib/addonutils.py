@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import re
 import sys
 import time
 import urllib
@@ -8,6 +9,8 @@ from collections import namedtuple
 from functools import wraps
 
 import xbmc
+import xbmcgui
+
 from data import __id__, __settings__, __plugin__
 
 
@@ -17,42 +20,38 @@ def dict_merge(old, new):
     return n
 
 
-def get_mlink(video, quality="480p", streamType="http"):
+def get_mlink(video, stream_type=None, quality=None, ask_quality="false"):
     """Get media link.
 
     Args:
-        video: json dict from api call
-        quality: video quality [480p, 720p, 1080p]
-
+        video: a dict from api call
+        quality: video quality (480p, 720p, 1080p)
+        stream_type: hls, hls2, hls4, http
+        ask_quality: "false" or "true"
     """
 
-    def normalize(qual):
-        """Normalize quality param"""
-        qual = str(qual)
-        return int(qual.lower().replace("p", "").replace("3d", "1080"))
+    def natural_sort(l):
+        def convert(text):
+            return int(text) if text.isdigit() else text.lower()
 
-    def geturl(url, streamType="http"):
-        return url[streamType] if isinstance(url, dict) else url
+        def alphanum_key(key):
+            return [convert(c) for c in re.split('([0-9]+)', key)]
 
-    url = ""
-    files = video["files"]
-    files = sorted(files, key=lambda x: normalize(x["quality"]), reverse=False)
+        return sorted(l, key=alphanum_key)
 
-    # check if auto quality
-    if quality.lower() == "auto":
-        return geturl(files[-1]["url"], streamType)
-
-    # manual param quality
-    for f in files:
-        f["quality"] = normalize(f["quality"])
-        if f["quality"] == quality:
-            return geturl(f["url"], streamType)
-
-    for f in reversed(files):
-        if normalize(f["quality"]) <= normalize(quality):
-            return geturl(f["url"], streamType)
-        url = geturl(f["url"], streamType)
-    return url
+    files = {f["quality"]: f["url"] for f in video["files"]}
+    flatten_urls_dict = {"{}@{}".format(quality, stream): url for quality, urls in files.items()
+                         for stream, url in urls.items()}
+    urls_list = natural_sort(flatten_urls_dict.keys())
+    if ask_quality == "true":
+        dialog = xbmcgui.Dialog()
+        result = dialog.select("Выберите качество видео", urls_list)
+        if result == -1:
+            sys.exit()
+        else:
+            return flatten_urls_dict[urls_list[result]]
+    else:
+        return files[quality][stream_type]
 
 
 def video_info(item, extend=None):
