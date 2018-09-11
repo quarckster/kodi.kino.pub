@@ -12,10 +12,6 @@ from client import KinoPubClient
 from data import __settings__, __plugin__
 
 
-DEFAULT_QUALITY = __settings__.getSetting("video_quality")
-DEFAULT_STREAM_TYPE = __settings__.getSetting("stream_type")
-
-
 mediatype_map = {
     "serial": "tvshow",
     "docuserial": "tvshow",
@@ -216,7 +212,7 @@ def episodes(id):
         qp = {
             "id": item["id"],
             "title": episode_title,
-            "eisode_number": video_number,
+            "episode_number": video_number,
             "video_data": json.dumps(video)
         }
         link = get_internal_link("play", **qp)
@@ -275,29 +271,30 @@ def season_episodes(id, season_number):
 def play(id, title, season_number=None, episode_number=None, video_data=None):
     if not video_data:
         response = KinoPubClient("items/{}".format(id)).get()
-        videoObject = response["item"]["videos"][0]
+        video_data = response["item"]["videos"][0]
     else:
-        videoObject = json.loads(video_data)
-    liObject = xbmcgui.ListItem(title)
-    subtitles = [subtitle["url"] for subtitle in videoObject["subtitles"]]
-    if subtitles:
-        liObject.setSubtitles(subtitles)
-    if "files" not in videoObject:
+        video_data = json.loads(video_data)
+    if "files" not in video_data:
         notice("Видео обновляется и временно не доступно!", "Видео в обработке", time=8000)
         return
+    li = xbmcgui.ListItem(title)
+    subtitles = [subtitle["url"] for subtitle in video_data["subtitles"]]
+    if subtitles:
+        li.setSubtitles(subtitles)
     url = get_mlink(
-        videoObject,
+        video_data,
         quality=__settings__.getSetting("video_quality"),
-        streamType=__settings__.getSetting("stream_type")
+        stream_type=__settings__.getSetting("stream_type"),
+        ask_quality=__settings__.getSetting("ask_quality")
     )
     KinoPubClient("watching/marktime").get(data={
         "id": id,
-        "video": videoObject["number"],
-        "time": videoObject.get("duration"),
+        "video": video_data["number"],
+        "time": video_data.get("duration"),
         "season": season_number
     })
-    liObject.setPath(url)
-    xbmcplugin.setResolvedUrl(request.handle, True, liObject)
+    li.setPath(url)
+    xbmcplugin.setResolvedUrl(request.handle, True, li)
 
 
 @route("/trailer")
@@ -367,7 +364,7 @@ def watching():
         li.setProperty("id", str(item["id"]))
         li.setProperty("in_watchlist", "1")
         li.setInfo("Video", {"mediatype": mediatype_map[item["type"]]})
-        link = get_internal_link("view", id=item["id"])
+        link = get_internal_link("view_seasons", id=item["id"])
         context_menu.add_items(li)
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     xbmcplugin.endOfDirectory(request.handle)
@@ -437,7 +434,4 @@ def toggle_watchlist(**kwargs):
 
 # Entry point
 def init():
-    if request.args:
-        ROUTES[request.path](**request.args)
-    else:
-        ROUTES[request.path]()
+    ROUTES[request.path](**request.args)
