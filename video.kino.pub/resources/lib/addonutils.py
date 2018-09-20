@@ -51,7 +51,11 @@ def get_mlink(video, stream_type=None, quality=None, ask_quality="false"):
         else:
             return flatten_urls_dict[urls_list[result]]
     else:
-        return files[quality][stream_type]
+        try:
+            return files[quality][stream_type]
+        except KeyError:
+            # if there is no such quality then return a link with the highest available quality
+            return files[natural_sort(files.keys())[-1]][stream_type]
 
 
 def video_info(item, extend=None):
