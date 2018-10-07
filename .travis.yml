@@ -1,4 +1,3 @@
-sudo: false
 language: python
 python:
   - "2.7"
@@ -8,22 +7,21 @@ stages:
     if: tag IS true
 jobs:
   include:
+    - stage: test
+      install:
+        - pip install -U flake8 pytest pytest-mock
+      script:
+        - flake8 . --max-line-length=100 --exclude=tests/responses.py
+        - pytest -v tests/tests.py
     - stage: deploy
       language: minimal
-      before_install:
-      after_success:
-      install:
       script: bash build.sh
       deploy:
         provider: releases
+        skip_cleanup: true
         api_key:
           secure: lW8+Kb5iTTsS7yZ7WmFE1mluZdUY2sj/FCTCgKQVOpBfOhtoyq5esW/ZXTTk3hBRo8gDjm3Ao3CPqMu1ozFTUXkDcyMNaWFB0cdhwdWn3bgIcj5bXPgXhmAZBAVhLk4logvsTA6u6a2Y1iJdwXfszw3FyIdaGcsAYcRBO3gEF2+zRw/LqktG3RhJ7xwYJAvF9uaWBZ/yuW4zHRgJ7RKd94cUdTv0TpPhsWC97F81do+j8psml6MXZtrzfPgxaWU6IoVk1FJXjSkI9sc5Nr+3A/hhDb8PNA0IUvkJ4yrprTLfWq/IrW5jdY0N8HWXRUrhteSjlggA2xZKvvjodK441ZAZDNcfx24fYYikcc/tSwTyreiJCf/ytPD9xOGloptVBSUJDuEC0EJCF4ah9n9Ge6PjOV1V/Z+ww2LjVqcuet3Llu2luoUnq4jnyGaqJGZYaa/8onFiIBjePvBqHS19Dco9NViDKHJwUk0OMpUkNaAPVb7jR0H9pxX2AcjdC+/hKupVJ6W1LgWqwWa7JfXeN5yDvxmuIkl3bMzggcBR1UKPz0QMPBb2rXwRwUKbwBAf/f3xFZPdxy+8k6sMviMaR3Gam3zpWmBcWSCkUcfaxRn4Nn5uJghz0flEkUmNoDVmqKJXytmyXzwkKxXYnhy9pwuKOTK51pBaAtmTEj8hPbM=
         file: video.kino.pub-$TRAVIS_TAG.zip
         on:
           tags: true
           repo: quarckster/kodi.kino.pub
-install:
-  - pip install -U flake8 pytest pytest-mock
-script:
-  - flake8 . --max-line-length=100 --exclude=video.kino.pub/tests/responses.py
-  - pytest -v tests/tests.py

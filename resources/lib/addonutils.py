@@ -5,7 +5,6 @@ import sys
 import time
 import urllib
 import urlparse
-from collections import namedtuple
 from functools import wraps
 
 import xbmc
