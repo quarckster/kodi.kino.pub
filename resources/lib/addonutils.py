@@ -149,13 +149,22 @@ def update_device_info(force=False):
         __settings__.setSetting("device_info_update", str(int(float(time.time()))))
 
 
-Request = namedtuple("Request", ["handle", "path", "args"])
-request = Request(
-    int(sys.argv[1]),
-    sys.argv[0].replace(__plugin__, ""),
-    dict(urlparse.parse_qsl(sys.argv[2].lstrip("?")))
-)
+class Request(object):
 
+    @property
+    def handle(self):
+        return int(sys.argv[1])
+
+    @property
+    def path(self):
+        return sys.argv[0].replace(__plugin__, "")
+
+    @property
+    def args(self):
+        return dict(urlparse.parse_qsl(sys.argv[2].lstrip("?")))
+
+
+request = Request()
 
 ROUTES = dict()
 

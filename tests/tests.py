@@ -92,21 +92,21 @@ def test_actionIndex(mocker, actionIndex, main, xbmcplugin, xbmcgui):
     main()
     c = u"[COLOR FFFFF000]{}[/COLOR]"
     expected_results = [
-        (handle, plugin.format("search"), c.format(u"Поиск"), False),
-        (handle, plugin.format("items"), c.format(u"Последние"), True),
-        (handle, plugin.format("items?sort=-rating"), c.format(u"Популярные"), True),
+        (handle, plugin.format("search?type=None"), c.format(u"Поиск"), False),
+        (handle, plugin.format("items?type=None"), c.format(u"Последние"), True),
+        (handle, plugin.format("items?sort=-rating&type=None"), c.format(u"Популярные"), True),
         (handle, plugin.format("tv"), c.format(u"ТВ"), True),
         (handle, plugin.format("bookmarks"), c.format(u"Закладки"), True),
         (handle, plugin.format("watching"), c.format(u"Я смотрю"), True),
         (handle, plugin.format("collections"), c.format(u"Подборки"), True),
-        (handle, plugin.format("index?type=movie"), u"Фильмы", True),
-        (handle, plugin.format("index?type=serial"), u"Сериалы", True),
-        (handle, plugin.format("index?type=tvshow"), u"ТВ шоу", True),
-        (handle, plugin.format("index?type=4k"), u"4K", True),
-        (handle, plugin.format("index?type=3d"), u"3D", True),
-        (handle, plugin.format("index?type=concert"), u"Концерты", True),
-        (handle, plugin.format("index?type=documovie"), u"Документальные фильмы", True),
-        (handle, plugin.format("index?type=docuserial"), u"Документальные сериалы", True)
+        (handle, plugin.format("item_index?type=movie"), u"Фильмы", True),
+        (handle, plugin.format("item_index?type=serial"), u"Сериалы", True),
+        (handle, plugin.format("item_index?type=tvshow"), u"ТВ шоу", True),
+        (handle, plugin.format("item_index?type=4k"), u"4K", True),
+        (handle, plugin.format("item_index?type=3d"), u"3D", True),
+        (handle, plugin.format("item_index?type=concert"), u"Концерты", True),
+        (handle, plugin.format("item_index?type=documovie"), u"Документальные фильмы", True),
+        (handle, plugin.format("item_index?type=docuserial"), u"Документальные сериалы", True)
     ]
     for result in expected_results:
         handle_, link, title, is_directory = result
@@ -129,13 +129,14 @@ def actionPlay(request, mocker, settings):
             return mocker.Mock()
 
     mock_KinoPubClient = mocker.Mock(side_effect=side_effect)
-    mocker.patch("resources.lib.addonworker.KinoPubClient", mock_KinoPubClient)
     title = actionPlay_response["item"]["title"].encode("utf-8")
     mocker.patch.object(sys, "argv", [
         plugin.format("play"),
         handle,
         "?{}".format(urlencode({"title": title, "id": id_}))
     ])
+    mocker.patch("resources.lib.addonworker.KinoPubClient", mock_KinoPubClient)
+    mocker.patch("resources.lib.addonworker.auth")
     return request.param
 
 
