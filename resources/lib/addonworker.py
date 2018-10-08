@@ -110,7 +110,6 @@ def index():
         xbmcplugin.endOfDirectory(request.handle)
     else:
         response = KinoPubClient("types").get()
-        xbmc.executebuiltin("Container.SetViewMode(0)")
         add_default_headings()
         li = xbmcgui.ListItem("[COLOR FFFFF000]ТВ[/COLOR]")
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("tv"), li, True)
