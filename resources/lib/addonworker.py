@@ -334,7 +334,7 @@ def search(page=None, type=None):
 
 
 @route("/bookmarks")
-def bookmarks(folder_id=None):
+def bookmarks(folder_id=None, page=None):
     if folder_id is None:
         response = KinoPubClient("bookmarks").get()
         for folder in response["items"]:
@@ -348,7 +348,7 @@ def bookmarks(folder_id=None):
         # Show content of the folder
         response = KinoPubClient("bookmarks/{}".format(folder_id)).get()
         show_items(response["items"])
-        show_pagination(response["pagination"], "bookmarks")
+        show_pagination(response["pagination"], "bookmarks", folder_id=folder_id)
         xbmcplugin.endOfDirectory(request.handle)
 
 
@@ -371,26 +371,25 @@ def watching():
 
 
 @route("/collections")
-def collections(sort=None):
-    handle = request.handle
-    response = KinoPubClient("collections/index").get(data={"sort": sort})
-    xbmcplugin.setContent(handle, "movies")
+def collections(sort=None, page=None):
+    response = KinoPubClient("collections/index").get(data={"sort": sort, "page": page})
+    xbmcplugin.setContent(request.handle, "movies")
     li = xbmcgui.ListItem("[COLOR FFFFF000]Последние[/COLOR]")
     link = get_internal_link("collections", sort="-created")
-    xbmcplugin.addDirectoryItem(handle, link, li, True)
+    xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     li = xbmcgui.ListItem("[COLOR FFFFF000]Просматриваемые[/COLOR]")
     link = get_internal_link("collections", sort="-watchers")
-    xbmcplugin.addDirectoryItem(handle, link, li, True)
+    xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     li = xbmcgui.ListItem("[COLOR FFFFF000]Популярные[/COLOR]")
     link = get_internal_link("collections", sort="-views")
-    xbmcplugin.addDirectoryItem(handle, link, li, True)
+    xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     for item in response["items"]:
         li = xbmcgui.ListItem(item["title"].encode("utf-8"))
         li.setThumbnailImage(item["posters"]["medium"])
         link = get_internal_link("collection_view", id=item["id"])
-        xbmcplugin.addDirectoryItem(handle, link, li, True)
+        xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     show_pagination(response["pagination"], "collections", sort=sort)
-    xbmcplugin.endOfDirectory(handle)
+    xbmcplugin.endOfDirectory(request.handle)
 
 
 @route("/collection_view")
