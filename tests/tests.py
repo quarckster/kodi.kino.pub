@@ -106,7 +106,9 @@ def test_index(mocker, index, main, xbmcplugin, xbmcgui):
     expected_results = [
         (handle, plugin.format("search?type=None"), c.format(u"Поиск"), False),
         (handle, plugin.format("items?type=None"), c.format(u"Последние"), True),
-        (handle, plugin.format("items?sort=-rating&type=None"), c.format(u"Популярные"), True),
+        (handle, plugin.format("items?type=None&shortcut=%2Fpopular"), c.format(u"Популярные"),
+            True),
+        (handle, plugin.format("items?type=None&shortcut=%2Fhot"), c.format(u"Популярные"), True),
         (handle, plugin.format("tv"), c.format(u"ТВ"), True),
         (handle, plugin.format("bookmarks"), c.format(u"Закладки"), True),
         (handle, plugin.format("watching"), c.format(u"Я смотрю"), True),
