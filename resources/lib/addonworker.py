@@ -73,6 +73,7 @@ def add_default_headings(type=None, fmt="slp"):
     # p - show popular
     # s - show alphabet sorting
     # g - show genres folder
+    # h - show hot
 
     if "s" in fmt:
         li = xbmcgui.ListItem("[COLOR FFFFF000]Поиск[/COLOR]")
@@ -84,7 +85,7 @@ def add_default_headings(type=None, fmt="slp"):
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     if "p" in fmt:
         li = xbmcgui.ListItem("[COLOR FFFFF000]Популярные[/COLOR]")
-        link = get_internal_link("items", type=type, sort="-rating")
+        link = get_internal_link("items", type=type, shortcut="/popular")
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     if "a" in fmt:
         li = xbmcgui.ListItem("[COLOR FFFFF000]По алфавиту[/COLOR]")
@@ -93,6 +94,10 @@ def add_default_headings(type=None, fmt="slp"):
     if "g" in fmt:
         li = xbmcgui.ListItem("[COLOR FFFFF000]Жанры[/COLOR]")
         link = get_internal_link("genres", type=type)
+        xbmcplugin.addDirectoryItem(request.handle, link, li, True)
+    if "h" in fmt:
+        li = xbmcgui.ListItem("[COLOR FFFFF000]Горячие[/COLOR]")
+        link = get_internal_link("items", type=type, shortcut="/hot")
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
 
 
@@ -110,7 +115,7 @@ def index():
         xbmcplugin.endOfDirectory(request.handle)
     else:
         response = KinoPubClient("types").get()
-        add_default_headings()
+        add_default_headings(fmt="slph")
         li = xbmcgui.ListItem("[COLOR FFFFF000]ТВ[/COLOR]")
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("tv"), li, True)
         li = xbmcgui.ListItem("[COLOR FFFFF000]Закладки[/COLOR]")
@@ -128,7 +133,7 @@ def index():
 
 @route("/item_index")
 def default_headings(type):
-    add_default_headings(type, "slpga")
+    add_default_headings(type, "slpgah")
     xbmcplugin.endOfDirectory(request.handle)
 
 
@@ -156,7 +161,8 @@ def genres(type):
 def items(type, **kwargs):
     """List items with pagination"""
     kwargs["type"] = type
-    response = KinoPubClient("items").get(data=kwargs)
+    shortcut = kwargs.pop("shortcut", "")
+    response = KinoPubClient("items{}".format(shortcut)).get(data=kwargs)
     pagination = response["pagination"]
     add_default_headings(type, fmt="s")
     show_items(response["items"])
