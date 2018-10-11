@@ -21,6 +21,7 @@ class AuthDialog(object):
         if self._dialog:
             self._dialog.close()
             self._dialog = None
+            xbmc.executebuiltin("Container.Refresh")
         if cancel:
             nav_internal_link("/")
 
