@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="video.kino.pub" name="kino.pub" version="2.0.0" provider-name="kino.pub">
+<addon id="video.kino.pub" name="kino.pub" version="2.0.2" provider-name="kino.pub">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>
@@ -10,11 +10,6 @@
     <summary>kino.pub - онлайн-кинотеатр.</summary>
     <description></description>
     <platform>all</platform>
-  </extension>
-  <extension point="xbmc.addon.repository" name="Official kino.pub Add-On Repository">
-    <info compressed="true">http://plugins.service-kp.com/kodi/addons.xml</info>
-    <checksum>http://plugins.service-kp.com/kodi/addons.xml.md5</checksum>
-    <datadir zip="true">http://plugins.service-kp.com/kodi</datadir>
   </extension>
 </addon>
 
