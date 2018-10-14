@@ -6,6 +6,7 @@ def add_items(list_item):
     menu_items = []
     _toggle_watched(list_item, menu_items)
     _toggle_watchlist(list_item, menu_items)
+    _edit_bookmarks(list_item, menu_items)
     list_item.addContextMenuItems(menu_items)
 
 
@@ -37,4 +38,11 @@ def _toggle_watched(list_item, menu_items):
     else:
         kwargs = {"id": item_id}
     link = get_internal_link("toggle_watched", **kwargs)
+    menu_items.append((label, "Container.Update({})".format(link)))
+
+
+def _edit_bookmarks(list_item, menu_items):
+    item_id = list_item.getProperty("id")
+    label = u"Изменить закладки"
+    link = get_internal_link("edit_bookmarks", item_id=item_id)
     menu_items.append((label, "Container.Update({})".format(link)))

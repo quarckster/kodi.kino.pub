@@ -436,6 +436,44 @@ def toggle_watchlist(**kwargs):
     xbmc.executebuiltin("Container.Refresh")
 
 
+@route("/edit_bookmarks")
+def edit_bookmarks(item_id=None):
+    item_folders_resp = KinoPubClient("bookmarks/get-item-folders").get(data={"item": item_id})
+    all_folders_resp = KinoPubClient("bookmarks").get()
+    all_folders = [f["title"] for f in all_folders_resp["items"]]
+    item_folders = [f["title"] for f in item_folders_resp["folders"]]
+    preselect = [all_folders.index(f) for f in item_folders]
+    dialog = xbmcgui.Dialog()
+    indexes = dialog.multiselect("Папки закладок", all_folders, preselect=preselect)
+    # Cancel button was pressed
+    if indexes is None:
+        return
+    chosen_folders = [all_folders[i] for i in indexes]
+    folders_to_add = list(set(chosen_folders) - set(item_folders))
+    folders_to_remove = list(set(item_folders) - set(chosen_folders))
+    # Ok button was pressed but nothing changed
+    if not folders_to_add and not folders_to_remove:
+        return
+
+    def get_folder_id(title):
+        for folder in all_folders_resp["items"]:
+            if folder["title"] == title:
+                return folder["id"]
+
+    for folder in folders_to_add:
+        KinoPubClient("bookmarks/add").post(data={
+            "item": item_id,
+            "folder": get_folder_id(folder)
+        })
+    for folder in folders_to_remove:
+        KinoPubClient("bookmarks/remove-item").post(data={
+            "item": item_id,
+            "folder": get_folder_id(folder)
+        })
+    notice("Закладки для видео изменены")
+    xbmc.executebuiltin("Container.Refresh")
+
+
 # Entry point
 def init():
     ROUTES[request.path](**request.args)
