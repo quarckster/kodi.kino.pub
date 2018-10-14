@@ -46,3 +46,9 @@ def _edit_bookmarks(list_item, menu_items):
     label = u"Изменить закладки"
     link = get_internal_link("edit_bookmarks", item_id=item_id)
     menu_items.append((label, "Container.Update({})".format(link)))
+
+
+def add_bookmarks_items(list_item, folder_id):
+    link = get_internal_link("remove_bookmark_folder", folder_id=folder_id)
+    label = u"Удалить папку"
+    list_item.addContextMenuItems([(label, "Container.Update({})".format(link))])

@@ -341,11 +341,15 @@ def search(page=None, type=None):
 @route("/bookmarks")
 def bookmarks(folder_id=None, page=None):
     if folder_id is None:
+        li = xbmcgui.ListItem("[COLOR FFFFF000]Создать папку[/COLOR]")
+        link = get_internal_link("create_bookmarks_folder")
+        xbmcplugin.addDirectoryItem(request.handle, link, li, False)
         response = KinoPubClient("bookmarks").get()
         for folder in response["items"]:
             li = xbmcgui.ListItem(folder["title"].encode("utf-8"))
             li.setProperty("folder-id", str(folder["id"]).encode("utf-8"))
             li.setProperty("views", str(folder["views"]).encode("utf-8"))
+            context_menu.add_bookmarks_items(li, folder["id"])
             link = get_internal_link("bookmarks", folder_id=folder["id"])
             xbmcplugin.addDirectoryItem(request.handle, link, li, True)
         xbmcplugin.endOfDirectory(request.handle)
@@ -472,6 +476,22 @@ def edit_bookmarks(item_id=None):
         })
     notice("Закладки для видео изменены")
     xbmc.executebuiltin("Container.Refresh")
+
+
+@route("/remove_bookmarks_folder")
+def remove_bookmark_folder(folder_id):
+    KinoPubClient("bookmarks/remove-folder").post(data={"folder": folder_id})
+
+
+@route("/create_bookmarks_folder")
+def create_bookmarks_folder():
+    kbd = xbmc.Keyboard()
+    kbd.setHeading("Имя папки закладок")
+    kbd.doModal()
+    if kbd.isConfirmed():
+        title = kbd.getText()
+        KinoPubClient("bookmarks/create").post(data={"title": title})
+        xbmc.executebuiltin("Container.Refresh")
 
 
 # Entry point
