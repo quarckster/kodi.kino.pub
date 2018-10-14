@@ -355,10 +355,9 @@ def bookmarks(folder_id=None, page=None):
         xbmcplugin.endOfDirectory(request.handle)
     else:
         # Show content of the folder
-        response = KinoPubClient("bookmarks/{}".format(folder_id)).get()
+        response = KinoPubClient("bookmarks/{}".format(folder_id)).get(data={"page": page})
         show_items(response["items"])
         show_pagination(response["pagination"], "bookmarks", folder_id=folder_id)
-        xbmcplugin.endOfDirectory(request.handle)
 
 
 @route("/watching")
@@ -398,7 +397,6 @@ def collections(sort=None, page=None):
         link = get_internal_link("collection_view", id=item["id"])
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     show_pagination(response["pagination"], "collections", sort=sort)
-    xbmcplugin.endOfDirectory(request.handle)
 
 
 @route("/collection_view")
