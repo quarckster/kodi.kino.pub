@@ -481,6 +481,7 @@ def edit_bookmarks(item_id=None):
 @route("/remove_bookmarks_folder")
 def remove_bookmark_folder(folder_id):
     KinoPubClient("bookmarks/remove-folder").post(data={"folder": folder_id})
+    xbmc.executebuiltin("Container.Refresh")
 
 
 @route("/create_bookmarks_folder")
