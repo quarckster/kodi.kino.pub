@@ -322,18 +322,14 @@ def trailer(id, sid=None):
 
 
 @route("/search")
-def search(page=None, type=None):
+def search(type=None):
     kbd = xbmc.Keyboard()
-    kbd.setDefault("")
     kbd.setHeading("Поиск")
     kbd.doModal()
-    out = ""
     if kbd.isConfirmed():
-        out = kbd.getText()
-        if len(out.decode("utf-8")) >= 3:
-            if "page" is not None:
-                page = 1
-            nav_internal_link("items", page=page, title=out, type=type)
+        title = kbd.getText()
+        if len(title.decode("utf-8")) >= 3:
+            nav_internal_link("items", title=title, type=type)
         else:
             notice("Введите больше символов для поиска", "Поиск")
 
