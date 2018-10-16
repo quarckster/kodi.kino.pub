@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="video.kino.pub" name="kino.pub" version="2.1.2" provider-name="kino.pub">
+<addon id="video.kino.pub" name="kino.pub" version="${VERSION}" provider-name="kino.pub">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>
@@ -12,4 +12,3 @@
     <platform>all</platform>
   </extension>
 </addon>
-
