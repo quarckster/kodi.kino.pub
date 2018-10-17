@@ -36,7 +36,6 @@ def show_pagination(pagination, action, **kwargs):
 
 def show_items(items, add_indexes=False):
     xbmc.log("{} : show_items. Total items: {}".format(__plugin__, str(len(items))))
-    xbmcplugin.setContent(request.handle, "movies")
     # Fill list with items
     for index, item in enumerate(items, 1):
         title = item["title"].encode("utf-8")
@@ -112,7 +111,6 @@ def index():
     if not auth.access_token:
         li = xbmcgui.ListItem("Активировать устройство")
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("login"), li, False)
-        xbmcplugin.endOfDirectory(request.handle)
     else:
         response = KinoPubClient("types").get()
         add_default_headings(fmt="slph")
@@ -128,7 +126,7 @@ def index():
             li = xbmcgui.ListItem(i["title"].encode("utf-8"))
             link = get_internal_link("item_index", type=i["id"])
             xbmcplugin.addDirectoryItem(request.handle, link, li, True)
-        xbmcplugin.endOfDirectory(request.handle)
+    xbmcplugin.endOfDirectory(request.handle)
 
 
 @route("/item_index")
@@ -165,6 +163,7 @@ def items(type, **kwargs):
     response = KinoPubClient("items{}".format(shortcut)).get(data=kwargs)
     pagination = response["pagination"]
     add_default_headings(type, fmt="s")
+    xbmcplugin.setContent(request.handle, "{}s".format(mediatype_map.get(type, "video")))
     show_items(response["items"])
     show_pagination(pagination, "items", type=type)
 
@@ -292,12 +291,6 @@ def play(id, title, season_number=None, episode_number=None, video_data=None):
         stream_type=__settings__.getSetting("stream_type"),
         ask_quality=__settings__.getSetting("ask_quality")
     )
-    KinoPubClient("watching/marktime").get(data={
-        "id": id,
-        "video": video_data["number"],
-        "time": video_data.get("duration"),
-        "season": season_number
-    })
     li.setPath(url)
     xbmcplugin.setResolvedUrl(request.handle, True, li)
 
@@ -352,6 +345,7 @@ def bookmarks(folder_id=None, page=None):
     else:
         # Show content of the folder
         response = KinoPubClient("bookmarks/{}".format(folder_id)).get(data={"page": page})
+        xbmcplugin.setContent(request.handle, "videos")
         show_items(response["items"])
         show_pagination(response["pagination"], "bookmarks", folder_id=folder_id)
 
