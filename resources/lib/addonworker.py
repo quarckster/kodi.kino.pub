@@ -10,6 +10,7 @@ from addonutils import (get_internal_link, get_mlink, nav_internal_link, notice,
 from authwindow import auth
 from client import KinoPubClient
 from data import __settings__, __plugin__
+from player import Player
 
 
 mediatype_map = {
@@ -281,18 +282,22 @@ def play(id, title, season_number=None, episode_number=None, video_data=None):
     if "files" not in video_data:
         notice("Видео обновляется и временно не доступно!", "Видео в обработке", time=8000)
         return
-    li = xbmcgui.ListItem(title)
-    subtitles = [subtitle["url"] for subtitle in video_data["subtitles"]]
-    if subtitles:
-        li.setSubtitles(subtitles)
     url = get_mlink(
         video_data,
         quality=__settings__.getSetting("video_quality"),
         stream_type=__settings__.getSetting("stream_type"),
         ask_quality=__settings__.getSetting("ask_quality")
     )
-    li.setPath(url)
+    li = xbmcgui.ListItem(title, path=url)
+    li.setInfo("video", {"Title": title})
+    subtitles = [subtitle["url"] for subtitle in video_data["subtitles"]]
+    if subtitles:
+        li.setSubtitles(subtitles)
+    player = Player(id=id, video_number=video_data["number"], season_number=season_number)
     xbmcplugin.setResolvedUrl(request.handle, True, li)
+    while player.is_playing:
+        player.set_marktime()
+        xbmc.sleep(1000)
 
 
 @route("/trailer")
