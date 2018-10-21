@@ -135,6 +135,7 @@ def play(request, mocker, settings):
     settings.setSetting("stream_type", request.param[0])
     settings.setSetting("video_quality", request.param[1])
     id_ = actionPlay_response["item"]["id"]
+    title = actionPlay_response["item"]["title"].encode("utf-8")
 
     def side_effect(value):
         if value == "items/{}".format(id_):
@@ -143,13 +144,14 @@ def play(request, mocker, settings):
             return mocker.Mock()
 
     mock_KinoPubClient = mocker.Mock(side_effect=side_effect)
-    title = actionPlay_response["item"]["title"].encode("utf-8")
+    mock_Player = mocker.Mock(return_value=mocker.Mock(is_playing=False))
     mocker.patch.object(sys, "argv", [
         plugin.format("play"),
         handle,
         "?{}".format(urlencode({"title": title, "id": id_}))
     ])
     mocker.patch("resources.lib.addonworker.KinoPubClient", mock_KinoPubClient)
+    mocker.patch("resources.lib.addonworker.Player", mock_Player)
     return request.param
 
 
@@ -157,10 +159,9 @@ def test_play(play, main, xbmcgui, xbmcplugin):
     stream, video_quality = play
     main()
     title = actionPlay_response["item"]["title"].encode("utf-8")
-    xbmcgui.ListItem.assert_called_with(title)
-    li = xbmcgui.ListItem(title)
     link = "https://example.com/{}/{}".format(stream, video_quality.rstrip("p"))
-    li.setPath.assert_called_once_with(link)
+    xbmcgui.ListItem.assert_called_with(title, path=link)
+    li = xbmcgui.ListItem(title, path=link)
     xbmcplugin.setResolvedUrl.assert_called_once_with(handle, True, li)
 
 
@@ -181,13 +182,25 @@ def items(mocker, xbmcgui):
 
 
 def test_items(main, items, xbmcgui, xbmcplugin, mocker):
+    from resources.lib.addonutils import video_info, trailer_link
+    from resources.lib.addonworker import mediatype_map
     main()
     s = plugin
     i = [item["id"] for item in actionItems_response["items"]]
     t = [item["title"].encode("utf-8") for item in actionItems_response["items"]]
+    arts = [item["posters"]["big"] for item in actionItems_response["items"]]
+
+    def make_info(item):
+        extra_info = {"trailer": trailer_link(item), "mediatype": mediatype_map[item["type"]]}
+        return video_info(item, extra_info)
+
+    info = [make_info(item) for item in actionItems_response["items"]]
+
     expected_results = [
-        (handle, s.format("play?{}".format(urlencode({"id": i[0], "title": t[0]}))), t[0], False),
-        (handle, s.format("play?{}".format(urlencode({"id": i[1], "title": t[1]}))), t[1], False),
+        (handle, s.format("play?{}".format(
+            urlencode({"id": i[0], "title": t[0], "info": info[0], "art": arts[0]}))), t[0], False),
+        (handle, s.format("play?{}".format(
+            urlencode({"id": i[1], "title": t[1], "info": info[1], "art": arts[1]}))), t[1], False),
         (handle, s.format("view_seasons?id={}".format(i[2])), t[2], True),
         (handle, s.format("view_seasons?id={}".format(i[3])), t[3], True),
         (handle, s.format("view_seasons?id={}".format(i[4])), t[4], True)
@@ -244,6 +257,7 @@ def view_episodes(mocker, view, xbmcgui):
 
 
 def test_view_episodes(request, main, view_episodes, xbmcgui, xbmcplugin):
+    from resources.lib.addonutils import video_info
     main()
     item = actionView_seasons_response["item"]
     i = item["id"]
@@ -253,18 +267,23 @@ def test_view_episodes(request, main, view_episodes, xbmcgui, xbmcplugin):
         if episode["title"]:
             episode_title = "{} | {}".format(
                 episode_title, episode["title"].encode("utf-8"))
+        info = video_info(item, {
+            "season": season["number"],
+            "episode": episode["number"],
+            "duration": episode["duration"],
+            "playcount": episode["watched"],
+            "mediatype": "episode"
+        })
         link = plugin.format("play?{}".format(urlencode({
             "id": i,
             "title": episode_title,
             "season_number": season["number"],
             "episode_number": episode["number"],
-            "video_data": json.dumps(episode)
+            "video_data": json.dumps(episode),
+            "info": info,
+            "art": item["posters"]["big"]
         })))
-        xbmcgui.ListItem.assert_any_call(
-            episode_title,
-            iconImage=episode["thumbnail"],
-            thumbnailImage=episode["thumbnail"]
-        )
+        xbmcgui.ListItem.assert_any_call(episode_title, thumbnailImage=episode["thumbnail"])
         li = xbmcgui.ListItem()
         li.setArt.assert_called_once_with({"poster": item["posters"]["big"]})
         xbmcplugin.addDirectoryItem.assert_any_call(handle, link, xbmcgui.ListItem(), False)
@@ -294,23 +313,28 @@ def view_standalone_episodes(mocker, xbmcgui):
 
 
 def test_view_standalone_episodes(request, main, view_standalone_episodes, xbmcgui, xbmcplugin):
+    from resources.lib.addonutils import video_info
     main()
     item = actionView_without_seasons_response["item"]
     for video in item["videos"]:
         episode_title = "e{:02d}".format(video["number"])
         if video["title"]:
             episode_title = "{} | {}".format(episode_title, video["title"].encode("utf-8"))
+        info = video_info(item, {
+            "season": 1,
+            "episode": video["number"],
+            "playcount": video["watched"],
+            "mediatype": "episode"
+        })
         link = plugin.format("play?{}".format(urlencode({
             "id": item["id"],
             "title": episode_title,
             "episode_number": video["number"],
-            "video_data": json.dumps(video)
+            "video_data": json.dumps(video),
+            "info": info,
+            "art": item["posters"]["big"]
         })))
-        xbmcgui.ListItem.assert_any_call(
-            episode_title,
-            iconImage=video["thumbnail"],
-            thumbnailImage=video["thumbnail"]
-        )
+        xbmcgui.ListItem.assert_any_call(episode_title, thumbnailImage=video["thumbnail"])
         li = xbmcgui.ListItem()
         li.setArt.assert_any_call({"poster": item["posters"]["big"]})
         xbmcplugin.addDirectoryItem.assert_any_call(handle, link, xbmcgui.ListItem(), False)
