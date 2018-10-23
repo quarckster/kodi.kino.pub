@@ -172,7 +172,9 @@ def items(mocker, xbmcgui):
         if value == "items":
             return mocker.Mock(**{"get.return_value": actionItems_response})
         if value == "watching":
-            return mocker.Mock(**{"get.return_value": {"item": {"status": 0}}})
+            return mocker.Mock(**{
+                "get.return_value": {"item": {"videos": [{"time": 0, "duration": 1, "status": 0}]}}
+            })
 
     mock_KinoPubClient = mocker.Mock(side_effect=side_effect)
     xbmcgui.ListItem().getVideoInfoTag().getPlayCount.return_value = 0
@@ -246,7 +248,17 @@ def test_view_seasons(main, view_seasons, xbmcgui, xbmcplugin):
 
 
 @pytest.fixture
-def view_episodes(mocker, view, xbmcgui):
+def view_season_episodes(mocker, view, xbmcgui):
+    id_ = actionView_seasons_response["item"]["id"]
+
+    def side_effect(value):
+        if value == "items/{}".format(id_):
+            return mocker.Mock(**{"get.return_value": actionView_seasons_response})
+        elif value == "watching":
+            return mocker.Mock(**{"get.return_value": watching_info_response_with_seasons})
+
+    mock_KinoPubClient = mocker.Mock(side_effect=side_effect)
+    mocker.patch("resources.lib.addonworker.KinoPubClient", mock_KinoPubClient)
     mocker.patch.object(sys, "argv", [
         plugin.format("view_season_episodes"),
         handle,
@@ -256,13 +268,15 @@ def view_episodes(mocker, view, xbmcgui):
     xbmcgui.ListItem().getProperty.return_value = 0
 
 
-def test_view_episodes(request, main, view_episodes, xbmcgui, xbmcplugin):
+def test_view_season_episodes(request, main, view_season_episodes, xbmcgui, xbmcplugin):
     from resources.lib.addonutils import video_info
     main()
     item = actionView_seasons_response["item"]
-    i = item["id"]
     season = item["seasons"][0]
+    watching_season = watching_info_response_with_seasons["item"]["seasons"][season["number"] - 1]
+    i = item["id"]
     for episode in season["episodes"]:
+        watching_episode = watching_season["episodes"][episode["number"] - 1]
         episode_title = "s{:02d}e{:02d}".format(season["number"], episode["number"])
         if episode["title"]:
             episode_title = "{} | {}".format(
@@ -270,8 +284,9 @@ def test_view_episodes(request, main, view_episodes, xbmcgui, xbmcplugin):
         info = video_info(item, {
             "season": season["number"],
             "episode": episode["number"],
-            "duration": episode["duration"],
-            "playcount": episode["watched"],
+            "time": watching_episode["time"],
+            "duration": watching_episode["duration"],
+            "playcount": watching_episode["status"],
             "mediatype": "episode"
         })
         link = plugin.format("play?{}".format(urlencode({
@@ -292,7 +307,7 @@ def test_view_episodes(request, main, view_episodes, xbmcgui, xbmcplugin):
 
 
 @pytest.fixture
-def view_standalone_episodes(mocker, xbmcgui):
+def view_episodes(mocker, xbmcgui):
     id_ = actionView_without_seasons_response["item"]["id"]
 
     def side_effect(value):
@@ -312,11 +327,13 @@ def view_standalone_episodes(mocker, xbmcgui):
     ])
 
 
-def test_view_standalone_episodes(request, main, view_standalone_episodes, xbmcgui, xbmcplugin):
+def test_view_episodes(request, main, view_episodes, xbmcgui, xbmcplugin):
     from resources.lib.addonutils import video_info
     main()
     item = actionView_without_seasons_response["item"]
+    watching_info = watching_info_response_without_seasons["item"]
     for video in item["videos"]:
+        watching_episode = watching_info["videos"][video["number"] - 1]
         episode_title = "e{:02d}".format(video["number"])
         if video["title"]:
             episode_title = "{} | {}".format(episode_title, video["title"].encode("utf-8"))
@@ -324,6 +341,8 @@ def test_view_standalone_episodes(request, main, view_standalone_episodes, xbmcg
             "season": 1,
             "episode": video["number"],
             "playcount": video["watched"],
+            "time": watching_episode["time"],
+            "duration": watching_episode["duration"],
             "mediatype": "episode"
         })
         link = plugin.format("play?{}".format(urlencode({

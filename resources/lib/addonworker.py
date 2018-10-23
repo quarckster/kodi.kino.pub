@@ -57,9 +57,13 @@ def show_items(items, add_indexes=False):
                 info=video_info(item, extra_info),
                 art=item["posters"]["big"]
             )
-            watched = KinoPubClient("watching").get(data={"id": item["id"]})["item"]
-            extra_info.update({"playcount": watched["status"]})
+            watching_info = KinoPubClient("watching").get(
+                data={"id": item["id"]})["item"]["videos"][0]
+            extra_info.update({"playcount": watching_info["status"]})
             li.setProperty("isPlayable", "true")
+            if watching_info["time"] / float(watching_info["duration"]) <= 0.9:
+                li.setProperty("resumetime", str(watching_info["time"]))
+                li.setProperty("totaltime", str(watching_info["duration"]))
             isdir = False
         elif item["subtype"] == "multi":
             link = get_internal_link("view_episodes", id=item["id"])
@@ -202,26 +206,35 @@ def episodes(id):
     response = KinoPubClient("items/{}".format(id)).get()
     item = response["item"]
     xbmcplugin.setContent(request.handle, "episodes")
-    for video_number, video in enumerate(item["videos"], 1):
-        episode_title = "e{:02d}".format(video_number)
+    watching_info = KinoPubClient("watching").get(data={"id": id})["item"]
+    for video in item["videos"]:
+        watching_episode = watching_info["videos"][video["number"] - 1]
+        episode_title = "e{:02d}".format(video["number"])
         if video["title"]:
             episode_title = "{} | {}".format(episode_title, video["title"].encode("utf-8"))
         li = xbmcgui.ListItem(episode_title, thumbnailImage=video["thumbnail"])
         info = video_info(item, {
             "season": 1,
-            "episode": video_number,
+            "episode": video["number"],
+            "time": watching_episode["time"],
+            "duration": watching_episode["duration"],
             "playcount": video["watched"],
             "mediatype": "episode"
         })
         li.setInfo("Video", info)
         li.setArt({"poster": item["posters"]["big"]})
         li.setProperty("id", str(item["id"]))
+        # According to https://kodi.wiki/view/HOW-TO:Modify_automatic_watch_and_resume_points
+        # playcountminimumpercent is 90
+        if watching_episode["time"] / float(watching_episode["duration"]) <= 0.9:
+            li.setProperty("resumetime", str(watching_episode["time"]))
+            li.setProperty("totaltime", str(watching_episode["duration"]))
         li.setProperty("isPlayable", "true")
         link = get_internal_link(
             "play",
             id=item["id"],
             title=episode_title,
-            episode_number=video_number,
+            episode_number=video["number"],
             video_data=json.dumps(video),
             info=info,
             art=item["posters"]["big"]
@@ -235,13 +248,14 @@ def episodes(id):
 def season_episodes(id, season_number):
     response = KinoPubClient("items/{}".format(id)).get()
     item = response["item"]
-    watching_info = KinoPubClient("watching").get(data={"id": item["id"]})["item"]
+    watching_info = KinoPubClient("watching").get(data={"id": id})["item"]
     season_number = int(season_number)
     season = item["seasons"][season_number - 1]
     watching_season = watching_info["seasons"][season_number - 1]
     selectedEpisode = False
     xbmcplugin.setContent(request.handle, "episodes")
     for episode in season["episodes"]:
+        watching_episode = watching_season["episodes"][episode["number"] - 1]
         episode_title = "s{:02d}e{:02d}".format(season_number, episode["number"])
         if episode["title"]:
             episode_title = "{} | {}".format(episode_title, episode["title"].encode("utf-8"))
@@ -249,16 +263,21 @@ def season_episodes(id, season_number):
         info = video_info(item, {
             "season": season_number,
             "episode": episode["number"],
-            "duration": episode["duration"],
-            "playcount": episode["watched"],
+            "time": watching_episode["time"],
+            "duration": watching_episode["duration"],
+            "playcount": watching_episode["status"],
             "mediatype": "episode"
         })
         li.setInfo("video", info)
         li.setArt({"poster": item["posters"]["big"]})
         li.setProperty("id", str(item["id"]))
+        # According to https://kodi.wiki/view/HOW-TO:Modify_automatic_watch_and_resume_points
+        # playcountminimumpercent is 90
+        if watching_episode["time"] / float(watching_episode["duration"]) <= 0.9:
+            li.setProperty("resumetime", str(watching_episode["time"]))
+            li.setProperty("totaltime", str(watching_episode["duration"]))
         li.setProperty("isPlayable", "true")
-        status = watching_season["episodes"][episode["number"] - 1]["status"]
-        if status < 1 and not selectedEpisode:
+        if watching_episode["status"] < 1 and not selectedEpisode:
             selectedEpisode = True
             li.select(selectedEpisode)
         link = get_internal_link(
