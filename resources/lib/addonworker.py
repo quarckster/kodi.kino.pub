@@ -362,9 +362,10 @@ def bookmarks(folder_id=None, page=None):
                 properties={
                     "folder-id": str(folder["id"]).encode("utf-8"),
                     "views": str(folder["views"]).encode("utf-8")
-                },
-                addContextMenuItems=True
+                }
             )
+            remove_link = get_internal_link("remove_bookmarks_folder", folder_id=folder["id"])
+            li.addContextMenuItems([("Удалить", "Container.Update({})".format(remove_link))])
             link = get_internal_link("bookmarks", folder_id=folder["id"])
             xbmcplugin.addDirectoryItem(request.handle, link, li, True)
         xbmcplugin.endOfDirectory(request.handle)
