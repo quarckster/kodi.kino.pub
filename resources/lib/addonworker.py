@@ -190,7 +190,7 @@ def seasons(id):
         watching_season = watching_info["seasons"][season["number"] - 1]
         li = ExtendedListItem(
             season_title,
-            info={"type": "video", "value": video_info(item, {"season": season["number"]})},
+            info={"video": video_info(item, {"season": season["number"]})},
             art={"poster": item["posters"]["big"]}
         )
         if watching_season["status"] < 1 and not selectedSeason:
@@ -226,7 +226,7 @@ def episodes(id):
         li = ExtendedListItem(
             episode_title,
             thumbnailImage=video["thumbnail"],
-            info={"type": "video", "value": info},
+            info={"video": info},
             art={"poster": item["posters"]["big"]},
             properties={"id": item["id"], "isPlayable": "true"},
             addContextMenuItems=True
@@ -269,7 +269,7 @@ def season_episodes(id, season_number):
             episode_title,
             thumbnailImage=episode["thumbnail"],
             art={"poster": item["posters"]["big"]},
-            info={"type": "video", "value": info},
+            info={"video": info},
             properties={"id": item["id"], "isPlayable": "true"},
             addContextMenuItems=True
         )
@@ -308,11 +308,12 @@ def play(id, title, video_data=None, info=None, art=None):
     li = ExtendedListItem(
         title,
         path=url,
-        info={"type": "video", "value": info},
+        info={"video": info},
+        properties={"id": id},
         art={"poster": art},
         subtitles=[subtitle["url"] for subtitle in video_data["subtitles"]]
     )
-    player = Player(id=id, video_number=video_data["number"], season_number=info.get("season"))
+    player = Player(li)
     xbmcplugin.setResolvedUrl(request.handle, True, li)
     while player.is_playing:
         player.set_marktime()
@@ -389,7 +390,7 @@ def watching():
             str(item["new"]),
             art={"poster": item["posters"]["big"]},
             properties={"id": str(item["id"]), "in_watchlist": "1"},
-            info={"type": "video", "value": {"mediatype": mediatype_map[item["type"]]}},
+            info={"video": {"mediatype": mediatype_map[item["type"]]}},
             addContextMenuItems=True
         )
         link = get_internal_link("view_seasons", id=item["id"])

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-from addonutils import get_internal_link
 from xbmcgui import ListItem
+
+from addonutils import get_internal_link
+from data import get_adv_setting
 
 
 class ExtendedListItem(ListItem):
@@ -12,11 +14,12 @@ class ExtendedListItem(ListItem):
     def __init__(self, name, label2="", iconImage="", thumbnailImage="", path="", art=None,
                  info=None, properties=None, addContextMenuItems=False, subtitles=None):
         super(ExtendedListItem, self).__init__(name, label2, iconImage, thumbnailImage, path)
-        info = info or {}
         if info:
-            self.setInfo(info["type"], info["value"])
-        if info.get("value", {}).get("duration") and info.get("value", {}).get("time"):
-            self.setResumeTime(info["time"], info["duration"])
+            self.setInfos(**info)
+            self.setResumeTime(
+                info["video"].get("time", 0),
+                info["video"].get("duration", 0)
+            )
         if art:
             self.setArt(art)
         if properties:
@@ -72,6 +75,13 @@ class ExtendedListItem(ListItem):
         for prop, value in properties.items():
             self.setProperty(prop, str(value))
 
+    def setInfos(self, **info):
+        for info_type, info_value in info.items():
+            self.setInfo(info_type, info_value)
+
     def setResumeTime(self, resumetime, totaltime):
-        if resumetime / float(totaltime) <= 0.9:
+        if not totaltime:
+            return
+        if (100 * resumetime / float(totaltime) <=
+                get_adv_setting("video", "playcountminimumpercent")):
             self.setProperties(resumetime=resumetime, totaltime=totaltime)
