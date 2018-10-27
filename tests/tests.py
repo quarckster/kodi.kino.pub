@@ -73,6 +73,12 @@ def xbmcplugin():
 
 
 @pytest.fixture
+def ExtendedListItem():
+    from resources.lib.addonworker import ExtendedListItem
+    return ExtendedListItem
+
+
+@pytest.fixture
 def settings():
     from resources.lib.data import __settings__
     return __settings__
@@ -84,7 +90,7 @@ def fake_kodi_api(mocker):
     mock_xbmcaddon = mocker.Mock()
     mock_xbmcaddon.Addon.side_effect = FakeAddon
     mocker.patch.dict("sys.modules", xbmcaddon=mock_xbmcaddon, xbmc=mocker.Mock(),
-                      xbmcplugin=mocker.Mock(), xbmcgui=mocker.Mock())
+                      xbmcplugin=mocker.Mock(), xbmcgui=mocker.Mock(), xbmcvfs=mocker.Mock())
     mocker.patch("resources.lib.addonworker.auth")
 
 
@@ -97,10 +103,11 @@ def index(mocker):
 
     mock_KinoPubClient = mocker.Mock(side_effect=side_effect)
     mocker.patch("resources.lib.addonworker.KinoPubClient", mock_KinoPubClient)
+    mocker.patch("resources.lib.addonworker.ExtendedListItem", mocker.Mock())
     mocker.patch.object(sys, "argv", [plugin.format(""), handle, ""])
 
 
-def test_index(mocker, index, main, xbmcplugin, xbmcgui):
+def test_index(mocker, index, main, xbmcplugin, ExtendedListItem):
     main()
     c = u"[COLOR FFFFF000]{}[/COLOR]"
     expected_results = [
@@ -124,8 +131,8 @@ def test_index(mocker, index, main, xbmcplugin, xbmcgui):
     ]
     for result in expected_results:
         handle_, link, title, is_directory = result
-        xbmcgui.ListItem.assert_any_call(title.encode("utf-8"))
-        li = xbmcgui.ListItem()
+        ExtendedListItem.assert_any_call(title.encode("utf-8"))
+        li = ExtendedListItem()
         xbmcplugin.addDirectoryItem.assert_any_call(handle_, link, li, is_directory)
     xbmcplugin.endOfDirectory.assert_called_once_with(handle)
 
@@ -148,25 +155,33 @@ def play(request, mocker, settings):
     mocker.patch.object(sys, "argv", [
         plugin.format("play"),
         handle,
-        "?{}".format(urlencode({"title": title, "id": id_}))
+        "?{}".format(urlencode({"title": title, "id": id_, "info": {}}))
     ])
     mocker.patch("resources.lib.addonworker.KinoPubClient", mock_KinoPubClient)
     mocker.patch("resources.lib.addonworker.Player", mock_Player)
+    mocker.patch("resources.lib.addonworker.ExtendedListItem", mocker.Mock())
     return request.param
 
 
-def test_play(play, main, xbmcgui, xbmcplugin):
+def test_play(play, main, ExtendedListItem, xbmcplugin):
     stream, video_quality = play
     main()
     title = actionPlay_response["item"]["title"].encode("utf-8")
     link = "https://example.com/{}/{}".format(stream, video_quality.rstrip("p"))
-    xbmcgui.ListItem.assert_called_with(title, path=link)
-    li = xbmcgui.ListItem(title, path=link)
+    ExtendedListItem.assert_called_with(
+        title,
+        path=link,
+        info={"video": {}},
+        properties={"id": str(actionPlay_response["item"]["id"])},
+        art={"poster": None},
+        subtitles=[]
+    )
+    li = ExtendedListItem(title, path=link)
     xbmcplugin.setResolvedUrl.assert_called_once_with(handle, True, li)
 
 
 @pytest.fixture
-def items(mocker, xbmcgui):
+def items(mocker):
 
     def side_effect(value):
         if value == "items":
@@ -177,41 +192,48 @@ def items(mocker, xbmcgui):
             })
 
     mock_KinoPubClient = mocker.Mock(side_effect=side_effect)
-    xbmcgui.ListItem().getVideoInfoTag().getPlayCount.return_value = 0
-    xbmcgui.ListItem().getProperty.return_value = 0
+    mock_ExtendedListItem = mocker.Mock()
+    mock_ExtendedListItem().getVideoInfoTag().getPlayCount.return_value = 0
+    mock_ExtendedListItem().getProperty.return_value = 0
     mocker.patch("resources.lib.addonworker.KinoPubClient", mock_KinoPubClient)
+    mocker.patch("resources.lib.addonworker.ExtendedListItem", mock_ExtendedListItem)
     mocker.patch.object(sys, "argv", [plugin.format("items"), handle, "?type=None"])
 
 
-def test_items(main, items, xbmcgui, xbmcplugin, mocker):
+def test_items(main, items, ExtendedListItem, xbmcplugin, mocker):
     from resources.lib.addonutils import video_info, trailer_link
     from resources.lib.addonworker import mediatype_map
     main()
-    s = plugin
-    i = [item["id"] for item in actionItems_response["items"]]
-    t = [item["title"].encode("utf-8") for item in actionItems_response["items"]]
-    arts = [item["posters"]["big"] for item in actionItems_response["items"]]
 
     def make_info(item):
         extra_info = {"trailer": trailer_link(item), "mediatype": mediatype_map[item["type"]]}
-        return video_info(item, extra_info)
+        return json.dumps(video_info(item, extra_info))
 
-    info = [make_info(item) for item in actionItems_response["items"]]
-
-    expected_results = [
-        (handle, s.format("play?{}".format(
-            urlencode({"id": i[0], "title": t[0], "info": info[0], "art": arts[0]}))), t[0], False),
-        (handle, s.format("play?{}".format(
-            urlencode({"id": i[1], "title": t[1], "info": info[1], "art": arts[1]}))), t[1], False),
-        (handle, s.format("view_seasons?id={}".format(i[2])), t[2], True),
-        (handle, s.format("view_seasons?id={}".format(i[3])), t[3], True),
-        (handle, s.format("view_seasons?id={}".format(i[4])), t[4], True)
+    expected_results = []
+    for item in actionItems_response["items"]:
+        expected_results.append({
+            "title": item["title"].encode("utf-8"),
+            "id": item["id"],
+            "art": item["posters"]["big"],
+            "info": make_info(item)
+        })
+    links = [
+        plugin.format("play?{}".format(urlencode(expected_results[0]))),
+        plugin.format("play?{}".format(urlencode(expected_results[1]))),
+        plugin.format("view_seasons?id={}".format(expected_results[2]["id"])),
+        plugin.format("view_seasons?id={}".format(expected_results[3]["id"])),
+        plugin.format("view_seasons?id={}".format(expected_results[4]["id"])),
     ]
-    for result in expected_results:
-        handle_, link, title, is_directory = result
-        xbmcgui.ListItem.assert_any_call(title)
-        li = xbmcgui.ListItem()
-        xbmcplugin.addDirectoryItem.assert_any_call(handle_, link, li, is_directory)
+    is_dirs = [False, False, True, True, True]
+    for result, link, is_dir in zip(expected_results, links, is_dirs):
+        ExtendedListItem.assert_any_call(
+            result["title"],
+            art={"poster": result["art"]},
+            properties={"id": result["id"]},
+            addContextMenuItems=True
+        )
+        li = ExtendedListItem()
+        xbmcplugin.addDirectoryItem.assert_any_call(handle, link, li, is_dir)
     xbmcplugin.endOfDirectory.assert_called_once_with(handle)
 
 
@@ -227,6 +249,7 @@ def view(mocker):
 
     mock_KinoPubClient = mocker.Mock(side_effect=side_effect)
     mocker.patch("resources.lib.addonworker.KinoPubClient", mock_KinoPubClient)
+    mocker.patch("resources.lib.addonworker.ExtendedListItem", mocker.Mock())
     return id_
 
 
@@ -235,20 +258,26 @@ def view_seasons(mocker, view):
     mocker.patch.object(sys, "argv", [plugin.format("view_seasons"), handle, "?id={}".format(view)])
 
 
-def test_view_seasons(main, view_seasons, xbmcgui, xbmcplugin):
+def test_view_seasons(main, view_seasons, ExtendedListItem, xbmcplugin):
+    from resources.lib.addonutils import video_info
     main()
+    item = actionView_seasons_response["item"]
     i = actionView_seasons_response["item"]["id"]
     seasons = actionView_seasons_response["item"]["seasons"]
     for season in seasons:
-        xbmcgui.ListItem.assert_any_call("Сезон {}".format(season["number"]))
+        ExtendedListItem.assert_any_call(
+            "Сезон {}".format(season["number"]),
+            info={"video": video_info(item, {"season": season["number"]})},
+            art={"poster": item["posters"]["big"]}
+        )
         link = plugin.format("view_season_episodes?season_number={}&id={}".format(
                              season["number"], i))
-        xbmcplugin.addDirectoryItem.assert_any_call(handle, link, xbmcgui.ListItem(), True)
+        xbmcplugin.addDirectoryItem.assert_any_call(handle, link, ExtendedListItem(), True)
     xbmcplugin.endOfDirectory.assert_called_once_with(handle)
 
 
 @pytest.fixture
-def view_season_episodes(mocker, view, xbmcgui):
+def view_season_episodes(mocker, view, ExtendedListItem):
     id_ = actionView_seasons_response["item"]["id"]
 
     def side_effect(value):
@@ -264,11 +293,11 @@ def view_season_episodes(mocker, view, xbmcgui):
         handle,
         "?id={}&season_number={}".format(view, 1)
     ])
-    xbmcgui.ListItem().getVideoInfoTag().getPlayCount.return_value = 0
-    xbmcgui.ListItem().getProperty.return_value = 0
+    ExtendedListItem().getVideoInfoTag().getPlayCount.return_value = 0
+    ExtendedListItem().getProperty.return_value = 0
 
 
-def test_view_season_episodes(request, main, view_season_episodes, xbmcgui, xbmcplugin):
+def test_view_season_episodes(request, main, view_season_episodes, ExtendedListItem, xbmcplugin):
     from resources.lib.addonutils import video_info
     main()
     item = actionView_seasons_response["item"]
@@ -292,16 +321,19 @@ def test_view_season_episodes(request, main, view_season_episodes, xbmcgui, xbmc
         link = plugin.format("play?{}".format(urlencode({
             "id": i,
             "title": episode_title,
-            "season_number": season["number"],
-            "episode_number": episode["number"],
             "video_data": json.dumps(episode),
-            "info": info,
+            "info": json.dumps(info),
             "art": item["posters"]["big"]
         })))
-        xbmcgui.ListItem.assert_any_call(episode_title, thumbnailImage=episode["thumbnail"])
-        li = xbmcgui.ListItem()
-        li.setArt.assert_called_once_with({"poster": item["posters"]["big"]})
-        xbmcplugin.addDirectoryItem.assert_any_call(handle, link, xbmcgui.ListItem(), False)
+        ExtendedListItem.assert_any_call(
+            episode_title,
+            thumbnailImage=episode["thumbnail"],
+            art={"poster": item["posters"]["big"]},
+            info={"video": info},
+            properties={"id": item["id"], "isPlayable": "true"},
+            addContextMenuItems=True
+        )
+        xbmcplugin.addDirectoryItem.assert_any_call(handle, link, ExtendedListItem(), False)
     xbmcplugin.setContent.assert_called_once_with(handle, "episodes")
     xbmcplugin.endOfDirectory.assert_called_once_with(handle)
 
@@ -317,9 +349,11 @@ def view_episodes(mocker, xbmcgui):
             return mocker.Mock(**{"get.return_value": watching_info_response_without_seasons})
 
     mock_KinoPubClient = mocker.Mock(side_effect=side_effect)
+    mock_ExtendedListItem = mocker.Mock()
     mocker.patch("resources.lib.addonworker.KinoPubClient", mock_KinoPubClient)
-    xbmcgui.ListItem().getVideoInfoTag().getPlayCount.return_value = 0
-    xbmcgui.ListItem().getProperty.return_value = 0
+    mocker.patch("resources.lib.addonworker.ExtendedListItem", mock_ExtendedListItem)
+    mock_ExtendedListItem().getVideoInfoTag().getPlayCount.return_value = 0
+    mock_ExtendedListItem().getProperty.return_value = 0
     mocker.patch.object(sys, "argv", [
         plugin.format("view_episodes"),
         handle,
@@ -327,7 +361,7 @@ def view_episodes(mocker, xbmcgui):
     ])
 
 
-def test_view_episodes(request, main, view_episodes, xbmcgui, xbmcplugin):
+def test_view_episodes(request, main, view_episodes, ExtendedListItem, xbmcplugin):
     from resources.lib.addonutils import video_info
     main()
     item = actionView_without_seasons_response["item"]
@@ -348,14 +382,18 @@ def test_view_episodes(request, main, view_episodes, xbmcgui, xbmcplugin):
         link = plugin.format("play?{}".format(urlencode({
             "id": item["id"],
             "title": episode_title,
-            "episode_number": video["number"],
             "video_data": json.dumps(video),
-            "info": info,
+            "info": json.dumps(info),
             "art": item["posters"]["big"]
         })))
-        xbmcgui.ListItem.assert_any_call(episode_title, thumbnailImage=video["thumbnail"])
-        li = xbmcgui.ListItem()
-        li.setArt.assert_any_call({"poster": item["posters"]["big"]})
-        xbmcplugin.addDirectoryItem.assert_any_call(handle, link, xbmcgui.ListItem(), False)
+        ExtendedListItem.assert_any_call(
+            episode_title,
+            thumbnailImage=video["thumbnail"],
+            info={"video": info},
+            art={"poster": item["posters"]["big"]},
+            properties={"id": item["id"], "isPlayable": "true"},
+            addContextMenuItems=True
+        )
+        xbmcplugin.addDirectoryItem.assert_any_call(handle, link, ExtendedListItem(), False)
     xbmcplugin.setContent.assert_called_once_with(handle, "episodes")
     xbmcplugin.endOfDirectory.assert_called_once_with(handle)
