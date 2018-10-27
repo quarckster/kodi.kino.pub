@@ -11,8 +11,10 @@ The most notable changes:
 
 * added feature to choose video quality before playing
 * new login dialog
-* added two new context menu items: "Буду смотреть" and "Отметить как просмотренное"
+* added custom context menu items: "Буду смотреть", "Отметить как просмотренное", "Изменить закладки"
 * big refactoring of the code has been made
+* watch and resume points are synced across multiple devices
+* new folders "Горячее" and "Недосмотренные"
 * added some tests
 
 
