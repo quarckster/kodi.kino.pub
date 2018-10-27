@@ -119,6 +119,7 @@ def test_index(mocker, index, main, xbmcplugin, ExtendedListItem):
         (handle, plugin.format("tv"), c.format(u"ТВ"), True),
         (handle, plugin.format("bookmarks"), c.format(u"Закладки"), True),
         (handle, plugin.format("watching"), c.format(u"Я смотрю"), True),
+        (handle, plugin.format("watching_movies"), c.format(u"Недосмотренные"), True),
         (handle, plugin.format("collections"), c.format(u"Подборки"), True),
         (handle, plugin.format("item_index?type=movie"), u"Фильмы", True),
         (handle, plugin.format("item_index?type=serial"), u"Сериалы", True),
