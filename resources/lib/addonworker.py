@@ -72,7 +72,6 @@ def show_items(items, add_indexes=False):
             link = get_internal_link("view_seasons", id=item["id"])
             isdir = True
         li.setInfo("video", video_info(item, extra_info))
-        li.addPredefinedContextMenuItems()
         xbmcplugin.addDirectoryItem(request.handle, link, li, isdir)
 
 
@@ -131,6 +130,8 @@ def index():
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("bookmarks"), li, True)
         li = ExtendedListItem("[COLOR FFFFF000]Я смотрю[/COLOR]")
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("watching"), li, True)
+        li = ExtendedListItem("[COLOR FFFFF000]Недосмотренные[/COLOR]")
+        xbmcplugin.addDirectoryItem(request.handle, get_internal_link("watching_movies"), li, True)
         li = ExtendedListItem("[COLOR FFFFF000]Подборки[/COLOR]")
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("collections"), li, True)
         for i in response["items"]:
@@ -290,12 +291,12 @@ def season_episodes(id, season_number):
 
 @route("/play")
 def play(id, title, video_data=None, info=None, art=None):
-    info = json.loads(info)
-    if not video_data:
+    if not video_data or not info:
         response = KinoPubClient("items/{}".format(id)).get()
-        video_data = response["item"]["videos"][0]
-    else:
-        video_data = json.loads(video_data)
+        video_data = video_data or response["item"]["videos"][0]
+        info = info or video_info(response["item"])
+    video_data = json.loads(video_data) if isinstance(video_data, str) else video_data
+    info = json.loads(info) if isinstance(info, str) else info
     if "files" not in video_data:
         notice("Видео обновляется и временно не доступно!", "Видео в обработке", time=8000)
         return
@@ -395,6 +396,34 @@ def watching():
         )
         link = get_internal_link("view_seasons", id=item["id"])
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
+    xbmcplugin.endOfDirectory(request.handle)
+
+
+@route("/watching_movies")
+def watching_movies():
+    response = KinoPubClient("watching/movies").get()
+    xbmcplugin.setContent(request.handle, "movies")
+    for item in response["items"]:
+        li = ExtendedListItem(
+            item["title"].encode("utf-8"),
+            art={"poster": item["posters"]["big"]},
+            properties={"id": str(item["id"])},
+            info={"video": {"mediatype": mediatype_map[item["type"]]}},
+            addContextMenuItems=True
+        )
+        if item["subtype"] == "multi":
+            link = get_internal_link("view_episodes", id=item["id"])
+            isdir = True
+        else:
+            li.setProperty("isPlayable", "true")
+            link = get_internal_link(
+                "play",
+                id=item["id"],
+                title=item["title"].encode("utf-8"),
+                art=item["posters"]["big"]
+            )
+            isdir = False
+        xbmcplugin.addDirectoryItem(request.handle, link, li, isdir)
     xbmcplugin.endOfDirectory(request.handle)
 
 
