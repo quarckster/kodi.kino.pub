@@ -7,57 +7,69 @@ from data import get_adv_setting
 
 class Player(xbmc.Player):
 
-    def __new__(cls, *args, **kwargs):
-        return super(Player, cls).__new__(cls)
-
-    def __init__(self, list_item):
+    def __init__(self, list_item=None):
+        super(Player, self).__init__()
         self.list_item = list_item
         self.is_playing = True
         self.marktime = 0
-        super(Player, self).__init__()
 
     def set_marktime(self):
         if self.isPlaying():
             self.marktime = int(self.getTime())
 
     @property
-    def ignore_marktime(self):
+    def should_make_resume_point(self):
         # https://kodi.wiki/view/HOW-TO:Modify_automatic_watch_and_resume_points#Settings_explained
+        return (self.marktime > get_adv_setting("video", "ignoresecondsatstart") and
+                not self.should_mark_as_watched)
+
+    @property
+    def should_mark_as_watched(self):
+        return (100 * self.marktime / float(self.list_item.getduration()) >
+                get_adv_setting("video", "playcountminimumpercent"))
+
+    @property
+    def should_reset_resume_point(self):
         return (
-            self.marktime <= get_adv_setting("video", "ignoresecondsatstart") or
-            (100 * self.marktime / float(self.list_item.getduration()) >=
-                100 - get_adv_setting("video", "ignorepercentatend"))
+            self.marktime < get_adv_setting("video", "ignoresecondsatstart") and
+            (float(self.list_item.getProperty("resumetime")) >
+                get_adv_setting("video", "ignoresecondsatstart"))
         )
 
+    @property
+    def _base_data(self):
+        id = self.list_item.getProperty("id")
+        video_number = self.list_item.getVideoInfoTag().getEpisode()
+        season_number = self.list_item.getVideoInfoTag().getSeason()
+        if season_number != -1:
+            data = {"id": id, "season": season_number, "video": video_number}
+        else:
+            data = {"id": id, "video": 1 if video_number == -1 else video_number}
+        return data
+
     def onPlayBackStopped(self):
-        if not self.ignore_marktime:
-            video_number = self.list_item.getVideoInfoTag().getEpisode()
-            video_number = 1 if video_number == -1 else video_number
-            season_number = self.list_item.getVideoInfoTag().getSeason()
-            season_number = None if season_number == -1 else season_number
-            KinoPubClient("watching/marktime").get(data={
-                "id": self.list_item.getProperty("id"),
-                "video": video_number,
-                "time": self.marktime,
-                "season": season_number
-            })
-            xbmc.executebuiltin("Container.Refresh")
         self.is_playing = False
+        data = self._base_data
+        if self.should_make_resume_point:
+            data["time"] = self.marktime
+            KinoPubClient("watching/marktime").get(data=data)
+        elif self.should_mark_as_watched and self.list_item.getVideoInfoTag().getPlayCount() < 1:
+            data["status"] = 1
+            KinoPubClient("watching/toggle").get(data=data)
+        elif self.should_reset_resume_point:
+            data["time"] = 0
+            KinoPubClient("watching/marktime").get(data=data)
+        else:
+            return
+        xbmc.executebuiltin("Container.Refresh")
 
     def onPlayBackEnded(self):
-        if self.list_item.getVideoInfoTag().getPlayCount() < 1:
-            video_number = self.list_item.getVideoInfoTag().getEpisode()
-            video_number = 1 if video_number == -1 else video_number
-            season_number = self.list_item.getVideoInfoTag().getSeason()
-            season_number = None if season_number == -1 else season_number
-            KinoPubClient("watching/toggle").get(data={
-                "id": self.list_item.getProperty("id"),
-                "video": video_number,
-                "season": season_number,
-                "status": 1
-            })
-            xbmc.executebuiltin("Container.Refresh")
         self.is_playing = False
+        if self.list_item.getVideoInfoTag().getPlayCount() < 1:
+            data = self._base_data
+            data["status"] = 1
+            KinoPubClient("watching/toggle").get(data=data)
+            xbmc.executebuiltin("Container.Refresh")
 
     def onPlaybackError(self):
         self.is_playing = False

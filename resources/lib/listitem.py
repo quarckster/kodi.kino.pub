@@ -16,10 +16,7 @@ class ExtendedListItem(ListItem):
         super(ExtendedListItem, self).__init__(name, label2, iconImage, thumbnailImage, path)
         if info:
             self.setInfos(**info)
-            self.setResumeTime(
-                info["video"].get("time", 0),
-                info["video"].get("duration", 0)
-            )
+            self.setResumeTime(info.get("video", {}).get("time"))
         if art:
             self.setArt(art)
         if properties:
@@ -79,9 +76,9 @@ class ExtendedListItem(ListItem):
         for info_type, info_value in info.items():
             self.setInfo(info_type, info_value)
 
-    def setResumeTime(self, resumetime, totaltime):
-        if not totaltime:
-            return
-        if (100 * resumetime / float(totaltime) <=
-                get_adv_setting("video", "playcountminimumpercent")):
+    def setResumeTime(self, resumetime, totaltime=None):
+        totaltime = float(totaltime or self.getduration())
+        if (resumetime is not None and 100 * resumetime / totaltime <=
+                get_adv_setting("video", "playcountminimumpercent") and
+                resumetime > get_adv_setting("video", "ignoresecondsatstart")):
             self.setProperties(resumetime=resumetime, totaltime=totaltime)

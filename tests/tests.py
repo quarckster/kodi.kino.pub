@@ -165,6 +165,7 @@ def play(request, mocker, settings):
 
 
 def test_play(play, main, ExtendedListItem, xbmcplugin):
+    from resources.lib.addonutils import video_info
     stream, video_quality = play
     main()
     title = actionPlay_response["item"]["title"].encode("utf-8")
@@ -172,7 +173,7 @@ def test_play(play, main, ExtendedListItem, xbmcplugin):
     ExtendedListItem.assert_called_with(
         title,
         path=link,
-        info={"video": {}},
+        info={"video": video_info(actionPlay_response["item"])},
         properties={"id": str(actionPlay_response["item"]["id"])},
         art={"poster": None},
         subtitles=[]
@@ -208,6 +209,8 @@ def test_items(main, items, ExtendedListItem, xbmcplugin, mocker):
 
     def make_info(item):
         extra_info = {"trailer": trailer_link(item), "mediatype": mediatype_map[item["type"]]}
+        if item["type"] not in ["serial", "docuserial", "tvshow"]:
+            extra_info.update({"time": 0, "duration": 1, "status": 0})
         return json.dumps(video_info(item, extra_info))
 
     expected_results = []
@@ -373,7 +376,6 @@ def test_view_episodes(request, main, view_episodes, ExtendedListItem, xbmcplugi
         if video["title"]:
             episode_title = "{} | {}".format(episode_title, video["title"].encode("utf-8"))
         info = video_info(item, {
-            "season": 1,
             "episode": video["number"],
             "playcount": video["watched"],
             "time": watching_episode["time"],

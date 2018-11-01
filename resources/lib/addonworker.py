@@ -52,6 +52,9 @@ def show_items(items, add_indexes=False):
         extra_info = {"trailer": trailer_link(item), "mediatype": mediatype_map[item["type"]]}
         # If not serials or multiseries movie, create playable item
         if item["type"] not in ["serial", "docuserial", "tvshow"] and not item["subtype"]:
+            watching_info = KinoPubClient("watching").get(
+                data={"id": item["id"]})["item"]["videos"][0]
+            extra_info.update(watching_info)
             link = get_internal_link(
                 "play",
                 id=item["id"],
@@ -59,9 +62,6 @@ def show_items(items, add_indexes=False):
                 info=json.dumps(video_info(item, extra_info)),
                 art=item["posters"]["big"]
             )
-            watching_info = KinoPubClient("watching").get(
-                data={"id": item["id"]})["item"]["videos"][0]
-            extra_info.update({"playcount": watching_info["status"]})
             li.setProperty("isPlayable", "true")
             li.setResumeTime(watching_info["time"], watching_info["duration"])
             isdir = False
@@ -217,7 +217,6 @@ def episodes(id):
         if video["title"]:
             episode_title = "{} | {}".format(episode_title, video["title"].encode("utf-8"))
         info = video_info(item, {
-            "season": 1,
             "episode": video["number"],
             "time": watching_episode["time"],
             "duration": watching_episode["duration"],
@@ -290,11 +289,11 @@ def season_episodes(id, season_number):
 
 
 @route("/play")
-def play(id, title, video_data=None, info=None, art=None):
-    if not video_data or not info:
+def play(id, title, info, video_data=None, art=None):
+    if not video_data:
         response = KinoPubClient("items/{}".format(id)).get()
-        video_data = video_data or response["item"]["videos"][0]
-        info = info or video_info(response["item"])
+        video_data = response["item"]["videos"][0]
+        info = video_info(response["item"], json.loads(info))
     video_data = json.loads(video_data) if isinstance(video_data, str) else video_data
     info = json.loads(info) if isinstance(info, str) else info
     if "files" not in video_data:
@@ -314,7 +313,7 @@ def play(id, title, video_data=None, info=None, art=None):
         art={"poster": art},
         subtitles=[subtitle["url"] for subtitle in video_data["subtitles"]]
     )
-    player = Player(li)
+    player = Player(list_item=li)
     xbmcplugin.setResolvedUrl(request.handle, True, li)
     while player.is_playing:
         player.set_marktime()
@@ -401,13 +400,12 @@ def watching():
 
 @route("/watching_movies")
 def watching_movies():
-    response = KinoPubClient("watching/movies").get()
     xbmcplugin.setContent(request.handle, "movies")
-    for item in response["items"]:
+    for item in KinoPubClient("watching/movies").get()["items"]:
         li = ExtendedListItem(
             item["title"].encode("utf-8"),
             art={"poster": item["posters"]["big"]},
-            properties={"id": str(item["id"])},
+            properties={"id": item["id"]},
             info={"video": {"mediatype": mediatype_map[item["type"]]}},
             addContextMenuItems=True
         )
@@ -415,12 +413,17 @@ def watching_movies():
             link = get_internal_link("view_episodes", id=item["id"])
             isdir = True
         else:
+            response = KinoPubClient("watching").get(data={"id": item["id"]})
+            watching_info = response["item"]["videos"][0]
             li.setProperty("isPlayable", "true")
+            li.setInfo("video", {"duration": watching_info["duration"]})
+            li.setResumeTime(watching_info["time"])
             link = get_internal_link(
                 "play",
                 id=item["id"],
                 title=item["title"].encode("utf-8"),
-                art=item["posters"]["big"]
+                art=item["posters"]["big"],
+                info=json.dumps(watching_info)
             )
             isdir = False
         xbmcplugin.addDirectoryItem(request.handle, link, li, isdir)
