@@ -156,7 +156,11 @@ def play(request, mocker, settings):
     mocker.patch.object(sys, "argv", [
         plugin.format("play"),
         handle,
-        "?{}".format(urlencode({"title": title, "id": id_, "info": {}}))
+        "?{}".format(urlencode({"title": title, "id": id_, "video_info": json.dumps({
+            "playcount": 0,
+            "time": 0,
+            "duration": 0
+        })}))
     ])
     mocker.patch("resources.lib.addonworker.KinoPubClient", mock_KinoPubClient)
     mocker.patch("resources.lib.addonworker.Player", mock_Player)
@@ -165,7 +169,6 @@ def play(request, mocker, settings):
 
 
 def test_play(play, main, ExtendedListItem, xbmcplugin):
-    from resources.lib.addonutils import video_info
     stream, video_quality = play
     main()
     title = actionPlay_response["item"]["title"].encode("utf-8")
@@ -173,9 +176,15 @@ def test_play(play, main, ExtendedListItem, xbmcplugin):
     ExtendedListItem.assert_called_with(
         title,
         path=link,
-        info={"video": video_info(actionPlay_response["item"])},
-        properties={"id": str(actionPlay_response["item"]["id"])},
-        art={"poster": None},
+        properties={
+            "id": str(actionPlay_response["item"]["id"]),
+            "play_duration": 0,
+            "play_resumetime": 0,
+            "video_number": 1,
+            "season_number": "",
+            "playcount": 0
+        },
+        poster=None,
         subtitles=[]
     )
     li = ExtendedListItem(title, path=link)
@@ -210,7 +219,7 @@ def test_items(main, items, ExtendedListItem, xbmcplugin, mocker):
     def make_info(item):
         extra_info = {"trailer": trailer_link(item), "mediatype": mediatype_map[item["type"]]}
         if item["type"] not in ["serial", "docuserial", "tvshow"]:
-            extra_info.update({"time": 0, "duration": 1, "status": 0})
+            extra_info.update({"time": 0, "duration": 1, "playcount": 0})
         return json.dumps(video_info(item, extra_info))
 
     expected_results = []
@@ -218,8 +227,8 @@ def test_items(main, items, ExtendedListItem, xbmcplugin, mocker):
         expected_results.append({
             "title": item["title"].encode("utf-8"),
             "id": item["id"],
-            "art": item["posters"]["big"],
-            "info": make_info(item)
+            "poster": item["posters"]["big"],
+            "video_info": make_info(item)
         })
     links = [
         plugin.format("play?{}".format(urlencode(expected_results[0]))),
@@ -232,7 +241,7 @@ def test_items(main, items, ExtendedListItem, xbmcplugin, mocker):
     for result, link, is_dir in zip(expected_results, links, is_dirs):
         ExtendedListItem.assert_any_call(
             result["title"],
-            art={"poster": result["art"]},
+            poster=result["poster"],
             properties={"id": result["id"]},
             addContextMenuItems=True
         )
@@ -271,8 +280,8 @@ def test_view_seasons(main, view_seasons, ExtendedListItem, xbmcplugin):
     for season in seasons:
         ExtendedListItem.assert_any_call(
             "Сезон {}".format(season["number"]),
-            info={"video": video_info(item, {"season": season["number"]})},
-            art={"poster": item["posters"]["big"]}
+            video_info=video_info(item, {"season": season["number"]}),
+            poster=item["posters"]["big"]
         )
         link = plugin.format("view_season_episodes?season_number={}&id={}".format(
                              season["number"], i))
@@ -326,14 +335,14 @@ def test_view_season_episodes(request, main, view_season_episodes, ExtendedListI
             "id": i,
             "title": episode_title,
             "video_data": json.dumps(episode),
-            "info": json.dumps(info),
-            "art": item["posters"]["big"]
+            "video_info": json.dumps(info),
+            "poster": item["posters"]["big"]
         })))
         ExtendedListItem.assert_any_call(
             episode_title,
             thumbnailImage=episode["thumbnail"],
-            art={"poster": item["posters"]["big"]},
-            info={"video": info},
+            poster=item["posters"]["big"],
+            video_info=info,
             properties={"id": item["id"], "isPlayable": "true"},
             addContextMenuItems=True
         )
@@ -386,14 +395,14 @@ def test_view_episodes(request, main, view_episodes, ExtendedListItem, xbmcplugi
             "id": item["id"],
             "title": episode_title,
             "video_data": json.dumps(video),
-            "info": json.dumps(info),
-            "art": item["posters"]["big"]
+            "video_info": json.dumps(info),
+            "poster": item["posters"]["big"]
         })))
         ExtendedListItem.assert_any_call(
             episode_title,
             thumbnailImage=video["thumbnail"],
-            info={"video": info},
-            art={"poster": item["posters"]["big"]},
+            video_info=info,
+            poster=item["posters"]["big"],
             properties={"id": item["id"], "isPlayable": "true"},
             addContextMenuItems=True
         )

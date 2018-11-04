@@ -11,16 +11,16 @@ class ExtendedListItem(ListItem):
         return super(ExtendedListItem, cls).__new__(cls, name, label2, iconImage, thumbnailImage,
                                                     path)
 
-    def __init__(self, name, label2="", iconImage="", thumbnailImage="", path="", art=None,
-                 info=None, properties=None, addContextMenuItems=False, subtitles=None):
+    def __init__(self, name, label2="", iconImage="", thumbnailImage="", path="", poster=None,
+                 video_info=None, properties=None, addContextMenuItems=False, subtitles=None):
         super(ExtendedListItem, self).__init__(name, label2, iconImage, thumbnailImage, path)
-        if info:
-            self.setInfos(**info)
-            self.setResumeTime(info.get("video", {}).get("time"))
-        if art:
-            self.setArt(art)
         if properties:
             self.setProperties(**properties)
+        if video_info:
+            self.setInfo("video", video_info)
+            self.setResumeTime(video_info.get("time"))
+        if poster:
+            self.setArt({"poster": poster})
         if subtitles:
             self.setSubtitles(subtitles)
         if addContextMenuItems:
@@ -61,8 +61,12 @@ class ExtendedListItem(ListItem):
         link = get_internal_link("edit_bookmarks", item_id=item_id)
         menu_items.append((label, "Container.Update({})".format(link)))
 
+    def _addSeparatorContextMenuItem(self, menu_items):
+        length = min([len(item[0]) for item in menu_items])
+        menu_items.append(("─" * length, ""))
+
     def addPredefinedContextMenuItems(self, items=None):
-        items = items or ["watched", "watchlist", "bookmarks"]
+        items = items or ["watched", "watchlist", "bookmarks", "separator"]
         menu_items = []
         for item in items:
             getattr(self, "_add{}ContextMenuItem".format(item.capitalize()))(menu_items)
@@ -71,10 +75,6 @@ class ExtendedListItem(ListItem):
     def setProperties(self, **properties):
         for prop, value in properties.items():
             self.setProperty(prop, str(value))
-
-    def setInfos(self, **info):
-        for info_type, info_value in info.items():
-            self.setInfo(info_type, info_value)
 
     def setResumeTime(self, resumetime, totaltime=None):
         totaltime = float(totaltime or self.getduration())
