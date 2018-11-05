@@ -78,7 +78,7 @@ class ExtendedListItem(ListItem):
 
     def setResumeTime(self, resumetime, totaltime=None):
         totaltime = float(totaltime or self.getduration())
-        if (resumetime is not None and 100 * resumetime / totaltime <=
+        if (resumetime is not None and totaltime > 0 and 100 * resumetime / totaltime <=
                 get_adv_setting("video", "playcountminimumpercent") and
                 resumetime > get_adv_setting("video", "ignoresecondsatstart")):
             self.setProperties(resumetime=resumetime, totaltime=totaltime)
