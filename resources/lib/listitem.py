@@ -41,17 +41,16 @@ class ExtendedListItem(ListItem):
     def _addWatchedContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
         season_number = self.getVideoInfoTag().getSeason()
-        episode_number = self.getVideoInfoTag().getEpisode()
+        video_number = self.getVideoInfoTag().getEpisode()
+        video_number = video_number if video_number != -1 else 1
         watched = int(self.getVideoInfoTag().getPlayCount()) > 0
         label = u"Отметить как непросмотренное" if watched else u"Отметить как просмотренное"
-        if episode_number != -1 and season_number != -1:
-            kwargs = {"id": item_id, "season": season_number, "video": episode_number}
-        elif season_number != -1:
-            kwargs = {"id": item_id, "season": season_number}
-        elif self.getVideoInfoTag().getMediaType() == "tvshow":
+        if self.getVideoInfoTag().getMediaType() == "tvshow":
             return
+        elif season_number != -1:
+            kwargs = {"id": item_id, "season": season_number, "video": video_number}
         else:
-            kwargs = {"id": item_id}
+            kwargs = {"id": item_id, "video": video_number}
         link = get_internal_link("toggle_watched", **kwargs)
         menu_items.append((label, "Container.Update({})".format(link)))
 
@@ -80,5 +79,6 @@ class ExtendedListItem(ListItem):
         totaltime = float(totaltime or self.getduration())
         if (resumetime is not None and totaltime > 0 and 100 * resumetime / totaltime <=
                 get_adv_setting("video", "playcountminimumpercent") and
-                resumetime > get_adv_setting("video", "ignoresecondsatstart")):
+                resumetime > get_adv_setting("video", "ignoresecondsatstart") or
+                resumetime == 0):
             self.setProperties(resumetime=resumetime, totaltime=totaltime)

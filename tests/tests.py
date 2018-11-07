@@ -243,7 +243,6 @@ def test_items(main, items, ExtendedListItem, xbmcplugin, mocker):
             result["title"],
             poster=result["poster"],
             properties={"id": result["id"]},
-            addContextMenuItems=True
         )
         li = ExtendedListItem()
         xbmcplugin.addDirectoryItem.assert_any_call(handle, link, li, is_dir)

@@ -44,8 +44,7 @@ def show_items(items, add_indexes=False):
         li = ExtendedListItem(
             title,
             poster=item["posters"]["big"],
-            properties={"id": item["id"]},
-            addContextMenuItems=True
+            properties={"id": item["id"]}
         )
         if "in_watchlist" in item:
             li.setProperty("in_watchlist", str(int(item["in_watchlist"])))
@@ -79,6 +78,7 @@ def show_items(items, add_indexes=False):
             link = get_internal_link("view_seasons", id=item["id"])
             isdir = True
         li.setInfo("video", video_info)
+        li.addPredefinedContextMenuItems()
         xbmcplugin.addDirectoryItem(request.handle, link, li, isdir)
 
 
@@ -495,8 +495,10 @@ def alphabet(type):
 
 
 @route("/toggle_watched")
-def toggle_watched(**kwargs):
-    KinoPubClient("watching/toggle").get(data=kwargs)
+def toggle_watched(**data):
+    KinoPubClient("watching/toggle").get(data=data)
+    data["time"] = 0
+    KinoPubClient("watching/marktime").get(data=data)
     xbmc.executebuiltin("Container.Refresh")
 
 
