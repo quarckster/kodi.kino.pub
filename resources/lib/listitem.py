@@ -34,7 +34,7 @@ class ExtendedListItem(ListItem):
         link = get_internal_link(
             "toggle_watchlist",
             id=self.getProperty("id"),
-            added=not int(in_watchlist)
+            added=int(not int(in_watchlist))
         )
         menu_items.append((label, "Container.Update({})".format(link)))
 

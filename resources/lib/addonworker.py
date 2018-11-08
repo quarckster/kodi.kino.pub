@@ -504,7 +504,7 @@ def toggle_watched(**data):
 
 @route("/toggle_watchlist")
 def toggle_watchlist(**kwargs):
-    added = bool(kwargs.pop("added"))
+    added = int(kwargs.pop("added"))
     KinoPubClient("watching/togglewatchlist").get(data=kwargs)
     if added:
         notice('Сериал добавлен в список "Буду смотреть"')
