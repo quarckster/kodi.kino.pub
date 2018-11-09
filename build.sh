@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ -d .git ]]; then
-    VERSION=`git tag -l | tail -n1`
+    VERSION=`git tag --sort=committerdate -l | tail -n1`
 elif [[ $# -eq 0 ]]; then
     echo "Current directory is not a git repository."
     echo "Provide a version as an argument."
