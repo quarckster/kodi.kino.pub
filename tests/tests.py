@@ -279,8 +279,14 @@ def test_view_seasons(main, view_seasons, ExtendedListItem, xbmcplugin):
     for season in seasons:
         ExtendedListItem.assert_any_call(
             "Сезон {}".format(season["number"]),
-            video_info=video_info(item, {"season": season["number"]}),
-            poster=item["posters"]["big"]
+            video_info=video_info(item, {
+                "season": season["number"],
+                "playcount": -1,
+                "mediatype": "season"
+            }),
+            poster=item["posters"]["big"],
+            properties={"id": item["id"]},
+            addContextMenuItems=True
         )
         link = plugin.format("view_season_episodes?season_number={}&id={}".format(
                              season["number"], i))

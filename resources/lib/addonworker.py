@@ -72,6 +72,9 @@ def show_items(items, add_indexes=False):
             li.setResumeTime(watching_info["time"], watching_info["duration"])
             isdir = False
         elif item["subtype"] == "multi":
+            watching_info = KinoPubClient("watching").get(data={"id": item["id"]})["item"]
+            li.setProperty("subtype", "multi")
+            video_info.update({"playcount": watching_info["status"]})
             link = get_internal_link("view_episodes", id=item["id"])
             isdir = True
         else:
@@ -198,8 +201,14 @@ def seasons(id):
         watching_season = watching_info["seasons"][season["number"] - 1]
         li = ExtendedListItem(
             season_title,
-            video_info=extract_video_info(item, {"season": season["number"]}),
-            poster=item["posters"]["big"]
+            video_info=extract_video_info(item, {
+                "season": season["number"],
+                "playcount": watching_season["status"],
+                "mediatype": "season"
+            }),
+            poster=item["posters"]["big"],
+            properties={"id": item["id"]},
+            addContextMenuItems=True
         )
         if watching_season["status"] < 1 and not selectedSeason:
             selectedSeason = True
@@ -497,8 +506,9 @@ def alphabet(type):
 @route("/toggle_watched")
 def toggle_watched(**data):
     KinoPubClient("watching/toggle").get(data=data)
-    data["time"] = 0
-    KinoPubClient("watching/marktime").get(data=data)
+    if "video" in data:
+        data["time"] = 0
+        KinoPubClient("watching/marktime").get(data=data)
     xbmc.executebuiltin("Container.Refresh")
 
 

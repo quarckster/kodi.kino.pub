@@ -47,6 +47,10 @@ class ExtendedListItem(ListItem):
         label = u"Отметить как непросмотренное" if watched else u"Отметить как просмотренное"
         if self.getVideoInfoTag().getMediaType() == "tvshow":
             return
+        elif self.getVideoInfoTag().getMediaType() == "season":
+            kwargs = {"id": item_id, "season": season_number}
+        elif self.getProperty("subtype") == "multi":
+            kwargs = {"id": item_id}
         elif season_number != -1:
             kwargs = {"id": item_id, "season": season_number, "video": video_number}
         else:
@@ -55,14 +59,16 @@ class ExtendedListItem(ListItem):
         menu_items.append((label, "Container.Update({})".format(link)))
 
     def _addBookmarksContextMenuItem(self, menu_items):
+        if self.getVideoInfoTag().getMediaType() == "season":
+            return
         item_id = self.getProperty("id")
         label = u"Изменить закладки"
         link = get_internal_link("edit_bookmarks", item_id=item_id)
         menu_items.append((label, "Container.Update({})".format(link)))
 
     def _addSeparatorContextMenuItem(self, menu_items):
-        length = min([len(item[0]) for item in menu_items])
-        menu_items.append(("─" * length, ""))
+        # 21 is the maximum number of characters when the hosrizontal scrolling doesn't appear.
+        menu_items.append(("─" * 21, ""))
 
     def addPredefinedContextMenuItems(self, items=None):
         items = items or ["watched", "watchlist", "bookmarks", "separator"]
@@ -77,8 +83,12 @@ class ExtendedListItem(ListItem):
 
     def setResumeTime(self, resumetime, totaltime=None):
         totaltime = float(totaltime or self.getduration())
-        if (resumetime is not None and totaltime > 0 and 100 * resumetime / totaltime <=
-                get_adv_setting("video", "playcountminimumpercent") and
-                resumetime > get_adv_setting("video", "ignoresecondsatstart") or
-                resumetime == 0):
+        if (
+            resumetime is not None and
+            totaltime > 0 and
+            100 * resumetime / totaltime <=
+            get_adv_setting("video", "playcountminimumpercent") and
+            resumetime > get_adv_setting("video", "ignoresecondsatstart") or
+            resumetime == 0
+        ):
             self.setProperties(resumetime=resumetime, totaltime=totaltime)
