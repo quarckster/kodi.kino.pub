@@ -1,13 +1,13 @@
 #!/bin/bash
 
-if [[ -d .git ]]; then
+if [[ $# -eq 1 ]]; then
+    VERSION=$1
+elif [[ -d .git ]]; then
     VERSION=`git tag --sort=committerdate -l | tail -n1`
 elif [[ $# -eq 0 ]]; then
     echo "Current directory is not a git repository."
     echo "Provide a version as an argument."
     exit 1
-else
-    VERSION=$1
 fi
 
 DIR=video.kino.pub-$VERSION
