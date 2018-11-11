@@ -111,6 +111,7 @@ def test_index(mocker, index, main, xbmcplugin, ExtendedListItem):
     main()
     c = u"[COLOR FFFFF000]{}[/COLOR]"
     expected_results = [
+        (handle, plugin.format("profile"), c.format(u"Профиль"), False),
         (handle, plugin.format("search?type=None"), c.format(u"Поиск"), False),
         (handle, plugin.format("items?type=None"), c.format(u"Последние"), True),
         (handle, plugin.format("items?type=None&shortcut=%2Fpopular"), c.format(u"Популярные"),

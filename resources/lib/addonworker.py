@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+from datetime import date
 
 import xbmc
 import xbmcgui
@@ -133,6 +134,8 @@ def index():
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("login"), li, False)
     else:
         response = KinoPubClient("types").get()
+        li = ExtendedListItem("[COLOR FFFFF000]Профиль[/COLOR]")
+        xbmcplugin.addDirectoryItem(request.handle, get_internal_link("profile"), li, False)
         add_default_headings(fmt="slph")
         li = ExtendedListItem("[COLOR FFFFF000]ТВ[/COLOR]")
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("tv"), li, True)
@@ -576,6 +579,19 @@ def create_bookmarks_folder():
         title = kbd.getText()
         KinoPubClient("bookmarks/create").post(data={"title": title})
         xbmc.executebuiltin("Container.Refresh")
+
+
+@route("/profile")
+def profile():
+    user_data = KinoPubClient("user").get()["user"]
+    reg_date = date.fromtimestamp(user_data["reg_date"])
+    dialog = xbmcgui.Dialog()
+    dialog.ok(
+        "Информация о профиле",
+        "Имя пользователя: [B]{}[/B]".format(user_data["username"]),
+        "Дата регистрации: [B]{0:%d} {0:%B} {0:%Y}[/B]".format(reg_date),
+        "Остаток дней подписки: [B]{}[/B]".format(int(user_data["subscription"]["days"]))
+    )
 
 
 # Entry point
