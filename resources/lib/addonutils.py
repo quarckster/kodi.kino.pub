@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import json
+import platform
 import re
 import sys
 import time
@@ -122,27 +122,16 @@ def update_device_info(force=False):
     # Update device info
     deviceInfoUpdate = __settings__.getSetting("device_info_update")
     if force or not deviceInfoUpdate or int(deviceInfoUpdate) + 1800 < int(time.time()):
-        infoLabels = [
-            '"System.BuildVersion"',
-            '"System.FriendlyName"',
-            '"System.KernelVersion"'
-        ]
-        result = "Busy"
-        payload = {
-            "jsonrpc": "2.0",
-            "method": "XBMC.GetInfoLabels",
-            "id": 1,
-            "params": {"labels": [",".join(infoLabels)]}
-        }
-        while "Busy" in result:
-            result = xbmc.executeJSONRPC(json.dumps(payload))
-        result = json.loads(result)["result"]
-        title = result.get("System.FriendlyName")
-        hardware = result.get("System.KernelVersion")
-        software = "Kodi/{}".format(result.get("System.BuildVersion"))
+        result = {"build_version": "Busy", "friendly_name": "Busy"}
+        while "Busy" in result.values():
+            result = {
+                "build_version": xbmc.getInfoLabel("System.BuildVersion"),
+                "friendly_name": xbmc.getInfoLabel("System.FriendlyName")
+            }
+        software = "Kodi {}".format(result["build_version"].split()[0])
         KinoPubClient("device/notify").post(data={
-            "title": title,
-            "hardware": hardware,
+            "title": result["friendly_name"],
+            "hardware": platform.machine(),
             "software": software
         })
         __settings__.setSetting("device_info_update", str(int(float(time.time()))))
