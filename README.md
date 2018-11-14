@@ -24,3 +24,9 @@ Manual installation
 * download the latest version here https://github.com/quarckster/kodi.kino.pub/releases/latest
 * go to Add-on manager https://kodi.wiki/view/Add-on_manager
 * choose "Install from ZIP file"
+
+
+Legacy plugin
+=============
+
+If you need the latest version of the original plugin you can download it here https://plugins.service-kp.com/kodi/video.kino.pub/video.kino.pub-1.2.1.zip
