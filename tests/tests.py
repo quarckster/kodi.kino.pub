@@ -56,7 +56,7 @@ class FakeListItem(object):
 
 @pytest.fixture
 def main():
-    from default import main
+    from addon import main
     return main
 
 
