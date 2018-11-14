@@ -1,14 +1,18 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="video.kino.pub" name="kino.pub" version="${VERSION}" provider-name="kino.pub">
   <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="xbmc.python" version="2.25.0"/>
   </requires>
-  <extension point="xbmc.python.pluginsource" provides="video" library="default.py">
+  <extension point="xbmc.python.pluginsource" library="addon.py">
     <provides>video</provides>
   </extension>
   <extension point="xbmc.addon.metadata">
     <summary>kino.pub - онлайн-кинотеатр.</summary>
-    <description></description>
     <platform>all</platform>
+    <license>BSD-3-Clause</license>
+    <source>https://github.com/quarckster/kodi.kino.pub</source>
+    <assets>
+      <icon>resources/icon.png</icon>
+    </assets>
   </extension>
 </addon>
