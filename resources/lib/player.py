@@ -61,7 +61,6 @@ class Player(xbmc.Player):
             KinoPubClient("watching/marktime").get(data=data)
         else:
             return
-        xbmc.executebuiltin("Container.Refresh")
 
     def onPlayBackEnded(self):
         self.is_playing = False
@@ -69,7 +68,6 @@ class Player(xbmc.Player):
             data = self._base_data
             data["status"] = 1
             KinoPubClient("watching/toggle").get(data=data)
-            xbmc.executebuiltin("Container.Refresh")
 
     def onPlaybackError(self):
         self.is_playing = False
