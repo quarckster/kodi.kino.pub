@@ -56,40 +56,28 @@ def get_mlink(video, stream_type=None, quality=None, ask_quality="false"):
             # if there is no such quality then return a link with the highest available quality
             return files[natural_sort(files.keys())[-1]][stream_type]
 
-def get_plot(item):
-    year_ratings = []
-    output = []
 
-    if int(item["year"]):
-        year_ratings.append(u"[COLOR FF12A0C7]{}[/COLOR]".format(int(item["year"])))
-
+def build_plot(item):
+    final_plot = []
     if item["imdb_rating"]:
-        year_ratings.append(u"[COLOR FFFFF000]IMDB:[/COLOR] {}".format(str(round(item["imdb_rating"], 1))))
-
+        final_plot.append("IMDB: {}".format(str(round(item["imdb_rating"], 1))))
     if item["kinopoisk_rating"]:
-        year_ratings.append(u"[COLOR FFFFF000]Кинопоиск:[/COLOR] {}".format(str(round(item["kinopoisk_rating"], 1))))
+        final_plot.append(u"Кинопоиск: {}".format(str(round(item["kinopoisk_rating"], 1))))
+    # a new line between the ratings and the plot
+    if item["imdb_rating"] or item["kinopoisk_rating"]:
+        final_plot.append("")
+    final_plot.append(item["plot"])
+    return "\n".join(final_plot)
 
-    if year_ratings:
-        output.append(u"{}".format(", ".join(year_ratings)))
 
-    if item["type"] == "serial":
-        if item["finished"]:
-            status = u"[COLOR FFFF0000]окончен[/COLOR]"
-        else:
-            status = u"в эфире"
-
-        output.append(u"[COLOR FFFFF000]Статус: [/COLOR]{}".format(status))
-
-    if item["plot"]:
-        if output:
-            output.append(u"")
-
-        output.append(item["plot"])
-
-    if output:
-        return "\n".join(output)
+def get_status(item):
+    if item["type"] == "serial" and item["finished"]:
+        return u"окончен"
+    elif item["type"] == "serial" and not item["finished"]:
+        return u"в эфире"
     else:
-        return u""
+        return
+
 
 def video_info(item, extend=None):
     info = {
@@ -98,10 +86,11 @@ def video_info(item, extend=None):
         "rating": float(item["rating"]),
         "cast": [x.strip() for x in item["cast"].split(",")],
         "director": item["director"],
-        "plot": get_plot(item),
+        "plot": build_plot(item),
         "title": item["title"],
         "duration": item.get("duration", {}).get("average"),
-        "code": item["imdb"],
+        "imdbnumber": item["imdb"],
+        "status": get_status(item),
         "votes": item["rating_votes"],
         "country": ", ".join([x["title"] for x in item["countries"]])
     }
