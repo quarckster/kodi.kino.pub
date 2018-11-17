@@ -57,38 +57,40 @@ def get_mlink(video, stream_type=None, quality=None, ask_quality="false"):
             return files[natural_sort(files.keys())[-1]][stream_type]
 
 
+def build_plot(item):
+    final_plot = []
+    if item["imdb_rating"]:
+        final_plot.append("IMDB: {}".format(str(round(item["imdb_rating"], 1))))
+    if item["kinopoisk_rating"]:
+        final_plot.append(u"Кинопоиск: {}".format(str(round(item["kinopoisk_rating"], 1))))
+    # a new line between the ratings and the plot
+    if item["imdb_rating"] or item["kinopoisk_rating"]:
+        final_plot.append("")
+    final_plot.append(item["plot"])
+    return "\n".join(final_plot)
+
+
+def get_status(item):
+    if item["type"] == "serial" and item["finished"]:
+        return u"окончен"
+    elif item["type"] == "serial" and not item["finished"]:
+        return u"в эфире"
+    else:
+        return
+
+
 def video_info(item, extend=None):
-
-    def get_plot():
-        plot_1 = item["plot"]
-        if item["kinopoisk_rating"]:
-            plot_2 = u"Кинопоиск: {}".format(str(round(item["kinopoisk_rating"], 1)))
-        else:
-            plot_2 = u"Кинопоиск: нет"
-        if item["imdb_rating"]:
-            plot_3 = u"IMDB: {}".format(str(round(item["imdb_rating"], 1)))
-        else:
-            plot_3 = u"IMDB: нет"
-        return "\n".join([plot_1, plot_2, plot_3])
-
-    def get_status():
-        if item["finished"] and item["type"] == "serial":
-            return u"окончен"
-        else:
-            if item["type"] == "serial":
-                return u"в эфире"
-
     info = {
         "year": int(item["year"]),
         "genre": ", ".join([x["title"] for x in item["genres"]]),
         "rating": float(item["rating"]),
         "cast": [x.strip() for x in item["cast"].split(",")],
         "director": item["director"],
-        "plot": get_plot(),
+        "plot": build_plot(item),
         "title": item["title"],
         "duration": item.get("duration", {}).get("average"),
-        "code": item["imdb"],
-        "status": get_status(),
+        "imdbnumber": item["imdb"],
+        "status": get_status(item),
         "votes": item["rating_votes"],
         "country": ", ".join([x["title"] for x in item["countries"]])
     }
