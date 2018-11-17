@@ -33,7 +33,10 @@ class FakeAddon(object):
         return {"path": cwd, "id": self._id}.get(info_id)
 
     def getSetting(self, setting_id):
-        return self._settings.get(setting_id, "")
+        if "show_" in setting_id:
+            return "true"
+        else:
+            return self._settings.get(setting_id, "")
 
     def setSetting(self, setting_id, value):
         self._settings[setting_id] = value

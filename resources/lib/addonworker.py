@@ -11,6 +11,7 @@ from authwindow import auth
 from client import KinoPubClient
 from data import __settings__, __plugin__
 from listitem import ExtendedListItem
+from main_menu import main_menu_items
 from player import Player
 
 
@@ -136,21 +137,15 @@ def index():
         response = KinoPubClient("types").get()
         li = ExtendedListItem("[COLOR FFFFF000]Профиль[/COLOR]")
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("profile"), li, False)
-        add_default_headings(fmt="slph")
-        li = ExtendedListItem("[COLOR FFFFF000]ТВ[/COLOR]")
-        xbmcplugin.addDirectoryItem(request.handle, get_internal_link("tv"), li, True)
-        li = ExtendedListItem("[COLOR FFFFF000]Закладки[/COLOR]")
-        xbmcplugin.addDirectoryItem(request.handle, get_internal_link("bookmarks"), li, True)
-        li = ExtendedListItem("[COLOR FFFFF000]Я смотрю[/COLOR]")
-        xbmcplugin.addDirectoryItem(request.handle, get_internal_link("watching"), li, True)
-        li = ExtendedListItem("[COLOR FFFFF000]Недосмотренные[/COLOR]")
-        xbmcplugin.addDirectoryItem(request.handle, get_internal_link("watching_movies"), li, True)
-        li = ExtendedListItem("[COLOR FFFFF000]Подборки[/COLOR]")
-        xbmcplugin.addDirectoryItem(request.handle, get_internal_link("collections"), li, True)
+        for menu_item in main_menu_items:
+            if menu_item.is_displayed:
+                li = ExtendedListItem(menu_item.title)
+                xbmcplugin.addDirectoryItem(request.handle, menu_item.link, li, menu_item.is_dir)
         for i in response["items"]:
-            li = ExtendedListItem(i["title"].encode("utf-8"))
-            link = get_internal_link("item_index", type=i["id"])
-            xbmcplugin.addDirectoryItem(request.handle, link, li, True)
+            if __settings__.getSetting("show_{}".format(i["id"])) != "false":
+                li = ExtendedListItem(i["title"].encode("utf-8"))
+                link = get_internal_link("item_index", type=i["id"])
+                xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     xbmcplugin.endOfDirectory(request.handle)
 
 
