@@ -97,27 +97,27 @@ def add_default_headings(type=None, fmt="slp"):
     # h - show hot
 
     if "s" in fmt:
-        li = ExtendedListItem("[COLOR FFFFF000]Поиск[/COLOR]")
+        li = ExtendedListItem("Поиск")
         link = get_internal_link("search", type=type)
         xbmcplugin.addDirectoryItem(request.handle, link, li, False)
     if "l" in fmt:
-        li = ExtendedListItem("[COLOR FFFFF000]Последние[/COLOR]")
+        li = ExtendedListItem("Последние")
         link = get_internal_link("items", type=type)
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     if "p" in fmt:
-        li = ExtendedListItem("[COLOR FFFFF000]Популярные[/COLOR]")
+        li = ExtendedListItem("Популярные")
         link = get_internal_link("items", type=type, shortcut="/popular")
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     if "a" in fmt:
-        li = ExtendedListItem("[COLOR FFFFF000]По алфавиту[/COLOR]")
+        li = ExtendedListItem("По алфавиту")
         link = get_internal_link("alphabet", type=type)
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     if "g" in fmt:
-        li = ExtendedListItem("[COLOR FFFFF000]Жанры[/COLOR]")
+        li = ExtendedListItem("Жанры")
         link = get_internal_link("genres", type=type)
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     if "h" in fmt:
-        li = ExtendedListItem("[COLOR FFFFF000]Горячие[/COLOR]")
+        li = ExtendedListItem("Горячие")
         link = get_internal_link("items", type=type, shortcut="/hot")
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
 
@@ -135,7 +135,7 @@ def index():
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("login"), li, False)
     else:
         response = KinoPubClient("types").get()
-        li = ExtendedListItem("[COLOR FFFFF000]Профиль[/COLOR]")
+        li = ExtendedListItem("Профиль")
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("profile"), li, False)
         for menu_item in main_menu_items:
             if menu_item.is_displayed:
@@ -182,7 +182,6 @@ def items(type, **kwargs):
     shortcut = kwargs.pop("shortcut", "")
     response = KinoPubClient("items{}".format(shortcut)).get(data=kwargs)
     pagination = response["pagination"]
-    add_default_headings(type, fmt="s")
     xbmcplugin.setContent(request.handle, "{}s".format(mediatype_map.get(type, "video")))
     show_items(response["items"])
     show_pagination(pagination, "items", type=type)
@@ -373,7 +372,7 @@ def search(type=None):
 @route("/bookmarks")
 def bookmarks(folder_id=None, page=None):
     if folder_id is None:
-        li = ExtendedListItem("[COLOR FFFFF000]Создать папку[/COLOR]")
+        li = ExtendedListItem("Создать папку")
         link = get_internal_link("create_bookmarks_folder")
         xbmcplugin.addDirectoryItem(request.handle, link, li, False)
         response = KinoPubClient("bookmarks").get()
@@ -460,13 +459,13 @@ def watching_movies():
 def collections(sort=None, page=None):
     response = KinoPubClient("collections/index").get(data={"sort": sort, "page": page})
     xbmcplugin.setContent(request.handle, "movies")
-    li = ExtendedListItem("[COLOR FFFFF000]Последние[/COLOR]")
+    li = ExtendedListItem("Последние")
     link = get_internal_link("collections", sort="-created")
     xbmcplugin.addDirectoryItem(request.handle, link, li, True)
-    li = ExtendedListItem("[COLOR FFFFF000]Просматриваемые[/COLOR]")
+    li = ExtendedListItem("Просматриваемые")
     link = get_internal_link("collections", sort="-watchers")
     xbmcplugin.addDirectoryItem(request.handle, link, li, True)
-    li = ExtendedListItem("[COLOR FFFFF000]Популярные[/COLOR]")
+    li = ExtendedListItem("Популярные")
     link = get_internal_link("collections", sort="-views")
     xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     for item in response["items"]:

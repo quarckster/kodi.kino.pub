@@ -9,55 +9,55 @@ MainMenuItem = namedtuple("MainMenuItem", ["title", "link", "is_dir", "is_displa
 
 main_menu_items = [
     MainMenuItem(
-        "[COLOR FFFFF000]Закладки[/COLOR]",
-        get_internal_link("bookmarks"),
-        True,
-        True
-    ),
-    MainMenuItem(
-        "[COLOR FFFFF000]Я смотрю[/COLOR]",
-        get_internal_link("watching"),
-        True,
-        True
-    ),
-    MainMenuItem(
-        "[COLOR FFFFF000]Недосмотренные[/COLOR]",
-        get_internal_link("watching_movies"),
-        True,
-        True
-    ),
-    MainMenuItem(
-        "[COLOR FFFFF000]Поиск[/COLOR]",
+        "Поиск",
         get_internal_link("search", type=None),
         False,
         eval(__settings__.getSetting("show_search").title())
     ),
     MainMenuItem(
-        "[COLOR FFFFF000]Последние[/COLOR]",
+        "Закладки",
+        get_internal_link("bookmarks"),
+        True,
+        True
+    ),
+    MainMenuItem(
+        "Я смотрю",
+        get_internal_link("watching"),
+        True,
+        True
+    ),
+    MainMenuItem(
+        "Недосмотренные",
+        get_internal_link("watching_movies"),
+        True,
+        True
+    ),
+    MainMenuItem(
+        "Последние",
         get_internal_link("items", type=None),
         True,
         eval(__settings__.getSetting("show_last").title())
     ),
     MainMenuItem(
-        "[COLOR FFFFF000]Популярные[/COLOR]",
+        "Популярные",
         get_internal_link("items", type=None, shortcut="/popular"),
         True,
         eval(__settings__.getSetting("show_popular").title())
     ),
     MainMenuItem(
-        "[COLOR FFFFF000]Горячие[/COLOR]",
+        "Горячие",
         get_internal_link("items", type=None, shortcut="/hot"),
         True,
         eval(__settings__.getSetting("show_hot").title())
     ),
     MainMenuItem(
-        "[COLOR FFFFF000]ТВ[/COLOR]",
+        "ТВ",
         get_internal_link("tv"),
         True,
         eval(__settings__.getSetting("show_tv").title())
     ),
     MainMenuItem(
-        "[COLOR FFFFF000]Подборки[/COLOR]",
+        "Подборки",
         get_internal_link("collections"),
         True,
         eval(__settings__.getSetting("show_collections").title())

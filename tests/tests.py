@@ -112,19 +112,17 @@ def index(mocker):
 
 def test_index(mocker, index, main, xbmcplugin, ExtendedListItem):
     main()
-    c = u"[COLOR FFFFF000]{}[/COLOR]"
     expected_results = [
-        (handle, plugin.format("profile"), c.format(u"Профиль"), False),
-        (handle, plugin.format("search?type=None"), c.format(u"Поиск"), False),
-        (handle, plugin.format("items?type=None"), c.format(u"Последние"), True),
-        (handle, plugin.format("items?type=None&shortcut=%2Fpopular"), c.format(u"Популярные"),
-            True),
-        (handle, plugin.format("items?type=None&shortcut=%2Fhot"), c.format(u"Популярные"), True),
-        (handle, plugin.format("tv"), c.format(u"ТВ"), True),
-        (handle, plugin.format("bookmarks"), c.format(u"Закладки"), True),
-        (handle, plugin.format("watching"), c.format(u"Я смотрю"), True),
-        (handle, plugin.format("watching_movies"), c.format(u"Недосмотренные"), True),
-        (handle, plugin.format("collections"), c.format(u"Подборки"), True),
+        (handle, plugin.format("profile"), u"Профиль", False),
+        (handle, plugin.format("search?type=None"), u"Поиск", False),
+        (handle, plugin.format("items?type=None"), u"Последние", True),
+        (handle, plugin.format("items?type=None&shortcut=%2Fpopular"), u"Популярные", True),
+        (handle, plugin.format("items?type=None&shortcut=%2Fhot"), u"Популярные", True),
+        (handle, plugin.format("tv"), u"ТВ", True),
+        (handle, plugin.format("bookmarks"), u"Закладки", True),
+        (handle, plugin.format("watching"), u"Я смотрю", True),
+        (handle, plugin.format("watching_movies"), u"Недосмотренные", True),
+        (handle, plugin.format("collections"), u"Подборки", True),
         (handle, plugin.format("item_index?type=movie"), u"Фильмы", True),
         (handle, plugin.format("item_index?type=serial"), u"Сериалы", True),
         (handle, plugin.format("item_index?type=tvshow"), u"ТВ шоу", True),
