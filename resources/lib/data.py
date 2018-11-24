@@ -2,7 +2,6 @@ import xml.etree.ElementTree as ET
 
 import xbmc
 import xbmcaddon
-import xbmcvfs
 
 
 __id__ = "video.kino.pub"
@@ -17,9 +16,9 @@ defaults = {
 
 
 def get_adv_setting(*args):
-    if xbmcvfs.exists(advancedsettings_file):
+    try:
         root = ET.parse(advancedsettings_file).getroot()
-        elem = root.find("./{}".format("/".join(args)))
-        return elem.text if elem else defaults.get(args)
-    else:
+    except (ET.ParseError, IOError):
         return defaults.get(args)
+    elem = root.find("./{}".format("/".join(args)))
+    return elem.text if elem else defaults.get(args)
