@@ -14,7 +14,6 @@ from data import __plugin__, __settings__
 class AuthDialog(object):
     def __init__(self):
         self.total = 0
-        self.position = 1
         self._dialog = xbmcgui.DialogProgress()
 
     def close(self, cancel=False):
@@ -25,9 +24,8 @@ class AuthDialog(object):
         if cancel:
             nav_internal_link("/")
 
-    def update(self, steps=1):
-        self.position += steps
-        position = int(float((100.0 // self.total)) * self.position)
+    def update(self, step):
+        position = int(100 * step / float(self.total))
         self._dialog.update(position)
 
     def show(self, text):
@@ -169,9 +167,9 @@ class Auth(object):
         return self.ERROR, resp
 
     def verify_device_code(self, interval):
-        steps = (10 * 60) // interval
+        steps = (5 * 60) // interval
         self.window.total = steps
-        for _ in range(steps):
+        for i in range(steps):
             if self.window.iscanceled:
                 self.window.close(cancel=True)
                 break
@@ -181,8 +179,8 @@ class Auth(object):
                     update_device_info(force=True)
                     self.window.close()
                     break
-                self.window.update()
-                time.sleep(interval)
+                self.window.update(i)
+                xbmc.sleep(interval * 1000)
         else:
             self.window.close(cancel=True)
 
