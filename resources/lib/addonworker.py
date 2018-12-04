@@ -29,7 +29,7 @@ mediatype_map = {
 
 def show_pagination(pagination, action, **kwargs):
     # Add "next page" button
-    if (pagination and int(pagination["current"])) + 1 <= int(pagination["total"]):
+    if pagination and (int(pagination["current"]) + 1 <= int(pagination["total"])):
         kwargs["page"] = int(pagination["current"]) + 1
         li = ExtendedListItem("[COLOR FFFFF000]Вперёд[/COLOR]")
         link = get_internal_link(action, **kwargs)
@@ -184,7 +184,7 @@ def items(type, **kwargs):
     pagination = response["pagination"]
     xbmcplugin.setContent(request.handle, "{}s".format(mediatype_map.get(type, "video")))
     show_items(response["items"])
-    show_pagination(pagination, "items", type=type)
+    show_pagination(pagination, "items", **kwargs)
 
 
 @route("/view_seasons")
