@@ -267,11 +267,9 @@ def season_episodes(id, season_number):
     selectedEpisode = False
     xbmcplugin.setContent(request.handle, "episodes")
     for episode in season["episodes"]:
-        # In tvshow season could be a case when some episodes are not available, but episode numbers
-        # in response payload are set correctly.
-        if episode["number"] not in watching_episode_numbers:
-            continue
-        watching_episode = watching_season["episodes"][episode["number"] - 1]
+        xbmc.log("{}".format(len(watching_season["episodes"])))
+        xbmc.log("EPISODE NUMBER {}".format(episode["number"]))
+        watching_episode = next((i for i in watching_season["episodes"] if i["number"] == episode["number"]), None)
         episode_title = "s{:02d}e{:02d}".format(season_number, episode["number"])
         if episode["title"]:
             episode_title = "{} | {}".format(episode_title, episode["title"].encode("utf-8"))
