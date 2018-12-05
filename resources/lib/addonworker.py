@@ -265,8 +265,8 @@ def season_episodes(id, season_number):
     watching_season = watching_info["seasons"][season_number - 1]
     selectedEpisode = False
     xbmcplugin.setContent(request.handle, "episodes")
-    for episode in season["episodes"]:
-        watching_episode = next((i for i in watching_season["episodes"] if i["number"] == episode["number"]), None)
+    for index, episode in enumerate(season["episodes"]):
+        watching_episode = watching_season["episodes"][index]
         episode_title = "s{:02d}e{:02d}".format(season_number, episode["number"])
         if episode["title"]:
             episode_title = "{} | {}".format(episode_title, episode["title"].encode("utf-8"))
