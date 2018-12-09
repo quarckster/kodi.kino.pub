@@ -9,7 +9,7 @@ from addonutils import (get_internal_link, get_mlink, nav_internal_link, notice,
                         ROUTES, trailer_link, video_info as extract_video_info)
 from authwindow import auth
 from client import KinoPubClient
-from data import __settings__, __plugin__
+from data import __addon__, __plugin__
 from listitem import ExtendedListItem
 from main_menu import main_menu_items
 from player import Player
@@ -142,7 +142,7 @@ def index():
                 li = ExtendedListItem(menu_item.title)
                 xbmcplugin.addDirectoryItem(request.handle, menu_item.link, li, menu_item.is_dir)
         for i in response["items"]:
-            if __settings__.getSetting("show_{}".format(i["id"])) != "false":
+            if __addon__.getSetting("show_{}".format(i["id"])) != "false":
                 li = ExtendedListItem(i["title"].encode("utf-8"))
                 link = get_internal_link("item_index", type=i["id"])
                 xbmcplugin.addDirectoryItem(request.handle, link, li, True)
@@ -317,9 +317,9 @@ def play(id, title, video_info, video_data=None, poster=None):
         return
     url = get_mlink(
         video_data,
-        quality=__settings__.getSetting("video_quality"),
-        stream_type=__settings__.getSetting("stream_type"),
-        ask_quality=__settings__.getSetting("ask_quality")
+        quality=__addon__.getSetting("video_quality"),
+        stream_type=__addon__.getSetting("stream_type"),
+        ask_quality=__addon__.getSetting("ask_quality")
     )
     li = ExtendedListItem(
         title,
@@ -349,8 +349,8 @@ def trailer(id, sid=None):
     if "files" in trailer:
         url = get_mlink(
             trailer,
-            quality=__settings__.getSetting("video_quality"),
-            stream_type=__settings__.getSetting("stream_type")
+            quality=__addon__.getSetting("video_quality"),
+            stream_type=__addon__.getSetting("stream_type")
         )
     elif sid is not None:
         url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid={}"

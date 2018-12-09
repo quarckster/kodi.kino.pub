@@ -10,7 +10,7 @@ from functools import wraps
 import xbmc
 import xbmcgui
 
-from data import __id__, __settings__, __plugin__
+from data import __id__, __device__, __plugin__
 
 
 def dict_merge(old, new):
@@ -122,7 +122,7 @@ def trailer_link(item):
 def update_device_info(force=False):
     from client import KinoPubClient
     # Update device info
-    deviceInfoUpdate = __settings__.getSetting("device_info_update")
+    deviceInfoUpdate = __device__.get("device_info_update")
     if force or not deviceInfoUpdate or int(deviceInfoUpdate) + 1800 < int(time.time()):
         result = {"build_version": "Busy", "friendly_name": "Busy"}
         while "Busy" in result.values():
@@ -136,7 +136,7 @@ def update_device_info(force=False):
             "hardware": platform.machine(),
             "software": software
         })
-        __settings__.setSetting("device_info_update", str(int(float(time.time()))))
+        __device__.update(device_info_update=str(int(float(time.time()))))
 
 
 class Request(object):

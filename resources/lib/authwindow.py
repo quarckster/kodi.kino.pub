@@ -8,7 +8,7 @@ import xbmc
 import xbmcgui
 
 from addonutils import nav_internal_link, update_device_info
-from data import __plugin__, __settings__
+from data import __plugin__, __device__
 
 
 class AuthDialog(object):
@@ -37,7 +37,7 @@ class AuthDialog(object):
 
 
 class Auth(object):
-    settings = __settings__
+    device = __device__
     terminated = False
     timer = 0
     CLIENT_ID = "xbmc"
@@ -49,42 +49,23 @@ class Auth(object):
         self.window = AuthDialog()
 
     @property
-    def is_token_expired(self):
-        return self.access_token_expire < int(time.time())
+    def access_token_expire(self):
+        access_token_expire = self.device.get("access_token_expire")
+        return None if access_token_expire is None else int(access_token_expire)
 
     @property
     def access_token(self):
-        return self.settings.getSetting("access_token")
-
-    @access_token.setter
-    def access_token(self, value):
-        if value is not None:
-            value = value.encode("utf-8")
-        self.settings.setSetting("access_token", value)
+        return self.device.get("access_token")
 
     @property
-    def access_token_expire(self):
-        return int(self.settings.getSetting("access_token_expire"))
-
-    @access_token_expire.setter
-    def access_token_expire(self, value):
-        if value is not None:
-            value = value.encode("utf-8")
-        self.settings.setSetting("access_token_expire", value)
-
+    def device_code(self):
+        return self.device.get("code")
     @property
     def refresh_token(self):
-        return self.settings.getSetting("refresh_token")
-
-    @refresh_token.setter
-    def refresh_token(self, value):
-        if value is not None:
-            value = value.encode("utf-8")
-        self.settings.setSetting("refresh_token", value)
+        return self.device.get("refresh_token")
 
     def reauth(self):
-        self.access_token = ""
-        self.device_token = ""
+        self.device.reset()
         self.do_login()
 
     def request(self, url, data):
@@ -119,14 +100,7 @@ class Auth(object):
         error = resp.get("error")
         if error:
             return self.ERROR, resp
-        self.device_code = resp["code"].encode("utf-8")
-        self.user_code = resp["user_code"].encode("utf-8")
-        self.verification_uri = resp["verification_uri"].encode("utf8")
-        self.refresh_interval = int(resp["interval"])
-
-        self.settings.setSetting("device_code", str(self.device_code).encode("utf-8"))
-        self.settings.setSetting("verification_uri", str(self.verification_uri).encode("utf-8"))
-        self.settings.setSetting("interval", str(self.refresh_interval))
+        self.device.update(**resp)
         return self.SUCCESS, resp
 
     def get_token(self, refresh=False):
@@ -156,13 +130,11 @@ class Auth(object):
 
         xbmc.log("ERROR IS {}".format(error))
         expires_in = int(resp.get("expires_in")) + int(time.time())
-        self.access_token = resp.get("access_token")
-        self.access_token_expire = str(expires_in)
+        self.device.update(access_token_expire=expires_in)
 
-        if self.access_token:
-            for key, val in resp.items():
-                self.settings.setSetting(key.encode("utf-8"), str(val).encode("utf-8"))
-            self.settings.setSetting("device_code", "")
+        if resp.get("access_token"):
+            self.device.update(**resp)
+            self.device.update(device_code=None)
             return self.SUCCESS, resp
         return self.ERROR, resp
 
