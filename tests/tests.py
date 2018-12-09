@@ -324,8 +324,8 @@ def test_view_season_episodes(request, main, view_season_episodes, ExtendedListI
     season = item["seasons"][0]
     watching_season = watching_info_response_with_seasons["item"]["seasons"][season["number"] - 1]
     i = item["id"]
-    for index, episode in enumerate(season["episodes"]):
-        watching_episode = watching_season["episodes"][index]
+    for episode in season["episodes"]:
+        watching_episode = watching_season["episodes"][episode["number"] - 1]
         episode_title = "s{:02d}e{:02d}".format(season["number"], episode["number"])
         if episode["title"]:
             episode_title = "{} | {}".format(

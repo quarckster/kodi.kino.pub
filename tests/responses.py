@@ -461,7 +461,7 @@ actionView_seasons_response = {
                             u"status": -1,
                             u"time": 0
                         },
-                        u"number": 2,
+                        u"number": 1,
                         u"id": 128671,
                         u"ac3": 0,
                         u"tracks": 1,
@@ -666,7 +666,7 @@ watching_info_response_with_seasons = {
                         u"status": -1,
                         u"updated": None,
                         u"title": "\u0411\u043e\u043b\u044c\u0448\u043e\u0439 \u0432\u0437\u0440\u044b\u0432",
-                        u"number": 2,
+                        u"number": 1,
                         u"time": 0,
                         u"duration": 2628,
                         u"id": 128671
