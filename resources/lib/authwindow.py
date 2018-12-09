@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import time
-import urllib
+from urllib import urlencode
 import urllib2
 
 import xbmc
@@ -60,6 +60,7 @@ class Auth(object):
     @property
     def device_code(self):
         return self.device.get("code")
+
     @property
     def refresh_token(self):
         return self.device.get("refresh_token")
@@ -72,7 +73,7 @@ class Auth(object):
         xbmc.log("REQUEST URL={}".format(url))
         xbmc.log("DATA {}".format(data))
         try:
-            udata = urllib.urlencode(data)
+            udata = urlencode(data)
             req = urllib2.Request(url)
 
             resp = urllib2.urlopen(req, udata).read()
@@ -134,7 +135,7 @@ class Auth(object):
 
         if resp.get("access_token"):
             self.device.update(**resp)
-            self.device.update(device_code=None)
+            self.device.update(code=None, user_code=None)
             return self.SUCCESS, resp
         return self.ERROR, resp
 

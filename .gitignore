@@ -111,8 +111,8 @@ venv.bak/
 dmypy.json
 
 # vscode
-.history/*
 .vscode/*
+.history/*
 
 # builds
 *.zip

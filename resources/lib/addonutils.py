@@ -3,14 +3,14 @@ import platform
 import re
 import sys
 import time
-import urllib
-import urlparse
+from urlparse import urlunsplit, parse_qsl
+from urllib import urlencode
 from functools import wraps
 
 import xbmc
 import xbmcgui
 
-from data import __id__, __device__, __plugin__
+from data import __id__, __addon__, __device__, __plugin__, __extended_plot__, __ratings_source__
 
 
 def dict_merge(old, new):
@@ -58,6 +58,9 @@ def get_mlink(video, stream_type=None, quality=None, ask_quality="false"):
 
 
 def build_plot(item):
+    # Don't put rating to plot if user don't want to
+    if __extended_plot__ == 'false':
+        return item["plot"]
     final_plot = []
     if item["imdb_rating"]:
         final_plot.append("IMDB: {}".format(str(round(item["imdb_rating"], 1))))
@@ -68,6 +71,25 @@ def build_plot(item):
         final_plot.append("")
     final_plot.append(item["plot"])
     return "\n".join(final_plot)
+
+
+# Build path to icon according to it's name
+def build_icon_path(name):
+    return xbmc.translatePath(
+        "special://home/addons/{}/resources/icons/{}.png".format(__id__, name)
+        )
+
+
+# Take rating from specified resource if this rating exist
+def build_rating(item):
+    rating = item["imdb_rating"] if __ratings_source__ == 'IMDB' else item["kinopoisk_rating"]
+    if rating:
+        return float(rating)
+
+
+# Find episode item in season object or return fallback
+def find_episode(season_obj, episode_number, fallback=None):
+    return next((i for i in season_obj["episodes"] if i['number'] == episode_number), fallback)
 
 
 def get_status(item):
@@ -83,7 +105,7 @@ def video_info(item, extend=None):
     info = {
         "year": int(item["year"]),
         "genre": ", ".join([x["title"] for x in item["genres"]]),
-        "rating": float(item["rating"]),
+        "rating": build_rating(item),
         "cast": [x.strip() for x in item["cast"].split(",")],
         "director": item["director"],
         "plot": build_plot(item),
@@ -101,7 +123,7 @@ def video_info(item, extend=None):
 
 def get_internal_link(path, **params):
     """Form internal link for plugin navigation"""
-    return urlparse.urlunsplit(("plugin", __id__, path, urllib.urlencode(params), ""))
+    return urlunsplit(("plugin", __id__, path, urlencode(params), ""))
 
 
 def nav_internal_link(action, **params):
@@ -109,7 +131,12 @@ def nav_internal_link(action, **params):
 
 
 def notice(message, heading="", time=4000):
-    xbmc.executebuiltin('XBMC.Notification("{}", "{}", "{}")'.format(heading, message, time))
+    if not heading:
+        heading = __addon__.getAddonInfo('name')
+    icon = __addon__.getAddonInfo('icon')
+    xbmc.executebuiltin(
+        'XBMC.Notification("{}", "{}", "{}", "{}")'.format(heading, message, time, icon)
+        )
 
 
 def trailer_link(item):
@@ -151,7 +178,7 @@ class Request(object):
 
     @property
     def args(self):
-        return dict(urlparse.parse_qsl(sys.argv[2].lstrip("?")))
+        return dict(parse_qsl(sys.argv[2].lstrip("?")))
 
 
 request = Request()

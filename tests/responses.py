@@ -461,7 +461,46 @@ actionView_seasons_response = {
                             u"status": -1,
                             u"time": 0
                         },
-                        u"number": 2,
+                        u"number": 1,
+                        u"id": 128671,
+                        u"ac3": 0,
+                        u"tracks": 1,
+                        u"duration": 2628,
+                        u"watched": -1,
+                        u"thumbnail": u"https://example.com/480x270.jpg",
+                        u"subtitles": []
+                    },
+                    {
+                        u"files": [
+                            {
+                                u"url": {
+                                    u"hls": u"https://example.com/hls/480p",
+                                    u"hls2": u"https://example.com/hls2/480p",
+                                    u"http": u"https://example.com/http/480p",
+                                    u"hls4": u"https://example.com/hls4/480p"
+                                },
+                                u"h": 406,
+                                u"quality": u"480p",
+                                u"w": 720
+                            },
+                            {
+                                u"url": {
+                                    u"hls": u"https://example.com/hls/720p",
+                                    u"hls2": u"https://example.com/hls2/720p",
+                                    u"http": u"https://example.com/http/720p",
+                                    u"hls4": u"https://example.com/hls4/720p"
+                                },
+                                u"h": 406,
+                                u"quality": u"720p",
+                                u"w": 960
+                            }
+                        ],
+                        u"title": u"Большой взрыв",
+                        u"watching": {
+                            u"status": -1,
+                            u"time": 0
+                        },
+                        u"number": 3,
                         u"id": 128671,
                         u"ac3": 0,
                         u"tracks": 1,
