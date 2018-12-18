@@ -1,15 +1,13 @@
 #!/usr/bin/python
 from resources.lib import addonworker
-from resources.lib.data import __settings__
+from resources.lib.data import __addon__, __device__
 
 
 def main():
-    if __settings__.getSetting("reset_auth") == "true":
-        __settings__.setSetting("access_token", "")
-        __settings__.setSetting("refresh_token", "")
-        __settings__.setSetting("access_token_expire", "")
-        __settings__.setSetting("reset_auth", "0")
-        __settings__.setSetting("device_info_update", "0")
+    if __addon__.getSetting("reset_auth") == "true":
+        # reset all device auth data
+        __device__.reset()
+        __addon__.setSetting("reset_auth", "false")
     addonworker.init()
 
 

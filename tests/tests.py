@@ -83,8 +83,8 @@ def ExtendedListItem():
 
 @pytest.fixture
 def settings():
-    from resources.lib.data import __settings__
-    return __settings__
+    from resources.lib.data import __addon__
+    return __addon__
 
 
 @pytest.fixture
