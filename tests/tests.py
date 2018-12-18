@@ -126,30 +126,35 @@ def index(mocker):
 
 
 def test_index(mocker, index, main, xbmcplugin, ExtendedListItem):
+    from resources.lib.addonutils import build_icon_path
     main()
     expected_results = [
-        (handle, plugin.format("profile"), u"Профиль", False),
-        (handle, plugin.format("search?type=None"), u"Поиск", False),
-        (handle, plugin.format("items?type=None"), u"Последние", True),
-        (handle, plugin.format("items?type=None&shortcut=%2Fpopular"), u"Популярные", True),
-        (handle, plugin.format("items?type=None&shortcut=%2Fhot"), u"Популярные", True),
-        (handle, plugin.format("tv"), u"ТВ", True),
-        (handle, plugin.format("bookmarks"), u"Закладки", True),
-        (handle, plugin.format("watching"), u"Я смотрю", True),
-        (handle, plugin.format("watching_movies"), u"Недосмотренные", True),
-        (handle, plugin.format("collections"), u"Подборки", True),
-        (handle, plugin.format("item_index?type=movie"), u"Фильмы", True),
-        (handle, plugin.format("item_index?type=serial"), u"Сериалы", True),
-        (handle, plugin.format("item_index?type=tvshow"), u"ТВ шоу", True),
-        (handle, plugin.format("item_index?type=4k"), u"4K", True),
-        (handle, plugin.format("item_index?type=3d"), u"3D", True),
-        (handle, plugin.format("item_index?type=concert"), u"Концерты", True),
-        (handle, plugin.format("item_index?type=documovie"), u"Документальные фильмы", True),
-        (handle, plugin.format("item_index?type=docuserial"), u"Документальные сериалы", True),
+        (handle, plugin.format("profile"), u"Профиль", "profile", False),
+        (handle, plugin.format("search?type=None"), u"Поиск", "search", False),
+        (handle, plugin.format("bookmarks"), u"Закладки", "bookmarks", True),
+        (handle, plugin.format("watching"), u"Я смотрю", "watching", True),
+        (handle, plugin.format("watching_movies"), u"Недосмотренные", "watching_movies", True),
+        (handle, plugin.format("items?type=None"), u"Последние", "new", True),
+        (handle, plugin.format("items?type=None&shortcut=%2Fpopular"),
+         u"Популярные", "popular", True),
+        (handle, plugin.format("items?type=None&shortcut=%2Fhot"), u"Горячие", "hot", True),
+        (handle, plugin.format("tv"), u"ТВ", "tv", True),
+        (handle, plugin.format("collections"), u"Подборки", "collections", True),
+        (handle, plugin.format("item_index?type=movie"), u"Фильмы", "movie", True),
+        (handle, plugin.format("item_index?type=serial"), u"Сериалы", "serial", True),
+        (handle, plugin.format("item_index?type=tvshow"), u"ТВ шоу", "tvshow", True),
+        (handle, plugin.format("item_index?type=4k"), u"4K", "4k", True),
+        (handle, plugin.format("item_index?type=3d"), u"3D", "3d", True),
+        (handle, plugin.format("item_index?type=concert"), u"Концерты", "concert", True),
+        (handle, plugin.format("item_index?type=documovie"),
+         u"Документальные фильмы", "documovie", True),
+        (handle, plugin.format("item_index?type=docuserial"),
+         u"Документальные сериалы", "docuserial", True)
     ]
     for result in expected_results:
-        handle_, link, title, is_directory = result
-        ExtendedListItem.assert_any_call(title.encode("utf-8"))
+        handle_, link, title, icon, is_directory = result
+        img = build_icon_path(icon)
+        ExtendedListItem.assert_any_call(title.encode("utf-8"), iconImage=img, thumbnailImage=img)
         li = ExtendedListItem()
         xbmcplugin.addDirectoryItem.assert_any_call(handle_, link, li, is_directory)
     xbmcplugin.endOfDirectory.assert_called_once_with(handle)

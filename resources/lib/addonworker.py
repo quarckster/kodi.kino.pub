@@ -21,6 +21,7 @@ from addonutils import (
     video_info as extract_video_info,
     get_window_property,
     set_window_property,
+    build_icon_path
 )
 from authwindow import auth
 from client import KinoPubClient
@@ -46,7 +47,9 @@ def show_pagination(pagination, action, **kwargs):
     # Add "next page" button
     if pagination and (int(pagination["current"]) + 1 <= int(pagination["total"])):
         kwargs["page"] = int(pagination["current"]) + 1
-        li = ExtendedListItem("[COLOR FFFFF000]Вперёд[/COLOR]")
+        # Use icons from lib for default headings
+        img = build_icon_path('next_page')
+        li = ExtendedListItem("[COLOR FFFFF000]Вперёд[/COLOR]", iconImage=img, thumbnailImage=img)
         link = get_internal_link(action, **kwargs)
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     xbmcplugin.endOfDirectory(request.handle, cacheToDisc=False)
@@ -112,29 +115,35 @@ def add_default_headings(type=None, fmt="slp"):
     # s - show alphabet sorting
     # g - show genres folder
     # h - show hot
-
+    # Use icons from lib for default headings
     if "s" in fmt:
-        li = ExtendedListItem("Поиск")
+        img = build_icon_path('search')
+        li = ExtendedListItem("Поиск", iconImage=img, thumbnailImage=img)
         link = get_internal_link("search", type=type)
         xbmcplugin.addDirectoryItem(request.handle, link, li, False)
     if "l" in fmt:
-        li = ExtendedListItem("Последние")
+        img = build_icon_path('new')
+        li = ExtendedListItem("Последние", iconImage=img, thumbnailImage=img)
         link = get_internal_link("items", type=type)
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     if "p" in fmt:
-        li = ExtendedListItem("Популярные")
+        img = build_icon_path('popular')
+        li = ExtendedListItem("Популярные", iconImage=img, thumbnailImage=img)
         link = get_internal_link("items", type=type, shortcut="/popular")
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     if "a" in fmt:
-        li = ExtendedListItem("По алфавиту")
+        img = build_icon_path('alphabet')
+        li = ExtendedListItem("По алфавиту", iconImage=img, thumbnailImage=img)
         link = get_internal_link("alphabet", type=type)
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     if "g" in fmt:
-        li = ExtendedListItem("Жанры")
+        img = build_icon_path('genres')
+        li = ExtendedListItem("Жанры", iconImage=img, thumbnailImage=img)
         link = get_internal_link("genres", type=type)
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     if "h" in fmt:
-        li = ExtendedListItem("Горячие")
+        img = build_icon_path('hot')
+        li = ExtendedListItem("Горячие", iconImage=img, thumbnailImage=img)
         link = get_internal_link("items", type=type, shortcut="/hot")
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
 
@@ -148,19 +157,27 @@ def login():
 def index():
     """Main screen - show type list"""
     if not auth.access_token:
-        li = ExtendedListItem("Активировать устройство")
+        # Use icons from lib for default headings
+        li = ExtendedListItem("Активировать устройство", iconImage=build_icon_path('activate'))
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("login"), li, False)
     else:
         response = KinoPubClient("types").get()
-        li = ExtendedListItem("Профиль")
+        # Use icons from lib for default headings
+        img = build_icon_path('profile')
+        li = ExtendedListItem("Профиль", iconImage=img, thumbnailImage=img)
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("profile"), li, False)
         for menu_item in main_menu_items:
             if menu_item.is_displayed:
-                li = ExtendedListItem(menu_item.title)
+                li = ExtendedListItem(
+                    menu_item.title,
+                    iconImage=menu_item.icon,
+                    thumbnailImage=menu_item.icon
+                    )
                 xbmcplugin.addDirectoryItem(request.handle, menu_item.link, li, menu_item.is_dir)
         for i in response["items"]:
             if xbmcaddon.Addon(id=__id__).getSetting("show_{}".format(i["id"])) != "false":
                 li = ExtendedListItem(i["title"].encode("utf-8"))
+                li = ExtendedListItem(i["title"].encode("utf-8"), iconImage=img, thumbnailImage=img)
                 link = get_internal_link("item_index", type=i["id"])
                 xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     xbmcplugin.endOfDirectory(request.handle)
@@ -424,13 +441,17 @@ def search(type=None):
 @route("/bookmarks")
 def bookmarks(folder_id=None, page=None):
     if folder_id is None:
-        li = ExtendedListItem("Создать папку")
+        img = build_icon_path('create_bookmarks_folder')
+        li = ExtendedListItem("Создать папку", iconImage=img, thumbnailImage=img)
         link = get_internal_link("create_bookmarks_folder")
         xbmcplugin.addDirectoryItem(request.handle, link, li, False)
         response = KinoPubClient("bookmarks").get()
         for folder in response["items"]:
+            img = build_icon_path('bookmark')
             li = ExtendedListItem(
                 folder["title"].encode("utf-8"),
+                iconImage=img,
+                thumbnailImage=img,
                 properties={
                     "folder-id": str(folder["id"]).encode("utf-8"),
                     "views": str(folder["views"]).encode("utf-8"),
@@ -516,13 +537,19 @@ def watching_movies():
 def collections(sort=None, page=None):
     response = KinoPubClient("collections/index").get(data={"sort": sort, "page": page})
     xbmcplugin.setContent(request.handle, "movies")
-    li = ExtendedListItem("Последние")
+
+    img = build_icon_path('new')
+    li = ExtendedListItem("Последние", iconImage=img, thumbnailImage=img)
     link = get_internal_link("collections", sort="-created")
     xbmcplugin.addDirectoryItem(request.handle, link, li, True)
-    li = ExtendedListItem("Просматриваемые")
+
+    img = build_icon_path('hot')
+    li = ExtendedListItem("Просматриваемые", iconImage=img, thumbnailImage=img)
     link = get_internal_link("collections", sort="-watchers")
     xbmcplugin.addDirectoryItem(request.handle, link, li, True)
-    li = ExtendedListItem("Популярные")
+
+    img = build_icon_path('popular')
+    li = ExtendedListItem("Популярные", iconImage=img, thumbnailImage=img)
     link = get_internal_link("collections", sort="-views")
     xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     for item in response["items"]:
