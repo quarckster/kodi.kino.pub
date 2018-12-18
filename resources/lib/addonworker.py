@@ -352,7 +352,7 @@ def trailer(id, sid=None):
         url = get_mlink(
             trailer,
             quality=__settings__.getSetting("video_quality"),
-            streamType=__settings__.getSetting("stream_type")
+            stream_type=__settings__.getSetting("stream_type")
         )
     elif sid is not None:
         url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid={}"
@@ -595,4 +595,8 @@ def profile():
 
 # Entry point
 def init():
-    ROUTES[request.path](**request.args)
+    # fix crash when using as widget and kodi adds "reload" to args
+    args = request.args
+    if args.get('reload'):
+        del args['reload']
+    ROUTES[request.path](**args)
