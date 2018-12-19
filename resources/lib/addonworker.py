@@ -595,8 +595,4 @@ def profile():
 
 # Entry point
 def init():
-    # fix crash when using as widget and kodi adds "reload" to args
-    args = request.args
-    if args.get('reload'):
-        del args['reload']
-    ROUTES[request.path](**args)
+    ROUTES[request.path](**request.args)

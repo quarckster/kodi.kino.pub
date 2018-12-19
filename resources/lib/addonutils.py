@@ -151,7 +151,11 @@ class Request(object):
 
     @property
     def args(self):
-        return dict(urlparse.parse_qsl(sys.argv[2].lstrip("?")))
+        args = dict(urlparse.parse_qsl(sys.argv[2].lstrip("?")))
+        # fix crash when using as widget and kodi adds "reload" to args
+        if "reload" in args:
+            del args['reload']
+        return args
 
 
 request = Request()
