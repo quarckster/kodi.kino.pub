@@ -6,6 +6,7 @@ import xbmcaddon
 
 __id__ = "video.kino.pub"
 __settings__ = xbmcaddon.Addon(id=__id__)
+__ratings_source__ = __settings__.getSetting('ratings_source')
 __plugin__ = "plugin://{}".format(__id__)
 advancedsettings_file = xbmc.translatePath("special://home/userdata/advancedsettings.xml")
 defaults = {
