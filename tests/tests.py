@@ -333,6 +333,7 @@ def test_view_season_episodes(request, main, view_season_episodes, ExtendedListI
         info = video_info(item, {
             "season": season["number"],
             "episode": episode["number"],
+            "tvshowtitle": episode["title"],
             "time": watching_episode["time"],
             "duration": watching_episode["duration"],
             "playcount": watching_episode["status"],
@@ -393,6 +394,7 @@ def test_view_episodes(request, main, view_episodes, ExtendedListItem, xbmcplugi
             episode_title = "{} | {}".format(episode_title, video["title"].encode("utf-8"))
         info = video_info(item, {
             "episode": video["number"],
+            "tvshowtitle": video["title"],
             "playcount": video["watched"],
             "time": watching_episode["time"],
             "duration": watching_episode["duration"],

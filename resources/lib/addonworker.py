@@ -231,6 +231,7 @@ def episodes(id):
             episode_title = "{} | {}".format(episode_title, video["title"].encode("utf-8"))
         info = extract_video_info(item, {
             "episode": video["number"],
+            "tvshowtitle": video["title"],
             "time": watching_episode["time"],
             "duration": watching_episode["duration"],
             "playcount": video["watched"],
@@ -278,6 +279,7 @@ def season_episodes(id, season_number):
         info = extract_video_info(item, {
             "season": season_number,
             "episode": episode["number"],
+            "tvshowtitle": episode["title"],
             "time": watching_episode["time"],
             "duration": watching_episode["duration"],
             "playcount": watching_episode["status"],
