@@ -17,7 +17,7 @@ handle = 1
 plugin = "plugin://video.kino.pub/{}"
 pytestmark = pytest.mark.usefixtures("fake_kodi_api")
 qualities = ["480p", "720p", "1080p"]
-streams = ["hls", "hls4", "http"]
+streams = ["hls", "hls2", "http"]
 
 
 class FakeAddon(object):
