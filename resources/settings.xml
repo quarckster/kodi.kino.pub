@@ -2,7 +2,7 @@
 <settings>
     <category label="Общие">
         <setting id="video_quality" type="select" label="Качество видео" values="1080p|720p|480p" enable="eq(2,false)" default="1080p"/>
-        <setting id="stream_type" type="select" label="Тип стриминга" values="http|hls|hls2|hls4" enable="eq(1,false)" default="hls"/>
+        <setting id="stream_type" type="select" label="Тип стриминга" values="http|hls|hls2" enable="eq(1,false)" default="hls"/>
         <setting id="ask_quality" type="bool" label="Задавать вопрос о качестве видео перед воспроизведением" default="false"/>
         <setting type="sep" />
         <setting id="ratings_source" type="select" label="Источник рейтингов" values="IMDB|Кинопоиск" default="IMDB"/>
