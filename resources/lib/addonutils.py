@@ -10,7 +10,7 @@ from functools import wraps
 import xbmc
 import xbmcgui
 
-from data import __id__, __settings__, __plugin__, __ratings_source__
+from data import __id__, __settings__, __plugin__
 
 
 def dict_merge(old, new):
@@ -57,11 +57,17 @@ def get_mlink(video, stream_type=None, quality=None, ask_quality="false"):
             return files[natural_sort(files.keys())[-1]][stream_type]
 
 
-# Take rating from specified resource if this rating exist
-def build_rating(item):
-    rating = item["imdb_rating"] if __ratings_source__ == 'IMDB' else item["kinopoisk_rating"]
-    if rating:
-        return float(rating)
+def build_plot(item):
+    final_plot = []
+    if item["imdb_rating"]:
+        final_plot.append("IMDB: {}".format(str(round(item["imdb_rating"], 1))))
+    if item["kinopoisk_rating"]:
+        final_plot.append(u"Кинопоиск: {}".format(str(round(item["kinopoisk_rating"], 1))))
+    # a new line between the ratings and the plot
+    if item["imdb_rating"] or item["kinopoisk_rating"]:
+        final_plot.append("")
+    final_plot.append(item["plot"])
+    return "\n".join(final_plot)
 
 
 def get_status(item):
@@ -77,10 +83,10 @@ def video_info(item, extend=None):
     info = {
         "year": int(item["year"]),
         "genre": ", ".join([x["title"] for x in item["genres"]]),
-        "rating": build_rating(item),
+        "rating": float(item["rating"]),
         "cast": [x.strip() for x in item["cast"].split(",")],
         "director": item["director"],
-        "plot": item["plot"],
+        "plot": build_plot(item),
         "title": item["title"],
         "duration": item.get("duration", {}).get("average"),
         "imdbnumber": item["imdb"],
