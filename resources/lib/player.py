@@ -20,8 +20,9 @@ class Player(xbmc.Player):
         # TODO for TV shows kinopub gives IMDB ID of the show, not of an episode
         # For example: https://www.imdb.com/title/tt2085059/
         # Because of this it can not scrobble TV shows
-
-        ids = json.dumps({u'imdb': 'tt' + tag.getIMDBNumber()})
+        # imdb id should be 7 digits with leading zeroes with tt prepended
+        imdb_id = "tt%07d" % (tag.getIMDBNumber(),)
+        ids = json.dumps({u'imdb': imdb_id})
         xbmcgui.Window(10000).setProperty('script.trakt.ids', ids)
 
     def set_marktime(self):
