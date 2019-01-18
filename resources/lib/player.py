@@ -21,7 +21,7 @@ class Player(xbmc.Player):
         # For example: https://www.imdb.com/title/tt2085059/
         # Because of this it can not scrobble TV shows
         # imdb id should be 7 digits with leading zeroes with tt prepended
-        imdb_id = "tt%07d" % (tag.getIMDBNumber(),)
+        imdb_id = "tt%07d" % (int(tag.getIMDBNumber()),)
         ids = json.dumps({u'imdb': imdb_id})
         xbmcgui.Window(10000).setProperty('script.trakt.ids', ids)
 
