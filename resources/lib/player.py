@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import xbmc
-
+import json
 from client import KinoPubClient
 from data import get_adv_setting
+from resources.lib.modules import control
 
 
 class Player(xbmc.Player):
@@ -46,18 +47,17 @@ class Player(xbmc.Player):
         else:
             data = {"id": id, "video": video_number}
         return data
-    
+
     def onPlayBackStarted(self):
         tag = self.list_item.getVideoInfoTag()
-        # trakt.tv info tag: https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling   
-        
+        # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
+
         # TODO for TV shows kinopub gives IMDB ID of the show, not of an episode
         # For example: https://www.imdb.com/title/tt2085059/
         # Because of this it can not scrobble TV shows
-        
-        ids = json.dumps({u'imdb': 'tt' + tag.getIMDBNumber()})
-        xbmcgui.Window(10000).setProperty('script.trakt.ids', ids)
 
+        ids = json.dumps({u'imdb': 'tt' + tag.getIMDBNumber()})
+        control.window.setProperty('script.trakt.ids', ids)
 
     def onPlayBackStopped(self):
         self.is_playing = False
