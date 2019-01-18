@@ -89,7 +89,7 @@ def video_info(item, extend=None):
         "plot": build_plot(item),
         "title": item["title"],
         "duration": item.get("duration", {}).get("average"),
-        "imdbnumber": "%07d" % (item["imdb"],), # imdb id should be 7 digits with leading zeroes
+        "imdbnumber": "%07d" % (item["imdb"],),  # imdb id should be 7 digits with leading zeroes
         "status": get_status(item),
         "votes": item["rating_votes"],
         "country": ", ".join([x["title"] for x in item["countries"]])
