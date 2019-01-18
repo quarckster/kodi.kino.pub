@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-import xbmc
-import json
+import xbmc,xbmcgui,json
 from client import KinoPubClient
 from data import get_adv_setting
-from resources.lib.modules import control
 
 
 class Player(xbmc.Player):
@@ -57,7 +55,7 @@ class Player(xbmc.Player):
         # Because of this it can not scrobble TV shows
 
         ids = json.dumps({u'imdb': 'tt' + tag.getIMDBNumber()})
-        control.window.setProperty('script.trakt.ids', ids)
+        xbmcgui.Window(10000).setProperty('script.trakt.ids', ids)
 
     def onPlayBackStopped(self):
         self.is_playing = False
