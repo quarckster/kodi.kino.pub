@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-import xbmc,xbmcgui,json
+import xbmc
+import xbmcgui
+import json
 from client import KinoPubClient
 from data import get_adv_setting
 
