@@ -336,6 +336,7 @@ def play(id, title, video_info, video_data=None, poster=None):
             "season_number": video_info.get("season", ""),
             "playcount": video_info["playcount"]
         },
+        video_info=video_info,
         poster=poster,
         subtitles=[subtitle["url"] for subtitle in video_data["subtitles"]],
     )
