@@ -600,9 +600,19 @@ def profile():
 @route("/speedtest")
 def speedtest():
     dialog = xbmcgui.Dialog()
-    dialog.ok(
+    answer = dialog.yesno(
         "Спидтест",
-        "Work in progress"
+        "Провести спидтест?",
+        "Будет выполнен замер скорости по трем серверам (Германия, Нидерланды, Россия)",
+        "Процесс займёт не более одной минуты",
+        "Нет",
+        "Да"
+    )
+    if not answer:
+        return
+    dialog.ok(
+        "Тест",
+        "Продолжаем"
     )
 
 
