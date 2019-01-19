@@ -18,7 +18,6 @@ class ExtendedListItem(ListItem):
             self.setProperties(**properties)
         if video_info:
             self.setInfo("video", video_info)
-            self.setResumeTime(video_info.get("time"))
         if poster:
             self.setArt({"poster": poster})
         if subtitles:
