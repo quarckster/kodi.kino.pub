@@ -24,7 +24,7 @@ class ExtendedListItem(ListItem):
             self.setSubtitles(subtitles)
         if addContextMenuItems:
             self.addPredefinedContextMenuItems()
-        if not isPlayerInit:
+        if not isPlayerInit and video_info and video_info.get("time"):
             # If we will set resume time on li which is sent to Player instance
             # The video's resume time will be set to 0
             self.setResumeTime(video_info.get("time"))
