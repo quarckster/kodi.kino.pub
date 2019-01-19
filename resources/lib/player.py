@@ -50,9 +50,9 @@ class Player(xbmc.Player):
 
     def onPlayBackStarted(self):
         # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
-        tag = self.list_item.getVideoInfoTag()
+        li = self.list_item
         # imdb id should be 7 digits with leading zeroes with tt prepended
-        imdb_id = "tt%07d" % (int(tag.getIMDBNumber()),)
+        imdb_id = "tt%07d" % (int(li.getUniqueID('imdb')),)
         ids = json.dumps({u'imdb': imdb_id})
         xbmcgui.Window(10000).setProperty('script.trakt.ids', ids)
 

@@ -171,7 +171,6 @@ def play(request, mocker, settings):
 
 
 def test_play(play, main, ExtendedListItem, xbmcplugin):
-    from resources.lib.addonutils import build_plot
     stream, video_quality = play
     main()
     title = actionPlay_response["item"]["title"].encode("utf-8")
@@ -190,23 +189,12 @@ def test_play(play, main, ExtendedListItem, xbmcplugin):
         poster=None,
         subtitles=[],
         video_info={
-            "status": None,
-            "rating": 3.0,
-            u'time': 0,
-            "title": actionPlay_response["item"]["title"],
-            "votes": actionPlay_response["item"]["rating_votes"],
-            "year": actionPlay_response["item"]["year"],
-            "cast": [x.strip() for x in actionPlay_response["item"]["cast"].split(",")],
-            "country": ", ".join([x["title"] for x in actionPlay_response["item"]["countries"]]),
-            "director": actionPlay_response["item"]["director"],
-            "duration": 0,
-            "genre": ", ".join([x["title"] for x in actionPlay_response["item"]["genres"]]),
-            u'playcount': 0,
-            "imdbnumber": actionPlay_response["item"]["imdb"],
-            "plot": build_plot(actionPlay_response["item"])
+            "episode": None,
+            "season": None
         }
     )
     li = ExtendedListItem(title, path=link)
+    li.setUniqueIDs.assert_called_with({"imdb": actionPlay_response["item"]["imdb"]})
     xbmcplugin.setResolvedUrl.assert_called_once_with(handle, True, li)
 
 
