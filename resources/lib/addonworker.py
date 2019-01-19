@@ -337,7 +337,6 @@ def play(id, title, video_info, video_data=None, poster=None):
             "playcount": video_info["playcount"]
         },
         video_info=video_info,
-        isPlayerInit=True,
         poster=poster,
         subtitles=[subtitle["url"] for subtitle in video_data["subtitles"]],
     )

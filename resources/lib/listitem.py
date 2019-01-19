@@ -12,8 +12,10 @@ class ExtendedListItem(ListItem):
                                                     path)
 
     def __init__(self, name, label2="", iconImage="", thumbnailImage="", path="", poster=None,
-                 video_info=None, properties=None, addContextMenuItems=False, subtitles=None,isPlayerInit=False):
-        super(ExtendedListItem, self).__init__(name, label2, iconImage, thumbnailImage, path)
+                 video_info=None, properties=None, addContextMenuItems=False, subtitles=None):
+        super(ExtendedListItem, self).__init__(name, label2, iconImage, thumbnailImage, path)  
+        if video_info.get("time"):
+            self.setProperty("resume_time", str(video_info.get("time")))
         if properties:
             self.setProperties(**properties)
         if video_info:
@@ -24,10 +26,6 @@ class ExtendedListItem(ListItem):
             self.setSubtitles(subtitles)
         if addContextMenuItems:
             self.addPredefinedContextMenuItems()
-        if not isPlayerInit and video_info and video_info.get("time"):
-            # If we will set resume time on li which is sent to Player instance
-            # The video's resume time will be set to 0
-            self.setResumeTime(video_info.get("time"))
 
     def _addWatchlistContextMenuItem(self, menu_items):
         in_watchlist = self.getProperty("in_watchlist")
