@@ -22,5 +22,6 @@
         <setting id="show_concert" type="bool" label="Концерты" default="true"/>
         <setting id="show_documovie" type="bool" label="Документальные фильмы" default="true"/>
         <setting id="show_docuserial" type="bool" label="Документальные сериалы" default="true"/>
+        <setting id="show_speedtest" type="bool" label="Спидтест" default="true"/>
     </category>
 </settings>

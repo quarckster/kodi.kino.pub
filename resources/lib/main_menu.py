@@ -61,5 +61,11 @@ main_menu_items = [
         get_internal_link("collections"),
         True,
         eval(__settings__.getSetting("show_collections").title())
+    ),
+    MainMenuItem(
+        "Спидтест",
+        get_internal_link("speedtest"),
+        True,
+        eval(__settings__.getSetting("show_speedtest").title())
     )
 ]
