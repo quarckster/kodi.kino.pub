@@ -14,13 +14,6 @@ class Player(xbmc.Player):
         self.is_playing = True
         self.marktime = 0
 
-        # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
-        tag = self.list_item.getVideoInfoTag()
-        # imdb id should be 7 digits with leading zeroes with tt prepended
-        imdb_id = "tt%07d" % (int(tag.getIMDBNumber()),)
-        ids = json.dumps({u'imdb': imdb_id})
-        xbmcgui.Window(10000).setProperty('script.trakt.ids', ids)
-
     def set_marktime(self):
         if self.isPlaying():
             self.marktime = int(self.getTime())
@@ -54,6 +47,14 @@ class Player(xbmc.Player):
         else:
             data = {"id": id, "video": video_number}
         return data
+
+    def onPlayBackStarted(self):
+        # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
+        tag = self.list_item.getVideoInfoTag()
+        # imdb id should be 7 digits with leading zeroes with tt prepended
+        imdb_id = "tt%07d" % (int(tag.getIMDBNumber()),)
+        ids = json.dumps({u'imdb': imdb_id})
+        xbmcgui.Window(10000).setProperty('script.trakt.ids', ids)
 
     def onPlayBackStopped(self):
         self.is_playing = False
