@@ -137,6 +137,8 @@ def index():
         response = KinoPubClient("types").get()
         li = ExtendedListItem("Профиль")
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("profile"), li, False)
+        li = ExtendedListItem("Спидтест")
+        xbmcplugin.addDirectoryItem(request.handle, get_internal_link("speedtest"), li, False)
         for menu_item in main_menu_items:
             if menu_item.is_displayed:
                 li = ExtendedListItem(menu_item.title)
@@ -592,6 +594,14 @@ def profile():
         "Имя пользователя: [B]{}[/B]".format(user_data["username"]),
         "Дата регистрации: [B]{0:%d} {0:%B} {0:%Y}[/B]".format(reg_date),
         "Остаток дней подписки: [B]{}[/B]".format(int(user_data["subscription"]["days"]))
+    )
+
+@route("/speedtest")
+def speedtest():
+    dialog = xbmcgui.Dialog()
+    dialog.ok(
+        "Спидтест",
+        "Work in progress"
     )
 
 
