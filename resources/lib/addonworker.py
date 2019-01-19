@@ -596,6 +596,7 @@ def profile():
         "Остаток дней подписки: [B]{}[/B]".format(int(user_data["subscription"]["days"]))
     )
 
+
 @route("/speedtest")
 def speedtest():
     dialog = xbmcgui.Dialog()
