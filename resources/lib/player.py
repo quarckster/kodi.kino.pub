@@ -40,9 +40,11 @@ class Player(xbmc.Player):
     @property
     def _base_data(self):
         id = self.list_item.getProperty("id")
-        video_number = str(self.list_item.getVideoInfoTag().getEpisode())
-        season_number = str(self.list_item.getVideoInfoTag().getSeason())
-        if season_number:
+        video_number = self.list_item.getVideoInfoTag().getEpisode()
+        if video_number == -1:
+            video_number = 1
+        season_number = self.list_item.getVideoInfoTag().getSeason()
+        if season_number != -1:
             data = {"id": id, "season": season_number, "video": video_number}
         else:
             data = {"id": id, "video": video_number}
