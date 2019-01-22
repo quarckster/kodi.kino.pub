@@ -40,8 +40,8 @@ class Player(xbmc.Player):
     @property
     def _base_data(self):
         id = self.list_item.getProperty("id")
-        video_number = self.list_item.getProperty("video_number")
-        season_number = self.list_item.getProperty("season_number")
+        video_number = str(self.list_item.getVideoInfoTag().getEpisode())
+        season_number = str(self.list_item.getVideoInfoTag().getSeason())
         if season_number:
             data = {"id": id, "season": season_number, "video": video_number}
         else:
@@ -63,7 +63,7 @@ class Player(xbmc.Player):
         if self.should_make_resume_point:
             data["time"] = self.marktime
             KinoPubClient("watching/marktime").get(data=data)
-        elif self.should_mark_as_watched and int(self.list_item.getProperty("playcount")) < 1:
+        elif self.should_mark_as_watched and self.list_item.getVideoInfoTag().getPlayCount() < 1:
             data["status"] = 1
             KinoPubClient("watching/toggle").get(data=data)
         elif self.should_reset_resume_point:
@@ -74,7 +74,7 @@ class Player(xbmc.Player):
 
     def onPlayBackEnded(self):
         self.is_playing = False
-        if int(self.list_item.getProperty("playcount")) < 1:
+        if self.list_item.getVideoInfoTag().getPlayCount() < 1:
             data = self._base_data
             data["status"] = 1
             KinoPubClient("watching/toggle").get(data=data)
