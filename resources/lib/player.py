@@ -50,10 +50,6 @@ class Player(xbmc.Player):
 
     def onPlayBackStarted(self):
         li = self.list_item
-        # import web_pdb; web_pdb.set_trace()
-        # Not the start of the video => resuming
-        if self.getTime() == 0 and li.getProperty("resume_time"):
-            self.seekTime(int(li.getProperty("resume_time")))
 
         # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
         # imdb id should be 7 digits with leading zeroes with tt prepended

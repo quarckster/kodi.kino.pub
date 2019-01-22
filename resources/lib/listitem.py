@@ -13,9 +13,7 @@ class ExtendedListItem(ListItem):
 
     def __init__(self, name, label2="", iconImage="", thumbnailImage="", path="", poster=None,
                  video_info=None, properties=None, addContextMenuItems=False, subtitles=None):
-        super(ExtendedListItem, self).__init__(name, label2, iconImage, thumbnailImage, path)  
-        if video_info.get("time"):
-            self.setProperty("resume_time", str(video_info.get("time")))
+        super(ExtendedListItem, self).__init__(name, label2, iconImage, thumbnailImage, path)
         if properties:
             self.setProperties(**properties)
         if video_info:
