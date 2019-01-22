@@ -342,6 +342,7 @@ def play(id, title, video_info, video_data=None, poster=None):
         poster=poster,
         subtitles=[subtitle["url"] for subtitle in video_data["subtitles"]],
     )
+    li.setResumeTime(video_info["time"], video_info["duration"])
     li.setUniqueIDs({"imdb": video_info["imdbnumber"]})
     player = Player(list_item=li)
     xbmcplugin.setResolvedUrl(request.handle, True, li)
