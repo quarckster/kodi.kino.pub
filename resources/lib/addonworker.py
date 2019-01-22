@@ -245,6 +245,7 @@ def episodes(id):
             properties={"id": item["id"], "isPlayable": "true"},
             addContextMenuItems=True
         )
+        li.setResumeTime(watching_episode["time"], watching_episode["duration"])
         link = get_internal_link(
             "play",
             id=item["id"],
@@ -293,6 +294,7 @@ def season_episodes(id, season_number):
             properties={"id": item["id"], "isPlayable": "true"},
             addContextMenuItems=True
         )
+        li.setResumeTime(watching_episode["time"], watching_episode["duration"])
         if watching_episode["status"] < 1 and not selectedEpisode:
             selectedEpisode = True
             li.select(selectedEpisode)
