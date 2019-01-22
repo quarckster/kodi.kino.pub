@@ -183,9 +183,6 @@ def test_play(play, main, ExtendedListItem, xbmcplugin):
             "id": str(actionPlay_response["item"]["id"]),
             "play_duration": 0,
             "play_resumetime": 0,
-            "video_number": 1,
-            "season_number": "",
-            "playcount": 0
         },
         poster=None,
         subtitles=[],
