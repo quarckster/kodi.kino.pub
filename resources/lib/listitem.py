@@ -70,8 +70,14 @@ class ExtendedListItem(ListItem):
         # 21 is the maximum number of characters when the hosrizontal scrolling doesn't appear.
         menu_items.append(("─" * 21, ""))
 
+    def _addSpeedtestContextMenuItem(self, menu_items):
+        label = u"Спидтест"
+        item_id = self.getProperty("id")
+        link = get_internal_link("speedtest", item_id=item_id)
+        menu_items.append((label, "Container.Update({})".format(link)))
+
     def addPredefinedContextMenuItems(self, items=None):
-        items = items or ["watched", "watchlist", "bookmarks", "separator"]
+        items = items or ["speedtest", "watched", "watchlist", "bookmarks", "separator"]
         menu_items = []
         for item in items:
             getattr(self, "_add{}ContextMenuItem".format(item.capitalize()))(menu_items)

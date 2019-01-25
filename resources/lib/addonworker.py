@@ -598,7 +598,7 @@ def profile():
 
 
 @route("/speedtest")
-def speedtest():
+def speedtest(item_id):
     dialog = xbmcgui.Dialog()
     answer = dialog.yesno(
         "Спидтест",
@@ -610,10 +610,20 @@ def speedtest():
     )
     if not answer:
         return
+    response = KinoPubClient("items/{}".format(item_id)).get()
+    video_data = response["item"]["videos"][0]
+    url = get_mlink(
+        video_data,
+        quality=__settings__.getSetting("video_quality"),
+        stream_type=__settings__.getSetting("stream_type"),
+        ask_quality=__settings__.getSetting("ask_quality")
+    )
     dialog.ok(
         "Тест",
-        "Продолжаем"
+        url
     )
+    xbmc.executebuiltin("Container.Refresh")
+    return
 
 
 # Entry point
