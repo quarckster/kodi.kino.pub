@@ -184,7 +184,8 @@ def test_play(play, main, ExtendedListItem, xbmcplugin):
             "play_resumetime": 0,
             "video_number": 1,
             "season_number": "",
-            "playcount": 0
+            "playcount": 0,
+            "imdbnumber": actionPlay_response["item"]["imdb"]
         },
         poster=None,
         subtitles=[]

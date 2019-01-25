@@ -2,6 +2,9 @@
 <addon id="video.kino.pub" name="kino.pub" version="${VERSION}" provider-name="kino.pub">
   <requires>
     <import addon="xbmc.python" version="2.25.0"/>
+    <!-- To use debugger use `import web_pdb; web_pdb.set_trace()`
+     <import addon="script.module.web-pdb" />
+    -->
   </requires>
   <extension point="xbmc.python.pluginsource" library="addon.py">
     <provides>video</provides>
