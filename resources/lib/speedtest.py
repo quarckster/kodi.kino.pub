@@ -5,7 +5,7 @@ class Speedtest(object):
     def __init__(self, url):
         self.url = url
 
-    def run(self, callback, is_canceled):
+    def run(self):
         start = time.clock()
         response = urlopen(self.url)
         CHUNK = 1024 * 1024 # 1MiB
@@ -17,8 +17,6 @@ class Speedtest(object):
             time_passed = time.clock() - start
             speed_kbs = downloaded // time_passed // 1000
             percentage = i * (100 / mbs_to_download)
-            callback(percentage, speed_kbs)
-            if (is_canceled()):
-                break
+            yield percentage, speed_kbs
             if not chunk:
                 break
