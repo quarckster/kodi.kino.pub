@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import xbmc
-
+import json
+import xbmcgui
 from client import KinoPubClient
 from data import get_adv_setting
 
@@ -46,6 +47,15 @@ class Player(xbmc.Player):
         else:
             data = {"id": id, "video": video_number}
         return data
+
+    def onPlayBackStarted(self):
+        li = self.list_item
+
+        # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
+        # imdb id should be 7 digits with leading zeroes with tt prepended
+        imdb_id = "tt{:07d}".format(int(li.getProperty("imdbnumber")))
+        ids = json.dumps({u'imdb': imdb_id})
+        xbmcgui.Window(10000).setProperty('script.trakt.ids', ids)
 
     def onPlayBackStopped(self):
         self.is_playing = False

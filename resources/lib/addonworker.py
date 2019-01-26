@@ -334,7 +334,8 @@ def play(id, title, video_info, video_data=None, poster=None):
             "play_resumetime": video_info["time"],
             "video_number": video_info.get("episode", 1),
             "season_number": video_info.get("season", ""),
-            "playcount": video_info["playcount"]
+            "playcount": video_info["playcount"],
+            "imdbnumber": video_info["imdbnumber"]
         },
         poster=poster,
         subtitles=[subtitle["url"] for subtitle in video_data["subtitles"]],
