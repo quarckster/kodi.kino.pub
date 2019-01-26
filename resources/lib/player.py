@@ -53,7 +53,7 @@ class Player(xbmc.Player):
 
         # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
         # imdb id should be 7 digits with leading zeroes with tt prepended
-        imdb_id = "tt%07d" % (int(li.getProperty('imdbnumber')),)
+        imdb_id = "tt{:07d}".format(int(li.getProperty("imdbnumber")))
         ids = json.dumps({u'imdb': imdb_id})
         xbmcgui.Window(10000).setProperty('script.trakt.ids', ids)
 
