@@ -13,8 +13,8 @@ class Speedtest(object):
         downloaded = i * self.chunk_size
         time_passed = time.clock() - self.start_time
         speed_kbs = downloaded // time_passed // 1000
-        percentage = i * (100 / self.mbs_to_download)
-        return percentage, speed_kbs
+        percentage = i * (float(100) / float(self.mbs_to_download))
+        return int(percentage), speed_kbs
 
     def iter_results(self):
         response = urlopen(self.url)

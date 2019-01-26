@@ -610,23 +610,47 @@ def speedtest(item_id):
         return
     response = KinoPubClient("items/{}".format(item_id)).get()
     video_data = response["item"]["videos"][0]
-    url = get_mlink(
-        video_data,
-        quality=__settings__.getSetting("video_quality"),
-        stream_type=__settings__.getSetting("stream_type"),
-        ask_quality=__settings__.getSetting("ask_quality")
-    )
-    pDialog = xbmcgui.DialogProgress()
-    pDialog.create('Спидтест')
 
-    speedtest = Speedtest(url)
+    regions = {
+        "Германия": "de",
+        "Нидерланды": "nl",
+        "Россия": "ru"
+    }
 
-    for percentage, speed_kbs in speedtest.iter_results():
-        pDialog.update(percentage, "{:.0f} kb/s".format(speed_kbs))
-        if pDialog.iscanceled():
-            break
+    results = {}
 
-    xbmc.executebuiltin("Container.Refresh")
+    def speedtest_for_region(region_name, region_key):
+        url = get_mlink(
+            video_data,
+            quality=__settings__.getSetting("video_quality"),
+            stream_type="http",
+            ask_quality=__settings__.getSetting("ask_quality")
+        )
+        pDialog = xbmcgui.DialogProgress()
+        pDialog.create(region_name)
+        pDialog.update(0, "0 kb/s")
+
+        speedtest = Speedtest(url + "?loc={}".format(region_key))
+
+        for percentage, speed_kbs in speedtest.iter_results():
+            pDialog.update(percentage, "{:.0f} kb/s".format(speed_kbs))
+            results[region_name] = speed_kbs
+            if pDialog.iscanceled():
+                break
+
+    for region_name, region_key in regions.iteritems():
+        speedtest_for_region(region_name, region_key)
+
+    dialog = xbmcgui.Dialog()
+
+    def get_results(results):
+        arr = []
+        for region, speed in results.iteritems():
+            arr.append("{}: {:.0f} kb/s".format(region, speed))
+        return arr
+
+    dialog.ok('Результат', *get_results(results))
+
     return
 
 
