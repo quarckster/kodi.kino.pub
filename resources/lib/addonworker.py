@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
 from datetime import date
-
 import xbmc
 import xbmcgui
 import xbmcplugin
@@ -13,6 +12,7 @@ from data import __settings__, __plugin__
 from listitem import ExtendedListItem
 from main_menu import main_menu_items
 from player import Player
+from speedtest import Speedtest
 
 
 mediatype_map = {
@@ -616,10 +616,13 @@ def speedtest(item_id):
         stream_type=__settings__.getSetting("stream_type"),
         ask_quality=__settings__.getSetting("ask_quality")
     )
-    dialog.ok(
-        "Тест",
-        url
-    )
+    pDialog = xbmcgui.DialogProgress()
+    pDialog.create('Спидтест')
+    def callback(percentage, speed_kbs):
+        pDialog.update(percentage, "{:.0f} kb/s".format(speed_kbs))
+    
+    Speedtest(url).run(callback, pDialog.iscanceled)
+        
     xbmc.executebuiltin("Container.Refresh")
     return
 
