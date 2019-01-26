@@ -1,22 +1,26 @@
 import time
-from urllib2 import urlopen 
+from urllib2 import urlopen
+
 
 class Speedtest(object):
     def __init__(self, url):
         self.url = url
+        self.chunk_size = 1024 * 1024  # 1MiB
+        self.mbs_to_download = 50
+        self.start_time = time.clock()
 
-    def run(self):
-        start = time.clock()
+    def _get_percentage_and_speed(self, i):
+        downloaded = i * self.chunk_size
+        time_passed = time.clock() - self.start_time
+        speed_kbs = downloaded // time_passed // 1000
+        percentage = i * (100 / self.mbs_to_download)
+        return percentage, speed_kbs
+
+    def iter_results(self):
         response = urlopen(self.url)
-        CHUNK = 1024 * 1024 # 1MiB
-        mbs_to_download = 50
 
-        for i in range(mbs_to_download):
-            chunk = response.read(CHUNK)
-            downloaded = i * CHUNK
-            time_passed = time.clock() - start
-            speed_kbs = downloaded // time_passed // 1000
-            percentage = i * (100 / mbs_to_download)
-            yield percentage, speed_kbs
+        for i in range(self.mbs_to_download):
+            chunk = response.read(self.chunk_size)
+            yield self._get_percentage_and_speed(i)
             if not chunk:
                 break

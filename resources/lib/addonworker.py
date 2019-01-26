@@ -618,10 +618,10 @@ def speedtest(item_id):
     )
     pDialog = xbmcgui.DialogProgress()
     pDialog.create('Спидтест')
-    
-    speedtest_generator = Speedtest(url).run()
 
-    for percentage, speed_kbs in speedtest_generator:
+    speedtest = Speedtest(url)
+
+    for percentage, speed_kbs in speedtest.iter_results():
         pDialog.update(percentage, "{:.0f} kb/s".format(speed_kbs))
         if pDialog.iscanceled():
             break
