@@ -7,7 +7,7 @@ import urllib2
 import xbmc
 import xbmcgui
 
-from addonutils import nav_internal_link, update_device_info
+from addonutils import nav_internal_link, notice, update_device_info
 from data import __plugin__, __settings__
 
 
@@ -93,7 +93,6 @@ class Auth(object):
         try:
             udata = urllib.urlencode(data)
             req = urllib2.Request(url)
-
             resp = urllib2.urlopen(req, udata).read()
             return json.loads(resp)
         except urllib2.URLError, e:
@@ -104,6 +103,11 @@ class Auth(object):
                     return resp
                 except Exception:
                     pass
+            # server can respond with 429 status, so we just wait until it gives a correct response
+            if e.code == 429:
+                for _ in range(2):
+                    time.sleep(3)
+                    return self.request(url, data)
             return {"status": e.code, "error": "unknown error"}
         xbmc.executebuiltin("XBMC.Notification(Internet problems,Connection timed out!)")
         if self.window:
@@ -188,11 +192,9 @@ class Auth(object):
         xbmc.log("{}: No access_token. Show modal auth".format(__plugin__))
         status, resp = self.get_device_code()
         if status == self.ERROR:
-            self.window.show("\n".join([
-                "Устройство не поддерживается.",
-                "Посетите http://kino.pub/device/support для уточнения деталей."
-            ]))
-            self.window.close(cancel=True)
+            notice("Код ответа сервера {}".format(resp["status"]), heading="Неизвестная ошибка")
+            nav_internal_link("/")
+            return
         self.window.show("\n".join([
             "Откройте [B]{}[/B]".format(resp["verification_uri"].encode("utf-8")),
             "и введите следующий код: [B]{}[/B]".format(resp["user_code"].encode("utf-8"))
