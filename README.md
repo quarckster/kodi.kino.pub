@@ -15,6 +15,7 @@ The most notable changes:
 * big refactoring of the code has been made
 * watch and resume points are synced across multiple devices
 * new folders "Горячее" and "Недосмотренные"
+* support of Trakt.tv
 * added some tests
 
 
