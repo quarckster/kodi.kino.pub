@@ -2,7 +2,7 @@
 from xbmcgui import ListItem
 
 from addonutils import get_internal_link
-from data import get_adv_setting
+from data import __settings__, get_adv_setting
 
 
 class ExtendedListItem(ListItem):
@@ -92,3 +92,7 @@ class ExtendedListItem(ListItem):
             resumetime == 0
         ):
             self.setProperties(resumetime=resumetime, totaltime=totaltime)
+
+    def markAdvert(self, has_advert):
+        if __settings__.getSetting("mark_advert") == "true" and has_advert:
+            self.setLabel("{} (!)".format(self.getLabel()))

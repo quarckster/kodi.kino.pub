@@ -84,6 +84,7 @@ def show_items(items, add_indexes=False):
             isdir = True
         li.setInfo("video", video_info)
         li.addPredefinedContextMenuItems()
+        li.markAdvert(item["advert"])
         xbmcplugin.addDirectoryItem(request.handle, link, li, isdir)
 
 
