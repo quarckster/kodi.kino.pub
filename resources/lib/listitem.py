@@ -65,13 +65,13 @@ class ExtendedListItem(ListItem):
         label = u"Изменить закладки"
         link = get_internal_link("edit_bookmarks", item_id=item_id)
         menu_items.append((label, "Container.Update({})".format(link)))
-    
+
     def _addCommentsContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
         label = u"Комментарии KinoPub"
         link = get_internal_link("comments", item_id=item_id)
         menu_items.append((label, "Container.Update({})".format(link)))
-    
+
     def _addSeparatorContextMenuItem(self, menu_items):
         # 21 is the maximum number of characters when the hosrizontal scrolling doesn't appear.
         menu_items.append(("─" * 21, ""))
