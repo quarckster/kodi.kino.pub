@@ -71,7 +71,7 @@ class ExtendedListItem(ListItem):
         label = u"Комментарии KinoPub"
         link = get_internal_link("comments", item_id=item_id)
         menu_items.append((label, "Container.Update({})".format(link)))
-        
+    
     def _addSeparatorContextMenuItem(self, menu_items):
         # 21 is the maximum number of characters when the hosrizontal scrolling doesn't appear.
         menu_items.append(("─" * 21, ""))
