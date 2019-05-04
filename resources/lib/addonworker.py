@@ -596,6 +596,7 @@ def profile():
         "Остаток дней подписки: [B]{}[/B]".format(int(user_data["subscription"]["days"]))
     )
 
+
 @route("/comments")
 def comments(item_id=None):
     response = KinoPubClient("items/comments").get(data={"id": item_id})
@@ -609,9 +610,11 @@ def comments(item_id=None):
             rating = " [COLOR FFD11141](%s)[/COLOR]" % i["rating"]
         else:
             rating = ""
-        message = "%s[COLOR FFFFF000]%s[/COLOR]%s: %s\n\n" % (message,i["user"]["name"],rating, i["message"].replace("\n", " "))   
+        message = "%s[COLOR FFFFF000]%s[/COLOR]%s: %s\n\n" % \
+                (message, i["user"]["name"], rating, i["message"].replace("\n", " "))
     dialog = xbmcgui.Dialog()
-    dialog.textviewer('Комментарии "%s"' % title, "%s" % message) 
+    dialog.textviewer('Комментарии "%s"' % title, "%s" % message)
+
 
 # Entry point
 def init():
