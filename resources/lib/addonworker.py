@@ -605,15 +605,17 @@ def comments(item_id=None):
     message = "" if comments else u"Пока тут пусто"
     for i in comments:
         if int(i["rating"]) > 0:
-            rating = " [COLOR FF00B159](+%s)[/COLOR]" % i["rating"]
+            rating = u" [COLOR FF00B159](+{})[/COLOR]".format(i["rating"])
         elif int(i["rating"]) < 0:
-            rating = " [COLOR FFD11141](%s)[/COLOR]" % i["rating"]
+            rating = u" [COLOR FFD11141]({})[/COLOR]".format(i["rating"])
         else:
             rating = ""
-        message = "%s[COLOR FFFFF000]%s[/COLOR]%s: %s\n\n" % \
-                  (message, i["user"]["name"], rating, i["message"].replace("\n", " "))
+        message = u"{}[COLOR FFFFF000]{}[/COLOR]{}: {}\n\n".format(message,
+                                                                  i["user"]["name"],
+                                                                  rating,
+                                                                  i["message"].replace("\n", " "))
     dialog = xbmcgui.Dialog()
-    dialog.textviewer('Комментарии "%s"' % title, "%s" % message)
+    dialog.textviewer('Комментарии "{}"'.format(title), message)
 
 
 # Entry point
