@@ -611,9 +611,9 @@ def comments(item_id=None):
         else:
             rating = ""
         message = u"{}[COLOR FFFFF000]{}[/COLOR]{}: {}\n\n".format(message,
-                                                                  i["user"]["name"],
-                                                                  rating,
-                                                                  i["message"].replace("\n", " "))
+                                                                   i["user"]["name"],
+                                                                   rating,
+                                                                   i["message"].replace("\n", " "))
     dialog = xbmcgui.Dialog()
     dialog.textviewer('Комментарии "{}"'.format(title), message)
 
