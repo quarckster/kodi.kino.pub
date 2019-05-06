@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import platform
 import re
 import sys
@@ -11,6 +12,18 @@ import xbmc
 import xbmcgui
 
 from data import __id__, __settings__, __plugin__
+
+
+def set_window_property(value):
+    if not isinstance(value, basestring):
+        value = json.dumps(value)
+    xbmcgui.Window(10000).setProperty("video.kino.pub-playback_data", value)
+
+
+def get_window_property(index):
+    data = json.loads(xbmcgui.Window(10000).getProperty("video.kino.pub-playback_data"))[index]
+    xbmcgui.Window(10000).clearProperty("video.kino.pub-playback_dict")
+    return data
 
 
 def dict_merge(old, new):
