@@ -9,7 +9,6 @@ from data import get_adv_setting
 class Player(xbmc.Player):
 
     def __init__(self, list_item=None):
-        super(Player, self).__init__()
         self.list_item = list_item
         self.is_playing = True
         self.marktime = 0
