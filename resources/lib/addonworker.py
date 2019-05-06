@@ -32,7 +32,7 @@ def show_pagination(pagination, action, **kwargs):
     # Add "next page" button
     if pagination and (int(pagination["current"]) + 1 <= int(pagination["total"])):
         kwargs["page"] = int(pagination["current"]) + 1
-        li = ExtendedListItem(u"[COLOR FFFFF000]Вперёд[/COLOR]")
+        li = ExtendedListItem("[COLOR FFFFF000]Вперёд[/COLOR]")
         link = get_internal_link(action, **kwargs)
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     xbmcplugin.endOfDirectory(request.handle, cacheToDisc=False)
@@ -43,8 +43,8 @@ def show_items(items, add_indexes=False):
     playback_data = {}
     # Fill list with items
     for index, item in enumerate(items, 1):
-        title = item["title"]
-        title = u"{}. {}".format(index, title) if add_indexes else title
+        title = item["title"].encode("utf-8")
+        title = "{}. {}".format(index, title) if add_indexes else title
         li = ExtendedListItem(
             title,
             poster=item["posters"]["big"],
@@ -100,27 +100,27 @@ def add_default_headings(type=None, fmt="slp"):
     # h - show hot
 
     if "s" in fmt:
-        li = ExtendedListItem(u"Поиск")
+        li = ExtendedListItem("Поиск")
         link = get_internal_link("search", type=type)
         xbmcplugin.addDirectoryItem(request.handle, link, li, False)
     if "l" in fmt:
-        li = ExtendedListItem(u"Последние")
+        li = ExtendedListItem("Последние")
         link = get_internal_link("items", type=type)
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     if "p" in fmt:
-        li = ExtendedListItem(u"Популярные")
+        li = ExtendedListItem("Популярные")
         link = get_internal_link("items", type=type, shortcut="/popular")
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     if "a" in fmt:
-        li = ExtendedListItem(u"По алфавиту")
+        li = ExtendedListItem("По алфавиту")
         link = get_internal_link("alphabet", type=type)
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     if "g" in fmt:
-        li = ExtendedListItem(u"Жанры")
+        li = ExtendedListItem("Жанры")
         link = get_internal_link("genres", type=type)
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     if "h" in fmt:
-        li = ExtendedListItem(u"Горячие")
+        li = ExtendedListItem("Горячие")
         link = get_internal_link("items", type=type, shortcut="/hot")
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
 
@@ -134,11 +134,11 @@ def login():
 def index():
     """Main screen - show type list"""
     if not auth.access_token:
-        li = ExtendedListItem(u"Активировать устройство")
+        li = ExtendedListItem("Активировать устройство")
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("login"), li, False)
     else:
         response = KinoPubClient("types").get()
-        li = ExtendedListItem(u"Профиль")
+        li = ExtendedListItem("Профиль")
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("profile"), li, False)
         for menu_item in main_menu_items:
             if menu_item.is_displayed:
@@ -197,7 +197,7 @@ def seasons(id):
     selectedSeason = False
     xbmcplugin.setContent(request.handle, "tvshows")
     for season in item["seasons"]:
-        season_title = u"Сезон {}".format(season["number"])
+        season_title = "Сезон {}".format(season["number"])
         watching_season = watching_info["seasons"][season["number"] - 1]
         li = ExtendedListItem(
             season_title,
@@ -276,7 +276,7 @@ def season_episodes(id, season_number):
         watching_episode = watching_season["episodes"][episode["number"] - 1]
         episode_title = "s{:02d}e{:02d}".format(season_number, episode["number"])
         if episode["title"]:
-            episode_title = u"{} | {}".format(episode_title, episode["title"])
+            episode_title = "{} | {}".format(episode_title, episode["title"].encode("utf-8"))
         info = extract_video_info(item, {
             "season": season_number,
             "episode": episode["number"],
@@ -606,18 +606,18 @@ def comments(item_id=None):
     response = KinoPubClient("items/comments").get(data={"id": item_id})
     comments = response["comments"]
     title = response["item"]["title"].encode("utf-8")
-    message = "" if comments else u"Пока тут пусто"
+    message = "" if comments else "Пока тут пусто"
     for i in comments:
         if int(i["rating"]) > 0:
-            rating = u" [COLOR FF00B159](+{})[/COLOR]".format(i["rating"])
+            rating = " [COLOR FF00B159](+{})[/COLOR]".format(i["rating"])
         elif int(i["rating"]) < 0:
-            rating = u" [COLOR FFD11141]({})[/COLOR]".format(i["rating"])
+            rating = " [COLOR FFD11141]({})[/COLOR]".format(i["rating"])
         else:
             rating = ""
-        message = u"{}[COLOR FFFFF000]{}[/COLOR]{}: {}\n\n".format(message,
-                                                                   i["user"]["name"],
-                                                                   rating,
-                                                                   i["message"].replace("\n", " "))
+        message = "{}[COLOR FFFFF000]{}[/COLOR]{}: {}\n\n".format(message,
+                                                                  i["user"]["name"],
+                                                                  rating,
+                                                                  i["message"].replace("\n", " "))
     dialog = xbmcgui.Dialog()
     dialog.textviewer('Комментарии "{}"'.format(title), message)
 

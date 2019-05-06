@@ -416,10 +416,10 @@ actionItems_response = {
         },
     ],
     u"pagination": {
-        u"current": 1,
-        u"total_items": 27979,
-        u"total": 1399,
-        u"perpage": 20
+        # u"current": 1,
+        # u"total_items": 27979,
+        # u"total": 1399,
+        # u"perpage": 20
     }
 }
 
