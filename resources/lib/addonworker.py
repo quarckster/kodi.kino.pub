@@ -2,6 +2,7 @@
 import json
 from datetime import date
 
+import inputstreamhelper
 import xbmc
 import xbmcgui
 import xbmcplugin
@@ -311,6 +312,19 @@ def season_episodes(id, season_number):
 
 @route("/play")
 def play(id, index):
+    properties = {}
+    if (
+        "hls" in __settings__.getSetting("stream_type") and
+        __settings__.getSetting("inputstream_helper_enabled") == "true"
+    ):
+        helper = inputstreamhelper.Helper("hls")
+        if not helper.check_inputstream():
+            return
+        else:
+            properties.update({
+                "inputstreamaddon": helper.inputstream_addon,
+                "inputstream.adaptive.manifest_type": "hls"
+            })
     playback_data = get_window_property(index)
     video_data = playback_data.get("video_data")
     video_info = playback_data["video_info"]
@@ -327,28 +341,22 @@ def play(id, index):
         stream_type=__settings__.getSetting("stream_type"),
         ask_quality=__settings__.getSetting("ask_quality")
     )
+    properties.update({
+        "id": id,
+        "play_duration": video_info["duration"],
+        "play_resumetime": video_info["time"],
+        "video_number": video_info.get("episode", 1),
+        "season_number": video_info.get("season", ""),
+        "playcount": video_info["playcount"],
+        "imdbnumber": video_info["imdbnumber"]
+    })
     li = ExtendedListItem(
         playback_data["title"],
         path=url,
-        properties={
-            "id": id,
-            "play_duration": video_info["duration"],
-            "play_resumetime": video_info["time"],
-            "video_number": video_info.get("episode", 1),
-            "season_number": video_info.get("season", ""),
-            "playcount": video_info["playcount"],
-            "imdbnumber": video_info["imdbnumber"]
-        },
+        properties=properties,
         poster=playback_data["poster"],
         subtitles=[subtitle["url"] for subtitle in video_data["subtitles"]],
     )
-    if "hls" in __settings__.getSetting("stream_type"):
-        li.setProperties(**{
-            "inputstreamaddon": "inputstream.adaptive",
-            "inputstream.adaptive.manifest_type": "hls"
-        })
-        li.setMimeType("application/x-mpegURL")
-        li.setContentLookup(False)
     player = Player(list_item=li)
     xbmcplugin.setResolvedUrl(request.handle, True, li)
     while player.is_playing:
