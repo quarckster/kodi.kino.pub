@@ -3,19 +3,21 @@
 Next generation Kodi addon for kino.pub
 =======================================
 
-This is a fork of Trorg's video.kino.pub addon.
+This is a fork of [Trorg's video.kino.pub addon](https://github.com/TroRg/kodi.kino.pub).
 
 Kodi 17 is a minimal supported version.
 
 The most notable changes:
 
-* added feature to choose video quality before playing
+* feature to choose video quality before playing
+* configurable start screen items
 * new login dialog
-* added custom context menu items: "Буду смотреть", "Отметить как просмотренное", "Изменить закладки"
-* big refactoring of the code has been made
+* added custom context menu items: "Буду смотреть", "Отметить как просмотренное", "Изменить закладки", "Комментарии kino.pub"
 * watch and resume points are synced across multiple devices
 * new folders "Горячее" and "Недосмотренные"
 * support of Trakt.tv
+* support of [inputstream.adaptive](https://github.com/peak3d/inputstream.adaptive) addon
+* big refactoring of the code has been made
 * added some tests
 
 
