@@ -92,8 +92,9 @@ def fake_kodi_api(mocker):
     """Mock Kodi Python API"""
     mock_xbmcaddon = mocker.Mock()
     mock_xbmcaddon.Addon.side_effect = FakeAddon
-    mocker.patch.dict("sys.modules", xbmcaddon=mock_xbmcaddon, xbmc=mocker.Mock(),
-                      xbmcplugin=mocker.Mock(), xbmcgui=mocker.Mock(), xbmcvfs=mocker.Mock())
+    mocker.patch.dict("sys.modules", inputstreamhelper=mocker.Mock(), xbmcaddon=mock_xbmcaddon,
+                      xbmc=mocker.Mock(), xbmcplugin=mocker.Mock(), xbmcgui=mocker.Mock(),
+                      xbmcvfs=mocker.Mock())
     mocker.patch("resources.lib.addonworker.auth")
 
 
