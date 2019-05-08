@@ -85,6 +85,7 @@ class Auth(object):
     def reauth(self):
         self.access_token = ""
         self.device_token = ""
+        self.refresh_token = ""
         self.do_login()
 
     def request(self, url, data):
@@ -160,6 +161,7 @@ class Auth(object):
 
         xbmc.log("ERROR IS {}".format(error))
         expires_in = int(resp.get("expires_in")) + int(time.time())
+        self.refresh_token = resp.get("refresh_token")
         self.access_token = resp.get("access_token")
         self.access_token_expire = str(expires_in)
 
