@@ -630,6 +630,17 @@ def comments(item_id=None):
     dialog.textviewer('Комментарии "{}"'.format(title), message)
 
 
+@route("/similar")
+def similar(item_id=None, title=""):
+    response = KinoPubClient("items/similar").get(data={"id": item_id})
+    if not response["items"]:
+        dialog = xbmcgui.Dialog()
+        dialog.ok("Похожие фильмы: {0}".format(title), u"Пока тут пусто")
+    else:
+        show_items(response["items"])
+        xbmcplugin.endOfDirectory(request.handle, cacheToDisk=False)
+
+
 # Entry point
 def init():
     ROUTES[request.path](**request.args)
