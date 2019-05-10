@@ -72,12 +72,19 @@ class ExtendedListItem(ListItem):
         link = get_internal_link("comments", item_id=item_id)
         menu_items.append((label, "Container.Update({})".format(link)))
 
+    def _addSimilarContextMenuItem(self, menu_items):
+        item_id = self.getProperty("id")
+        title = self.getLabel()
+        label = u"Похожие фильмы"
+        link = get_internal_link("similar", item_id=item_id, title=title)
+        menu_items.append((label, "Container.Update({})".format(link)))
+
     def _addSeparatorContextMenuItem(self, menu_items):
         # 21 is the maximum number of characters when the hosrizontal scrolling doesn't appear.
         menu_items.append(("─" * 21, ""))
 
     def addPredefinedContextMenuItems(self, items=None):
-        items = items or ["watched", "watchlist", "bookmarks", "comments", "separator"]
+        items = items or ["watched", "watchlist", "bookmarks", "comments", "similar", "separator"]
         menu_items = []
         for item in items:
             getattr(self, "_add{}ContextMenuItem".format(item.capitalize()))(menu_items)
