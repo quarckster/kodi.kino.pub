@@ -635,7 +635,7 @@ def similar(item_id=None, title=""):
     list_of_movies = response["items"]
     if len(list_of_movies) == 0:
         dialog = xbmcgui.Dialog()
-        dialog.ok('Похожие фильмы: {0}'.format(title), u'Пока тут пусто')
+        dialog.ok("Похожие фильмы: {0}".format(title), u"Пока тут пусто")
     else:
         show_items(response["items"])
         xbmcplugin.endOfDirectory(request.handle)
