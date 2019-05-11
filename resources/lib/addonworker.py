@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-import json
 from datetime import date
 
-import inputstreamhelper
+try:
+    import inputstreamhelper
+except ImportError:
+    inputstreamhelper = None
 import xbmc
+import xbmcaddon
 import xbmcgui
 import xbmcplugin
 from addonutils import (get_internal_link, get_mlink, nav_internal_link, notice, request, route,
@@ -315,7 +318,8 @@ def play(id, index):
     properties = {}
     if (
         "hls" in __settings__.getSetting("stream_type") and
-        __settings__.getSetting("inputstream_helper_enabled") == "true"
+        __settings__.getSetting("inputstream_adaptive_enabled") == "true" and
+        inputstreamhelper
     ):
         helper = inputstreamhelper.Helper("hls")
         if not helper.check_inputstream():
@@ -413,7 +417,7 @@ def bookmarks(folder_id=None, page=None):
             li.addContextMenuItems([("Удалить", "Container.Update({})".format(remove_link))])
             link = get_internal_link("bookmarks", folder_id=folder["id"])
             xbmcplugin.addDirectoryItem(request.handle, link, li, True)
-        xbmcplugin.endOfDirectory(request.handle, cacheToDisc=False)
+        xbmcplugin.endOfDirectory(request.handle)
     else:
         # Show content of the folder
         response = KinoPubClient("bookmarks/{}".format(folder_id)).get(data={"page": page})
@@ -477,7 +481,7 @@ def watching_movies():
             }
             isdir = False
         xbmcplugin.addDirectoryItem(request.handle, link, li, isdir)
-    xbmcgui.Window(10000).setProperty("video.kino.pub-playback_data", json.dumps(playback_data))
+    set_window_property(playback_data)
     xbmcplugin.endOfDirectory(request.handle, cacheToDisc=False)
 
 
@@ -639,6 +643,15 @@ def similar(item_id=None, title=""):
     else:
         show_items(response["items"])
         xbmcplugin.endOfDirectory(request.handle, cacheToDisk=False)
+
+
+@route("/inputstream_helper_install")
+def install_inputstream_helper():
+    try:
+        xbmcaddon.Addon("script.module.inputstreamhelper")
+        notice("inputstream helper установлен")
+    except RuntimeError:
+        xbmc.executebuiltin("InstallAddon(script.module.inputstreamhelper)")
 
 
 # Entry point
