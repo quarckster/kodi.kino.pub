@@ -4,6 +4,7 @@ import sys
 import urllib
 import urllib2
 import xbmc
+import xbmcgui
 from addonutils import notice
 from authwindow import auth
 from data import __plugin__
@@ -16,6 +17,13 @@ class KinoPubClient(object):
         self.action = action
 
     def _make_request(self, request, timeout=600):
+        # in order to avoid a race condition from
+        # https://github.com/quarckster/kodi.kino.pub/issues/49
+        for _ in range(10):
+            if xbmcgui.Window(10000).getProperty("kinopub_api_lock") == "true":
+                xbmc.sleep(300)
+            else:
+                break
         request.add_header("Authorization", "Bearer {}".format(auth.access_token))
         try:
             response = urllib2.urlopen(request, timeout=timeout)
@@ -23,10 +31,12 @@ class KinoPubClient(object):
             xbmc.log("{}. HTTPError. Code: {}. Message: {}".format(
                      __plugin__, e.code, e.message), level=xbmc.LOGERROR)
             if e.code in [400, 401]:
+                xbmcgui.Window(10000).setProperty("kinopub_api_lock", "true")
                 status, __ = auth.get_token(refresh=True)
                 if status != auth.SUCCESS:
                     # reset access_token
                     auth.reauth()
+                xbmcgui.Window(10000).clearProperty("kinopub_api_lock")
                 if auth.access_token:
                     return self._make_request(request)
                 sys.exit()
