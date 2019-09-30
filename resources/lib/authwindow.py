@@ -159,7 +159,7 @@ class Auth(object):
         if error:
             return self.ERROR, resp
 
-        xbmc.log("ERROR IS {}".format(error))
+        xbmc.log("{}. ERROR IS {}".format(__plugin__, error), level=xbmc.LOGERROR)
         expires_in = int(resp.get("expires_in")) + int(time.time())
         self.refresh_token = resp.get("refresh_token")
         self.access_token = resp.get("access_token")

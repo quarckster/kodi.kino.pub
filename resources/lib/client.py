@@ -21,9 +21,18 @@ class KinoPubClient(object):
         # https://github.com/quarckster/kodi.kino.pub/issues/49
         for _ in range(10):
             if xbmcgui.Window(10000).getProperty("kinopub_api_lock") == "true":
+                xbmc.log(
+                    "{}. Kino.pub API lock is acquired.".format(__plugin__),
+                    level=xbmc.LOGNOTICE
+                )
                 xbmc.sleep(300)
             else:
                 break
+        else:
+            xbmc.log(
+                "{}. Waiting for kino.pub API lock is timed out.".format(__plugin__),
+                level=xbmc.LOGNOTICE
+            )
         request.add_header("Authorization", "Bearer {}".format(auth.access_token))
         try:
             response = urllib2.urlopen(request, timeout=timeout)
@@ -32,11 +41,19 @@ class KinoPubClient(object):
                      __plugin__, e.code, e.message), level=xbmc.LOGERROR)
             if e.code in [400, 401]:
                 xbmcgui.Window(10000).setProperty("kinopub_api_lock", "true")
+                xbmc.log(
+                    "{}. kino.pub API lock has been acquired".format(__plugin__),
+                    level=xbmc.LOGNOTICE
+                )
                 status, __ = auth.get_token(refresh=True)
                 if status != auth.SUCCESS:
                     # reset access_token
                     auth.reauth()
                 xbmcgui.Window(10000).clearProperty("kinopub_api_lock")
+                xbmc.log(
+                    "{}. kino.pub API lock has been released".format(__plugin__),
+                    level=xbmc.LOGNOTICE
+                )
                 if auth.access_token:
                     return self._make_request(request)
                 sys.exit()

@@ -179,7 +179,8 @@ def route(path):
 
         @wraps(f)
         def wrapper_route(*args, **kwargs):
-            xbmc.log("{} : {}. {}".format(__plugin__, f.__name__, str(request.args)))
+            xbmc.log("{} : {}. {}".format(__plugin__, f.__name__, str(request.args)),
+                     level=xbmc.LOGNOTICE)
             return f(*args, **kwargs)
         return wrapper_route
     return decorator_route
