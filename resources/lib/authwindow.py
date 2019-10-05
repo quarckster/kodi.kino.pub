@@ -136,6 +136,7 @@ class Auth(object):
 
     def get_token(self, refresh=False):
         if refresh:
+            xbmc.log("{}: Refreshing token".format(__plugin__), level=xbmc.LOGNOTICE)
             data = {
                 "grant_type": "refresh_token",
                 "refresh_token": self.refresh_token,
@@ -143,6 +144,7 @@ class Auth(object):
                 "client_secret": self.CLIENT_SECRET
             }
         else:
+            xbmc.log("{}: Getting new token".format(__plugin__), level=xbmc.LOGNOTICE)
             data = {
                 "grant_type": "device_token",
                 "client_id": self.CLIENT_ID,
@@ -150,27 +152,29 @@ class Auth(object):
                 "client_secret": self.CLIENT_SECRET
             }
         resp = self.request(self.OAUTH_API_URL, data)
-
         error = resp.get("error")
         if error and error == "authorization_pending":
+            xbmc.log("{}: ERROR is {}".format(__plugin__, error), level=xbmc.LOGERROR)
             return self.PENDING_STATUS, resp
         if error and error in ["invalid_grant", "code_expired", "invalid_client"]:
+            xbmc.log("{}: ERROR is {}".format(__plugin__, error), level=xbmc.LOGERROR)
             return self.EXPIRED, resp
         if error:
+            xbmc.log("{}: ERROR is {}".format(__plugin__, error), level=xbmc.LOGERROR)
             return self.ERROR, resp
-
-        xbmc.log("{}. ERROR IS {}".format(__plugin__, error), level=xbmc.LOGERROR)
+        if not resp.get("access_token"):
+            xbmc.log("{}: access token is empty".format(__plugin__), level=xbmc.LOGERROR)
+            return self.ERROR, resp
         expires_in = int(resp.get("expires_in")) + int(time.time())
         self.refresh_token = resp.get("refresh_token")
         self.access_token = resp.get("access_token")
         self.access_token_expire = str(expires_in)
-
-        if self.access_token:
-            for key, val in resp.items():
-                self.settings.setSetting(key.encode("utf-8"), str(val).encode("utf-8"))
-            self.settings.setSetting("device_code", "")
-            return self.SUCCESS, resp
-        return self.ERROR, resp
+        xbmc.log("{}: refresh token - {}; access token - {}; expires in - {}".format(
+            __plugin__, self.refresh_token, self.access_token, expires_in), level=xbmc.LOGNOTICE)
+        for key, val in resp.items():
+            self.settings.setSetting(key.encode("utf-8"), str(val).encode("utf-8"))
+        self.settings.setSetting("device_code", "")
+        return self.SUCCESS, resp
 
     def verify_device_code(self, interval):
         steps = (5 * 60) // interval
