@@ -4,7 +4,6 @@ import sys
 import urllib
 import urllib2
 import xbmc
-import xbmcgui
 from addonutils import notice
 from authwindow import auth
 from data import __plugin__
@@ -17,22 +16,8 @@ class KinoPubClient(object):
         self.action = action
 
     def _make_request(self, request, timeout=600):
-        # in order to avoid a race condition from
-        # https://github.com/quarckster/kodi.kino.pub/issues/49
-        for _ in range(10):
-            if xbmcgui.Window(10000).getProperty("kinopub_api_lock") == "true":
-                xbmc.log(
-                    "{}. Kino.pub API lock is acquired.".format(__plugin__),
-                    level=xbmc.LOGNOTICE
-                )
-                xbmc.sleep(300)
-            else:
-                break
-        else:
-            xbmc.log(
-                "{}. Waiting for kino.pub API lock is timed out.".format(__plugin__),
-                level=xbmc.LOGNOTICE
-            )
+        xbmc.log("{}: sending {} request to {}".format(__plugin__, request.get_method(),
+                 request.get_full_url()), level=xbmc.LOGNOTICE)
         request.add_header("Authorization", "Bearer {}".format(auth.access_token))
         try:
             response = urllib2.urlopen(request, timeout=timeout)
@@ -40,27 +25,17 @@ class KinoPubClient(object):
             xbmc.log("{}. HTTPError. Code: {}. Message: {}".format(
                      __plugin__, e.code, e.message), level=xbmc.LOGERROR)
             if e.code in [400, 401]:
-                xbmcgui.Window(10000).setProperty("kinopub_api_lock", "true")
-                xbmc.log(
-                    "{}. kino.pub API lock has been acquired".format(__plugin__),
-                    level=xbmc.LOGNOTICE
-                )
                 status, __ = auth.get_token(refresh=True)
                 if status != auth.SUCCESS:
                     # reset access_token
                     auth.reauth()
-                xbmcgui.Window(10000).clearProperty("kinopub_api_lock")
-                xbmc.log(
-                    "{}. kino.pub API lock has been released".format(__plugin__),
-                    level=xbmc.LOGNOTICE
-                )
                 if auth.access_token:
                     return self._make_request(request)
                 sys.exit()
             else:
                 notice("Код ответа сервера {}".format(e.code), "Неизвестная ошибка")
         except Exception as e:
-            xbmc.log("{}. {}. Message: {}".format(
+            xbmc.log("{}: {}. Message: {}".format(
                      __plugin__, e.__class__.__name__, e.message), level=xbmc.LOGERROR)
             notice(e.message, "Ошибка")
         else:
@@ -68,7 +43,7 @@ class KinoPubClient(object):
             if response["status"] == 200:
                 return response
             else:
-                xbmc.log("{}. Unknown error. Code: {}".format(
+                xbmc.log("{}: Unknown error. Code: {}".format(
                          __plugin__, response["status"]), level=xbmc.LOGERROR)
                 notice("Код ответа сервера {}".format(response["status"]), "Неизвестная ошибка")
 

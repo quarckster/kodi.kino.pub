@@ -48,7 +48,7 @@ class Player(xbmc.Player):
         return data
 
     def onPlayBackStarted(self):
-        xbmc.log("{}: Playback started".format(__plugin__), level=xbmc.LOGNOTICE)
+        xbmc.log("{}: playback started".format(__plugin__), level=xbmc.LOGNOTICE)
         li = self.list_item
 
         # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
@@ -58,31 +58,37 @@ class Player(xbmc.Player):
         xbmcgui.Window(10000).setProperty('script.trakt.ids', ids)
 
     def onPlayBackStopped(self):
+        # in order to avoid a race condition from
+        # https://github.com/quarckster/kodi.kino.pub/issues/49
+        xbmc.sleep(5000)
         self.is_playing = False
         data = self._base_data
-        xbmc.log("{}: Playback stopped".format(__plugin__), level=xbmc.LOGNOTICE)
+        xbmc.log("{}: playback stopped".format(__plugin__), level=xbmc.LOGNOTICE)
         if self.should_make_resume_point:
             data["time"] = self.marktime
-            xbmc.log("{}: Sending resume point".format(__plugin__), level=xbmc.LOGNOTICE)
+            xbmc.log("{}: sending resume point".format(__plugin__), level=xbmc.LOGNOTICE)
             KinoPubClient("watching/marktime").get(data=data)
         elif self.should_mark_as_watched and int(self.list_item.getProperty("playcount")) < 1:
             data["status"] = 1
-            xbmc.log("{}: Marking as watched".format(__plugin__), level=xbmc.LOGNOTICE)
+            xbmc.log("{}: marking as watched".format(__plugin__), level=xbmc.LOGNOTICE)
             KinoPubClient("watching/toggle").get(data=data)
         elif self.should_reset_resume_point:
             data["time"] = 0
-            xbmc.log("{}: Resetting resume point".format(__plugin__), level=xbmc.LOGNOTICE)
+            xbmc.log("{}: resetting resume point".format(__plugin__), level=xbmc.LOGNOTICE)
             KinoPubClient("watching/marktime").get(data=data)
         else:
             return
 
     def onPlayBackEnded(self):
+        # in order to avoid a race condition from
+        # https://github.com/quarckster/kodi.kino.pub/issues/49
+        xbmc.sleep(5000)
         self.is_playing = False
-        xbmc.log("{}: Playback ended".format(__plugin__), level=xbmc.LOGNOTICE)
+        xbmc.log("{}: playback ended".format(__plugin__), level=xbmc.LOGNOTICE)
         if int(self.list_item.getProperty("playcount")) < 1:
             data = self._base_data
             data["status"] = 1
-            xbmc.log("{}: Marking as watched".format(__plugin__), level=xbmc.LOGNOTICE)
+            xbmc.log("{}: marking as watched".format(__plugin__), level=xbmc.LOGNOTICE)
             KinoPubClient("watching/toggle").get(data=data)
 
     def onPlaybackError(self):

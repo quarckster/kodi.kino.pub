@@ -89,8 +89,7 @@ class Auth(object):
         self.do_login()
 
     def request(self, url, data):
-        xbmc.log("REQUEST URL={}".format(url))
-        xbmc.log("DATA {}".format(data))
+        xbmc.log("{}: request url {}, data {}".format(__plugin__, url, data), level=xbmc.LOGNOTICE)
         try:
             udata = urllib.urlencode(data)
             req = urllib2.Request(url)
@@ -136,7 +135,7 @@ class Auth(object):
 
     def get_token(self, refresh=False):
         if refresh:
-            xbmc.log("{}: Refreshing token".format(__plugin__), level=xbmc.LOGNOTICE)
+            xbmc.log("{}: refreshing token".format(__plugin__), level=xbmc.LOGNOTICE)
             data = {
                 "grant_type": "refresh_token",
                 "refresh_token": self.refresh_token,
@@ -144,7 +143,7 @@ class Auth(object):
                 "client_secret": self.CLIENT_SECRET
             }
         else:
-            xbmc.log("{}: Getting new token".format(__plugin__), level=xbmc.LOGNOTICE)
+            xbmc.log("{}: getting new token".format(__plugin__), level=xbmc.LOGNOTICE)
             data = {
                 "grant_type": "device_token",
                 "client_id": self.CLIENT_ID,
@@ -195,7 +194,7 @@ class Auth(object):
             self.window.close(cancel=True)
 
     def do_login(self):
-        xbmc.log("{}: No access_token. Show modal auth".format(__plugin__))
+        xbmc.log("{}: no access_token. Show modal auth".format(__plugin__))
         status, resp = self.get_device_code()
         if status == self.ERROR:
             notice("Код ответа сервера {}".format(resp["status"]), heading="Неизвестная ошибка")
@@ -206,7 +205,7 @@ class Auth(object):
             "и введите следующий код: [B]{}[/B]".format(resp["user_code"].encode("utf-8"))
         ]))
         self.verify_device_code(int(resp["interval"]))
-        xbmc.log("{}: Close modal auth".format(__plugin__))
+        xbmc.log("{}: close modal auth".format(__plugin__))
 
 
 auth = Auth()
