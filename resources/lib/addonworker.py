@@ -11,7 +11,7 @@ import xbmcgui
 import xbmcplugin
 from addonutils import (get_internal_link, get_mlink, nav_internal_link, notice, request, route,
                         ROUTES, trailer_link, video_info as extract_video_info, get_window_property,
-                        set_window_property)
+                        set_window_property, wait_for_api_lock)
 from authwindow import auth
 from client import KinoPubClient
 from data import __settings__, __plugin__
@@ -43,7 +43,7 @@ def show_pagination(pagination, action, **kwargs):
 
 
 def show_items(items, add_indexes=False):
-    xbmc.log("{} : show_items. Total items: {}".format(__plugin__, str(len(items))),
+    xbmc.log("{}: show_items. Total items: {}".format(__plugin__, str(len(items))),
              level=xbmc.LOGNOTICE)
     playback_data = {}
     # Fill list with items
@@ -184,6 +184,7 @@ def genres(type):
 
 
 @route("/items")
+@wait_for_api_lock
 def items(type, **kwargs):
     """List items with pagination"""
     kwargs["type"] = type
@@ -224,6 +225,7 @@ def seasons(id):
 
 
 @route("/view_episodes")
+@wait_for_api_lock
 def episodes(id):
     item = KinoPubClient("items/{}".format(id)).get()["item"]
     watching_info = KinoPubClient("watching").get(data={"id": id})["item"]
@@ -263,6 +265,7 @@ def episodes(id):
 
 
 @route("/view_season_episodes")
+@wait_for_api_lock
 def season_episodes(id, season_number):
     item = KinoPubClient("items/{}".format(id)).get()["item"]
     watching_info = KinoPubClient("watching").get(data={"id": id})["item"]
@@ -400,6 +403,7 @@ def search(type=None):
 
 
 @route("/bookmarks")
+@wait_for_api_lock
 def bookmarks(folder_id=None, page=None):
     if folder_id is None:
         li = ExtendedListItem("Создать папку")
@@ -448,6 +452,7 @@ def watching():
 
 
 @route("/watching_movies")
+@wait_for_api_lock
 def watching_movies():
     xbmcplugin.setContent(request.handle, "movies")
     playback_data = {}
@@ -636,6 +641,7 @@ def comments(item_id=None):
 
 
 @route("/similar")
+@wait_for_api_lock
 def similar(item_id=None, title=""):
     response = KinoPubClient("items/similar").get(data={"id": item_id})
     if not response["items"]:
@@ -643,7 +649,7 @@ def similar(item_id=None, title=""):
         dialog.ok("Похожие фильмы: {0}".format(title), u"Пока тут пусто")
     else:
         show_items(response["items"])
-        xbmcplugin.endOfDirectory(request.handle, cacheToDisk=False)
+        xbmcplugin.endOfDirectory(request.handle, cacheToDisc=False)
 
 
 @route("/inputstream_helper_install")

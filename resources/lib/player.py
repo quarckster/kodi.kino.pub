@@ -2,6 +2,7 @@
 import xbmc
 import json
 import xbmcgui
+from addonutils import api_lock
 from client import KinoPubClient
 from data import get_adv_setting, __plugin__
 
@@ -49,18 +50,14 @@ class Player(xbmc.Player):
 
     def onPlayBackStarted(self):
         xbmc.log("{}: playback started".format(__plugin__), level=xbmc.LOGNOTICE)
-        li = self.list_item
-
         # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
         # imdb id should be 7 digits with leading zeroes with tt prepended
-        imdb_id = "tt{:07d}".format(int(li.getProperty("imdbnumber")))
+        imdb_id = "tt{:07d}".format(int(self.list_item.getProperty("imdbnumber")))
         ids = json.dumps({u'imdb': imdb_id})
-        xbmcgui.Window(10000).setProperty('script.trakt.ids', ids)
+        xbmcgui.Window(10000).setProperty("script.trakt.ids", ids)
 
+    @api_lock
     def onPlayBackStopped(self):
-        # in order to avoid a race condition from
-        # https://github.com/quarckster/kodi.kino.pub/issues/49
-        xbmc.sleep(5000)
         self.is_playing = False
         data = self._base_data
         xbmc.log("{}: playback stopped".format(__plugin__), level=xbmc.LOGNOTICE)
@@ -79,10 +76,8 @@ class Player(xbmc.Player):
         else:
             return
 
+    @api_lock
     def onPlayBackEnded(self):
-        # in order to avoid a race condition from
-        # https://github.com/quarckster/kodi.kino.pub/issues/49
-        xbmc.sleep(5000)
         self.is_playing = False
         xbmc.log("{}: playback ended".format(__plugin__), level=xbmc.LOGNOTICE)
         if int(self.list_item.getProperty("playcount")) < 1:
