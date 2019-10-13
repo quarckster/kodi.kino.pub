@@ -21,13 +21,14 @@ streams = ["hls", "hls2", "http"]
 
 
 class FakeAddon(object):
+    _settings = {
+        "access_token_expire": str(int(time.time() + 1000)),
+        "video_quality": "720p",
+        "stream_type": "hls4"
+    }
+
     def __init__(self, id="video.kino.pub"):
         self._id = id
-        self._settings = {
-            "access_token_expire": str(int(time.time() + 1000)),
-            "video_quality": "720p",
-            "stream_type": "hls4"
-        }
 
     def getAddonInfo(self, info_id):
         return {"path": cwd, "id": self._id}.get(info_id)
@@ -76,15 +77,15 @@ def xbmcplugin():
 
 
 @pytest.fixture
-def ExtendedListItem():
-    from resources.lib.addonworker import ExtendedListItem
-    return ExtendedListItem
+def xbmcaddon():
+    from resources.lib.addonworker import xbmcaddon
+    return xbmcaddon
 
 
 @pytest.fixture
-def settings():
-    from resources.lib.data import __settings__
-    return __settings__
+def ExtendedListItem():
+    from resources.lib.addonworker import ExtendedListItem
+    return ExtendedListItem
 
 
 @pytest.fixture
@@ -142,9 +143,10 @@ def test_index(mocker, index, main, xbmcplugin, ExtendedListItem):
 
 
 @pytest.fixture(params=itertools.product(streams, qualities), ids=lambda ids: "-".join(ids))
-def play(request, mocker, settings):
-    settings.setSetting("stream_type", request.param[0])
-    settings.setSetting("video_quality", request.param[1])
+def play(request, mocker, xbmcaddon):
+    from resources.lib.data import __id__
+    xbmcaddon.Addon(id=__id__).setSetting("stream_type", request.param[0])
+    xbmcaddon.Addon(id=__id__).setSetting("video_quality", request.param[1])
     id_ = actionPlay_response["item"]["id"]
     title = actionPlay_response["item"]["title"].encode("utf-8")
 

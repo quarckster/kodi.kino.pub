@@ -10,9 +10,10 @@ from contextlib import contextmanager
 from functools import wraps
 
 import xbmc
+import xbmcaddon
 import xbmcgui
 
-from data import __id__, __settings__, __plugin__
+from data import __id__, __plugin__
 
 
 def set_window_property(value):
@@ -136,8 +137,9 @@ def trailer_link(item):
 
 def update_device_info(force=False):
     from client import KinoPubClient
+    settings = xbmcaddon.Addon(id=__id__)
     # Update device info
-    deviceInfoUpdate = __settings__.getSetting("device_info_update")
+    deviceInfoUpdate = settings.getSetting("device_info_update")
     if force or not deviceInfoUpdate or int(deviceInfoUpdate) + 1800 < int(time.time()):
         result = {"build_version": "Busy", "friendly_name": "Busy"}
         while "Busy" in result.values():
@@ -151,7 +153,7 @@ def update_device_info(force=False):
             "hardware": platform.machine(),
             "software": software
         })
-        __settings__.setSetting("device_info_update", str(int(float(time.time()))))
+        settings.setSetting("device_info_update", str(int(float(time.time()))))
 
 
 class Request(object):

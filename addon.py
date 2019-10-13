@@ -1,15 +1,16 @@
 #!/usr/bin/python
+import xbmcaddon
 from resources.lib import addonworker
-from resources.lib.data import __settings__
+from resources.lib.data import __id__
 
 
 def main():
-    if __settings__.getSetting("reset_auth") == "true":
-        __settings__.setSetting("access_token", "")
-        __settings__.setSetting("refresh_token", "")
-        __settings__.setSetting("access_token_expire", "")
-        __settings__.setSetting("reset_auth", "0")
-        __settings__.setSetting("device_info_update", "0")
+    if xbmcaddon.Addon(id=__id__).getSetting("reset_auth") == "true":
+        xbmcaddon.Addon(id=__id__).setSetting("access_token", "")
+        xbmcaddon.Addon(id=__id__).setSetting("refresh_token", "")
+        xbmcaddon.Addon(id=__id__).setSetting("access_token_expire", "")
+        xbmcaddon.Addon(id=__id__).setSetting("reset_auth", "0")
+        xbmcaddon.Addon(id=__id__).setSetting("device_info_update", "0")
     addonworker.init()
 
 

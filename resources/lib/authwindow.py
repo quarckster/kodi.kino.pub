@@ -5,10 +5,11 @@ import urllib
 import urllib2
 
 import xbmc
+import xbmcaddon
 import xbmcgui
 
 from addonutils import nav_internal_link, notice, update_device_info
-from data import __plugin__, __settings__
+from data import __plugin__, __id__
 
 
 class AuthDialog(object):
@@ -37,7 +38,6 @@ class AuthDialog(object):
 
 
 class Auth(object):
-    settings = __settings__
     terminated = False
     timer = 0
     CLIENT_ID = "xbmc"
@@ -54,33 +54,33 @@ class Auth(object):
 
     @property
     def access_token(self):
-        return self.settings.getSetting("access_token")
+        return xbmcaddon.Addon(id=__id__).getSetting("access_token")
 
     @access_token.setter
     def access_token(self, value):
         if value is not None:
             value = value.encode("utf-8")
-        self.settings.setSetting("access_token", value)
+        xbmcaddon.Addon(id=__id__).setSetting("access_token", value)
 
     @property
     def access_token_expire(self):
-        return int(self.settings.getSetting("access_token_expire"))
+        return int(xbmcaddon.Addon(id=__id__).getSetting("access_token_expire"))
 
     @access_token_expire.setter
     def access_token_expire(self, value):
         if value is not None:
             value = value.encode("utf-8")
-        self.settings.setSetting("access_token_expire", value)
+        xbmcaddon.Addon(id=__id__).setSetting("access_token_expire", value)
 
     @property
     def refresh_token(self):
-        return self.settings.getSetting("refresh_token")
+        return xbmcaddon.Addon(id=__id__).getSetting("refresh_token")
 
     @refresh_token.setter
     def refresh_token(self, value):
         if value is not None:
             value = value.encode("utf-8")
-        self.settings.setSetting("refresh_token", value)
+        xbmcaddon.Addon(id=__id__).setSetting("refresh_token", value)
 
     def reauth(self):
         self.access_token = ""
@@ -128,9 +128,12 @@ class Auth(object):
         self.verification_uri = resp["verification_uri"].encode("utf8")
         self.refresh_interval = int(resp["interval"])
 
-        self.settings.setSetting("device_code", str(self.device_code).encode("utf-8"))
-        self.settings.setSetting("verification_uri", str(self.verification_uri).encode("utf-8"))
-        self.settings.setSetting("interval", str(self.refresh_interval))
+        xbmcaddon.Addon(id=__id__).setSetting("device_code", str(self.device_code).encode("utf-8"))
+        xbmcaddon.Addon(id=__id__).setSetting(
+            "verification_uri",
+            str(self.verification_uri).encode("utf-8")
+        )
+        xbmcaddon.Addon(id=__id__).setSetting("interval", str(self.refresh_interval))
         return self.SUCCESS, resp
 
     def get_token(self, refresh=False):
@@ -171,8 +174,8 @@ class Auth(object):
         xbmc.log("{}: refresh token - {}; access token - {}; expires in - {}".format(
             __plugin__, self.refresh_token, self.access_token, expires_in), level=xbmc.LOGNOTICE)
         for key, val in resp.items():
-            self.settings.setSetting(key.encode("utf-8"), str(val).encode("utf-8"))
-        self.settings.setSetting("device_code", "")
+            xbmcaddon.Addon(id=__id__).setSetting(key.encode("utf-8"), str(val).encode("utf-8"))
+        xbmcaddon.Addon(id=__id__).setSetting("device_code", "")
         return self.SUCCESS, resp
 
     def verify_device_code(self, interval):
