@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import xbmc
 import json
+import time
 import xbmcgui
-from addonutils import api_lock
+from authwindow import auth
 from client import KinoPubClient
 from data import get_adv_setting, __plugin__
 
@@ -38,6 +39,11 @@ class Player(xbmc.Player):
         )
 
     @property
+    def should_refresh_token(self):
+        return (int(time.time()) + int(self.list_item.getProperty("play_duration")) >=
+                int(auth.access_token_expire))
+
+    @property
     def _base_data(self):
         id = self.list_item.getProperty("id")
         video_number = self.list_item.getProperty("video_number")
@@ -55,8 +61,13 @@ class Player(xbmc.Player):
         imdb_id = "tt{:07d}".format(int(self.list_item.getProperty("imdbnumber")))
         ids = json.dumps({u'imdb': imdb_id})
         xbmcgui.Window(10000).setProperty("script.trakt.ids", ids)
+        if self.should_refresh_token:
+            xbmc.log("{}: access token should be refreshed".format(__plugin__),
+                     level=xbmc.LOGNOTICE)
+            status, __ = auth.get_token(refresh=True)
+            if status != auth.SUCCESS:
+                auth.reauth()
 
-    @api_lock
     def onPlayBackStopped(self):
         self.is_playing = False
         data = self._base_data
@@ -76,7 +87,6 @@ class Player(xbmc.Player):
         else:
             return
 
-    @api_lock
     def onPlayBackEnded(self):
         self.is_playing = False
         xbmc.log("{}: playback ended".format(__plugin__), level=xbmc.LOGNOTICE)

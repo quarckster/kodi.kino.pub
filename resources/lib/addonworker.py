@@ -11,7 +11,7 @@ import xbmcgui
 import xbmcplugin
 from addonutils import (get_internal_link, get_mlink, nav_internal_link, notice, request, route,
                         ROUTES, trailer_link, video_info as extract_video_info, get_window_property,
-                        set_window_property, wait_for_api_lock)
+                        set_window_property)
 from authwindow import auth
 from client import KinoPubClient
 from data import __plugin__, __id__
@@ -184,7 +184,6 @@ def genres(type):
 
 
 @route("/items")
-@wait_for_api_lock
 def items(type, **kwargs):
     """List items with pagination"""
     kwargs["type"] = type
@@ -225,7 +224,6 @@ def seasons(id):
 
 
 @route("/view_episodes")
-@wait_for_api_lock
 def episodes(id):
     item = KinoPubClient("items/{}".format(id)).get()["item"]
     watching_info = KinoPubClient("watching").get(data={"id": id})["item"]
@@ -265,7 +263,6 @@ def episodes(id):
 
 
 @route("/view_season_episodes")
-@wait_for_api_lock
 def season_episodes(id, season_number):
     item = KinoPubClient("items/{}".format(id)).get()["item"]
     watching_info = KinoPubClient("watching").get(data={"id": id})["item"]
@@ -403,7 +400,6 @@ def search(type=None):
 
 
 @route("/bookmarks")
-@wait_for_api_lock
 def bookmarks(folder_id=None, page=None):
     if folder_id is None:
         li = ExtendedListItem("Создать папку")
@@ -452,7 +448,6 @@ def watching():
 
 
 @route("/watching_movies")
-@wait_for_api_lock
 def watching_movies():
     xbmcplugin.setContent(request.handle, "movies")
     playback_data = {}
@@ -641,7 +636,6 @@ def comments(item_id=None):
 
 
 @route("/similar")
-@wait_for_api_lock
 def similar(item_id=None, title=""):
     response = KinoPubClient("items/similar").get(data={"id": item_id})
     if not response["items"]:

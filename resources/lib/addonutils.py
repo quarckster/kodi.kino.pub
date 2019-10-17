@@ -6,7 +6,6 @@ import sys
 import time
 import urllib
 import urlparse
-from contextlib import contextmanager
 from functools import wraps
 
 import xbmc
@@ -187,41 +186,3 @@ def route(path):
             return f(*args, **kwargs)
         return wrapper_route
     return decorator_route
-
-
-def api_lock(func):
-
-    @contextmanager
-    def lock():
-        xbmcgui.Window(10000).setProperty("kinopub_api_lock", "true")
-        xbmc.log("{}: kino.pub API lock has been acquired".format(__plugin__), level=xbmc.LOGNOTICE)
-        yield
-        xbmcgui.Window(10000).clearProperty("kinopub_api_lock")
-        xbmc.log("{}: kino.pub API lock has been released".format(__plugin__), level=xbmc.LOGNOTICE)
-
-    def func_wrapper(*args, **kwargs):
-        with lock():
-            return func(*args, **kwargs)
-
-    return func_wrapper
-
-
-def wait_for_api_lock(func):
-    def func_wrapper(*args, **kwargs):
-        for _ in range(10):
-            if xbmcgui.Window(10000).getProperty("kinopub_api_lock") == "true":
-                xbmc.log(
-                    "{}: kino.pub API lock is acquired".format(__plugin__),
-                    level=xbmc.LOGNOTICE
-                )
-                xbmc.sleep(500)
-            else:
-                break
-        else:
-            xbmc.log(
-                "{}: waiting for kino.pub API lock is timed out".format(__plugin__),
-                level=xbmc.LOGNOTICE
-            )
-        return func(*args, **kwargs)
-
-    return func_wrapper
