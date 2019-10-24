@@ -11,8 +11,8 @@ from functools import wraps
 import xbmc
 import xbmcaddon
 import xbmcgui
-
-from data import __id__, __plugin__
+from data import __id__
+from data import __plugin__
 
 
 def set_window_property(value):
@@ -49,13 +49,16 @@ def get_mlink(video, stream_type=None, quality=None, ask_quality="false"):
             return int(text) if text.isdigit() else text.lower()
 
         def alphanum_key(key):
-            return [convert(c) for c in re.split('([0-9]+)', key)]
+            return [convert(c) for c in re.split("([0-9]+)", key)]
 
         return sorted(l, key=alphanum_key)
 
     files = {f["quality"]: f["url"] for f in video["files"]}
-    flatten_urls_dict = {"{}@{}".format(quality, stream): url for quality, urls in files.items()
-                         for stream, url in urls.items()}
+    flatten_urls_dict = {
+        "{}@{}".format(quality, stream): url
+        for quality, urls in files.items()
+        for stream, url in urls.items()
+    }
     urls_list = natural_sort(flatten_urls_dict.keys())
     if ask_quality == "true":
         dialog = xbmcgui.Dialog()
@@ -107,7 +110,7 @@ def video_info(item, extend=None):
         "imdbnumber": item["imdb"],
         "status": get_status(item),
         "votes": item["rating_votes"],
-        "country": ", ".join([x["title"] for x in item["countries"]])
+        "country": ", ".join([x["title"] for x in item["countries"]]),
     }
     if extend and isinstance(extend, dict):
         info.update(extend)
@@ -136,6 +139,7 @@ def trailer_link(item):
 
 def update_device_info(force=False):
     from client import KinoPubClient
+
     settings = xbmcaddon.Addon(id=__id__)
     # Update device info
     deviceInfoUpdate = settings.getSetting("device_info_update")
@@ -144,19 +148,20 @@ def update_device_info(force=False):
         while "Busy" in result.values():
             result = {
                 "build_version": xbmc.getInfoLabel("System.BuildVersion"),
-                "friendly_name": xbmc.getInfoLabel("System.FriendlyName")
+                "friendly_name": xbmc.getInfoLabel("System.FriendlyName"),
             }
         software = "Kodi {}".format(result["build_version"].split()[0])
-        KinoPubClient("device/notify").post(data={
-            "title": result["friendly_name"],
-            "hardware": platform.machine(),
-            "software": software
-        })
+        KinoPubClient("device/notify").post(
+            data={
+                "title": result["friendly_name"],
+                "hardware": platform.machine(),
+                "software": software,
+            }
+        )
         settings.setSetting("device_info_update", str(int(float(time.time()))))
 
 
 class Request(object):
-
     @property
     def handle(self):
         return int(sys.argv[1])
@@ -181,8 +186,11 @@ def route(path):
 
         @wraps(f)
         def wrapper_route(*args, **kwargs):
-            xbmc.log("{}: {}. {}".format(__plugin__, f.__name__, str(request.args)),
-                     level=xbmc.LOGNOTICE)
+            xbmc.log(
+                "{}: {}. {}".format(__plugin__, f.__name__, str(request.args)), level=xbmc.LOGNOTICE
+            )
             return f(*args, **kwargs)
+
         return wrapper_route
+
     return decorator_route

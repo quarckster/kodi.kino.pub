@@ -9,7 +9,7 @@ advancedsettings_file = xbmc.translatePath("special://home/userdata/advancedsett
 defaults = {
     ("video", "playcountminimumpercent"): 90,
     ("video", "ignoresecondsatstart"): 180,
-    ("video", "ignorepercentatend"): 8
+    ("video", "ignorepercentatend"): 8,
 }
 
 

@@ -1,19 +1,30 @@
 # -*- coding: utf-8 -*-
 import xbmcaddon
-from xbmcgui import ListItem
-
 from addonutils import get_internal_link
-from data import get_adv_setting, __id__
+from data import __id__
+from data import get_adv_setting
+from xbmcgui import ListItem
 
 
 class ExtendedListItem(ListItem):
-
     def __new__(cls, name, label2="", iconImage="", thumbnailImage="", path="", **kwargs):
-        return super(ExtendedListItem, cls).__new__(cls, name, label2, iconImage, thumbnailImage,
-                                                    path)
+        return super(ExtendedListItem, cls).__new__(
+            cls, name, label2, iconImage, thumbnailImage, path
+        )
 
-    def __init__(self, name, label2="", iconImage="", thumbnailImage="", path="", poster=None,
-                 video_info=None, properties=None, addContextMenuItems=False, subtitles=None):
+    def __init__(
+        self,
+        name,
+        label2="",
+        iconImage="",
+        thumbnailImage="",
+        path="",
+        poster=None,
+        video_info=None,
+        properties=None,
+        addContextMenuItems=False,
+        subtitles=None,
+    ):
         super(ExtendedListItem, self).__init__(name, label2, iconImage, thumbnailImage, path)
         if properties:
             self.setProperties(**properties)
@@ -33,9 +44,7 @@ class ExtendedListItem(ListItem):
             return
         label = u"Не буду смотреть" if int(in_watchlist) else u"Буду смотреть"
         link = get_internal_link(
-            "toggle_watchlist",
-            id=self.getProperty("id"),
-            added=int(not int(in_watchlist))
+            "toggle_watchlist", id=self.getProperty("id"), added=int(not int(in_watchlist))
         )
         menu_items.append((label, "Container.Update({})".format(link)))
 
@@ -98,12 +107,11 @@ class ExtendedListItem(ListItem):
     def setResumeTime(self, resumetime, totaltime=None):
         totaltime = float(totaltime or self.getduration())
         if (
-            resumetime is not None and
-            totaltime > 0 and
-            100 * resumetime / totaltime <=
-            get_adv_setting("video", "playcountminimumpercent") and
-            resumetime > get_adv_setting("video", "ignoresecondsatstart") or
-            resumetime == 0
+            resumetime is not None
+            and totaltime > 0
+            and 100 * resumetime / totaltime <= get_adv_setting("video", "playcountminimumpercent")
+            and resumetime > get_adv_setting("video", "ignoresecondsatstart")
+            or resumetime == 0
         ):
             self.setProperties(resumetime=resumetime, totaltime=totaltime)
 

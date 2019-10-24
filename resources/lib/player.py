@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
-import xbmc
 import json
 import time
+
+import xbmc
 import xbmcgui
 from authwindow import auth
 from client import KinoPubClient
-from data import get_adv_setting, __plugin__
+from data import __plugin__
+from data import get_adv_setting
 
 
 class Player(xbmc.Player):
-
     def __init__(self, list_item=None):
         self.list_item = list_item
         self.is_playing = True
@@ -22,26 +23,29 @@ class Player(xbmc.Player):
     @property
     def should_make_resume_point(self):
         # https://kodi.wiki/view/HOW-TO:Modify_automatic_watch_and_resume_points#Settings_explained
-        return (self.marktime > get_adv_setting("video", "ignoresecondsatstart") and
-                not self.should_mark_as_watched)
+        return (
+            self.marktime > get_adv_setting("video", "ignoresecondsatstart")
+            and not self.should_mark_as_watched
+        )
 
     @property
     def should_mark_as_watched(self):
-        return (100 * self.marktime / float(self.list_item.getProperty("play_duration")) >
-                get_adv_setting("video", "playcountminimumpercent"))
+        return 100 * self.marktime / float(
+            self.list_item.getProperty("play_duration")
+        ) > get_adv_setting("video", "playcountminimumpercent")
 
     @property
     def should_reset_resume_point(self):
-        return (
-            self.marktime < get_adv_setting("video", "ignoresecondsatstart") and
-            (float(self.list_item.getProperty("play_resumetime")) >
-                get_adv_setting("video", "ignoresecondsatstart"))
+        return self.marktime < get_adv_setting("video", "ignoresecondsatstart") and (
+            float(self.list_item.getProperty("play_resumetime"))
+            > get_adv_setting("video", "ignoresecondsatstart")
         )
 
     @property
     def should_refresh_token(self):
-        return (int(time.time()) + int(self.list_item.getProperty("play_duration")) >=
-                int(auth.access_token_expire))
+        return int(time.time()) + int(self.list_item.getProperty("play_duration")) >= int(
+            auth.access_token_expire
+        )
 
     @property
     def _base_data(self):
@@ -59,11 +63,12 @@ class Player(xbmc.Player):
         # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
         # imdb id should be 7 digits with leading zeroes with tt prepended
         imdb_id = "tt{:07d}".format(int(self.list_item.getProperty("imdbnumber")))
-        ids = json.dumps({u'imdb': imdb_id})
+        ids = json.dumps({u"imdb": imdb_id})
         xbmcgui.Window(10000).setProperty("script.trakt.ids", ids)
         if self.should_refresh_token:
-            xbmc.log("{}: access token should be refreshed".format(__plugin__),
-                     level=xbmc.LOGNOTICE)
+            xbmc.log(
+                "{}: access token should be refreshed".format(__plugin__), level=xbmc.LOGNOTICE
+            )
             status, __ = auth.get_token(refresh=True)
             if status != auth.SUCCESS:
                 auth.reauth()

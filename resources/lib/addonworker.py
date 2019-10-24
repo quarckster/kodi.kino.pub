@@ -9,9 +9,19 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
-from addonutils import (get_internal_link, get_mlink, nav_internal_link, notice, request, route,
-                        ROUTES, trailer_link, video_info as extract_video_info, get_window_property,
-                        set_window_property)
+from addonutils import (
+    get_internal_link,
+    get_mlink,
+    nav_internal_link,
+    notice,
+    request,
+    route,
+    ROUTES,
+    trailer_link,
+    video_info as extract_video_info,
+    get_window_property,
+    set_window_property,
+)
 from authwindow import auth
 from client import KinoPubClient
 from data import __plugin__, __id__
@@ -28,7 +38,7 @@ mediatype_map = {
     "3d": "movie",
     "documovie": "movie",
     "movie": "movie",
-    "4k": "movie"
+    "4k": "movie",
 }
 
 
@@ -43,33 +53,32 @@ def show_pagination(pagination, action, **kwargs):
 
 
 def show_items(items, add_indexes=False):
-    xbmc.log("{}: show_items. Total items: {}".format(__plugin__, str(len(items))),
-             level=xbmc.LOGNOTICE)
+    xbmc.log(
+        "{}: show_items. Total items: {}".format(__plugin__, str(len(items))), level=xbmc.LOGNOTICE
+    )
     playback_data = {}
     # Fill list with items
     for index, item in enumerate(items, 1):
         title = item["title"].encode("utf-8")
         title = "{}. {}".format(index, title) if add_indexes else title
-        li = ExtendedListItem(
-            title,
-            poster=item["posters"]["big"],
-            properties={"id": item["id"]}
-        )
+        li = ExtendedListItem(title, poster=item["posters"]["big"], properties={"id": item["id"]})
         if "in_watchlist" in item:
             li.setProperty("in_watchlist", str(int(item["in_watchlist"])))
-        video_info = extract_video_info(item, {
-            "trailer": trailer_link(item),
-            "mediatype": mediatype_map[item["type"]]
-        })
+        video_info = extract_video_info(
+            item, {"trailer": trailer_link(item), "mediatype": mediatype_map[item["type"]]}
+        )
         # If not serials or multiseries movie, create playable item
         if item["type"] not in ["serial", "docuserial", "tvshow"] and not item["subtype"]:
-            watching_info = KinoPubClient("watching").get(
-                data={"id": item["id"]})["item"]["videos"][0]
-            video_info.update({
-                "time": watching_info["time"],
-                "duration": watching_info["duration"],
-                "playcount": watching_info["status"],
-            })
+            watching_info = KinoPubClient("watching").get(data={"id": item["id"]})["item"][
+                "videos"
+            ][0]
+            video_info.update(
+                {
+                    "time": watching_info["time"],
+                    "duration": watching_info["duration"],
+                    "playcount": watching_info["status"],
+                }
+            )
             link = get_internal_link("play", id=item["id"], index=index)
             li.setProperty("isPlayable", "true")
             li.setResumeTime(watching_info["time"], watching_info["duration"])
@@ -77,7 +86,7 @@ def show_items(items, add_indexes=False):
             playback_data[index] = {
                 "video_info": video_info,
                 "poster": item["posters"]["big"],
-                "title": title
+                "title": title,
             }
             set_window_property(playback_data)
         elif item["subtype"] == "multi":
@@ -206,14 +215,17 @@ def seasons(id):
         watching_season = watching_info["seasons"][season["number"] - 1]
         li = ExtendedListItem(
             season_title,
-            video_info=extract_video_info(item, {
-                "season": season["number"],
-                "playcount": watching_season["status"],
-                "mediatype": "season"
-            }),
+            video_info=extract_video_info(
+                item,
+                {
+                    "season": season["number"],
+                    "playcount": watching_season["status"],
+                    "mediatype": "season",
+                },
+            ),
             poster=item["posters"]["big"],
             properties={"id": item["id"]},
-            addContextMenuItems=True
+            addContextMenuItems=True,
         )
         if watching_season["status"] < 1 and not selectedSeason:
             selectedSeason = True
@@ -234,28 +246,31 @@ def episodes(id):
         episode_title = "e{:02d}".format(video["number"])
         if video["title"]:
             episode_title = "{} | {}".format(episode_title, video["title"].encode("utf-8"))
-        info = extract_video_info(item, {
-            "episode": video["number"],
-            "tvshowtitle": video["title"],
-            "time": watching_episode["time"],
-            "duration": watching_episode["duration"],
-            "playcount": video["watched"],
-            "mediatype": "episode"
-        })
+        info = extract_video_info(
+            item,
+            {
+                "episode": video["number"],
+                "tvshowtitle": video["title"],
+                "time": watching_episode["time"],
+                "duration": watching_episode["duration"],
+                "playcount": video["watched"],
+                "mediatype": "episode",
+            },
+        )
         li = ExtendedListItem(
             episode_title,
             thumbnailImage=video["thumbnail"],
             video_info=info,
             poster=item["posters"]["big"],
             properties={"id": item["id"], "isPlayable": "true"},
-            addContextMenuItems=True
+            addContextMenuItems=True,
         )
         link = get_internal_link("play", id=item["id"], index=video["number"])
         playback_data[video["number"]] = {
             "video_data": video,
             "video_info": info,
             "poster": item["posters"]["big"],
-            "title": episode_title
+            "title": episode_title,
         }
         xbmcplugin.addDirectoryItem(request.handle, link, li, False)
     set_window_property(playback_data)
@@ -282,22 +297,25 @@ def season_episodes(id, season_number):
         episode_title = "s{:02d}e{:02d}".format(season_number, episode["number"])
         if episode["title"]:
             episode_title = "{} | {}".format(episode_title, episode["title"].encode("utf-8"))
-        info = extract_video_info(item, {
-            "season": season_number,
-            "episode": episode["number"],
-            "tvshowtitle": episode["title"],
-            "time": watching_episode["time"],
-            "duration": watching_episode["duration"],
-            "playcount": watching_episode["status"],
-            "mediatype": "episode"
-        })
+        info = extract_video_info(
+            item,
+            {
+                "season": season_number,
+                "episode": episode["number"],
+                "tvshowtitle": episode["title"],
+                "time": watching_episode["time"],
+                "duration": watching_episode["duration"],
+                "playcount": watching_episode["status"],
+                "mediatype": "episode",
+            },
+        )
         li = ExtendedListItem(
             episode_title,
             thumbnailImage=episode["thumbnail"],
             poster=item["posters"]["big"],
             video_info=info,
             properties={"id": item["id"], "isPlayable": "true"},
-            addContextMenuItems=True
+            addContextMenuItems=True,
         )
         if watching_episode["status"] < 1 and not selectedEpisode:
             selectedEpisode = True
@@ -307,7 +325,7 @@ def season_episodes(id, season_number):
             "video_data": episode,
             "video_info": info,
             "poster": item["posters"]["big"],
-            "title": episode_title
+            "title": episode_title,
         }
         xbmcplugin.addDirectoryItem(request.handle, link, li, False)
     set_window_property(playback_data)
@@ -318,18 +336,20 @@ def season_episodes(id, season_number):
 def play(id, index):
     properties = {}
     if (
-        "hls" in xbmcaddon.Addon(id=__id__).getSetting("stream_type") and
-        xbmcaddon.Addon(id=__id__).getSetting("inputstream_adaptive_enabled") == "true" and
-        inputstreamhelper
+        "hls" in xbmcaddon.Addon(id=__id__).getSetting("stream_type")
+        and xbmcaddon.Addon(id=__id__).getSetting("inputstream_adaptive_enabled") == "true"
+        and inputstreamhelper
     ):
         helper = inputstreamhelper.Helper("hls")
         if not helper.check_inputstream():
             return
         else:
-            properties.update({
-                "inputstreamaddon": helper.inputstream_addon,
-                "inputstream.adaptive.manifest_type": "hls"
-            })
+            properties.update(
+                {
+                    "inputstreamaddon": helper.inputstream_addon,
+                    "inputstream.adaptive.manifest_type": "hls",
+                }
+            )
     playback_data = get_window_property(index)
     video_data = playback_data.get("video_data")
     video_info = playback_data["video_info"]
@@ -344,17 +364,19 @@ def play(id, index):
         video_data,
         quality=xbmcaddon.Addon(id=__id__).getSetting("video_quality"),
         stream_type=xbmcaddon.Addon(id=__id__).getSetting("stream_type"),
-        ask_quality=xbmcaddon.Addon(id=__id__).getSetting("ask_quality")
+        ask_quality=xbmcaddon.Addon(id=__id__).getSetting("ask_quality"),
     )
-    properties.update({
-        "id": id,
-        "play_duration": video_info["duration"],
-        "play_resumetime": video_info["time"],
-        "video_number": video_info.get("episode", 1),
-        "season_number": video_info.get("season", ""),
-        "playcount": video_info["playcount"],
-        "imdbnumber": video_info["imdbnumber"]
-    })
+    properties.update(
+        {
+            "id": id,
+            "play_duration": video_info["duration"],
+            "play_resumetime": video_info["time"],
+            "video_number": video_info.get("episode", 1),
+            "season_number": video_info.get("season", ""),
+            "playcount": video_info["playcount"],
+            "imdbnumber": video_info["imdbnumber"],
+        }
+    )
     li = ExtendedListItem(
         playback_data["title"],
         path=url,
@@ -377,7 +399,7 @@ def trailer(id, sid=None):
         url = get_mlink(
             trailer,
             quality=xbmcaddon.Addon(id=__id__).getSetting("video_quality"),
-            stream_type=xbmcaddon.Addon(id=__id__).getSetting("stream_type")
+            stream_type=xbmcaddon.Addon(id=__id__).getSetting("stream_type"),
         )
     elif sid is not None:
         url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid={}"
@@ -411,8 +433,8 @@ def bookmarks(folder_id=None, page=None):
                 folder["title"].encode("utf-8"),
                 properties={
                     "folder-id": str(folder["id"]).encode("utf-8"),
-                    "views": str(folder["views"]).encode("utf-8")
-                }
+                    "views": str(folder["views"]).encode("utf-8"),
+                },
             )
             remove_link = get_internal_link("remove_bookmarks_folder", folder_id=folder["id"])
             li.addContextMenuItems([("Удалить", "Container.Update({})".format(remove_link))])
@@ -433,14 +455,15 @@ def watching():
     xbmcplugin.setContent(request.handle, "tvshows")
     for item in response["items"]:
         title = "{} : [COLOR FFFFF000]+{}[/COLOR]".format(
-            item["title"].encode("utf-8"), str(item["new"]))
+            item["title"].encode("utf-8"), str(item["new"])
+        )
         li = ExtendedListItem(
             title,
             str(item["new"]),
             poster=item["posters"]["big"],
             properties={"id": str(item["id"]), "in_watchlist": "1"},
             video_info={"mediatype": mediatype_map[item["type"]]},
-            addContextMenuItems=True
+            addContextMenuItems=True,
         )
         link = get_internal_link("view_seasons", id=item["id"])
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
@@ -457,7 +480,7 @@ def watching_movies():
             poster=item["posters"]["big"],
             properties={"id": item["id"]},
             video_info={"mediatype": mediatype_map[item["type"]]},
-            addContextMenuItems=True
+            addContextMenuItems=True,
         )
         if item["subtype"] == "multi":
             link = get_internal_link("view_episodes", id=item["id"])
@@ -466,11 +489,14 @@ def watching_movies():
             response = KinoPubClient("items/{}".format(item["id"])).get()
             watching_info = KinoPubClient("watching").get(data={"id": item["id"]})["item"]["videos"]
             watching_info = watching_info[0]
-            video_info = extract_video_info(response["item"], {
-                "time": watching_info["time"],
-                "duration": watching_info["duration"],
-                "playcount": watching_info["status"],
-            })
+            video_info = extract_video_info(
+                response["item"],
+                {
+                    "time": watching_info["time"],
+                    "duration": watching_info["duration"],
+                    "playcount": watching_info["status"],
+                },
+            )
             li.setInfo("video", video_info)
             li.setProperty("isPlayable", "true")
             li.setResumeTime(watching_info["time"])
@@ -478,7 +504,7 @@ def watching_movies():
             playback_data[i] = {
                 "video_info": video_info,
                 "poster": item["posters"]["big"],
-                "title": item["title"].encode("utf-8")
+                "title": item["title"].encode("utf-8"),
             }
             isdir = False
         xbmcplugin.addDirectoryItem(request.handle, link, li, isdir)
@@ -501,8 +527,7 @@ def collections(sort=None, page=None):
     xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     for item in response["items"]:
         li = ExtendedListItem(
-            item["title"].encode("utf-8"),
-            thumbnailImage=item["posters"]["medium"]
+            item["title"].encode("utf-8"), thumbnailImage=item["posters"]["medium"]
         )
         link = get_internal_link("collection_view", id=item["id"])
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
@@ -520,7 +545,7 @@ def collection_view(id):
 def alphabet(type):
     alpha = [
         "А,Б,В,Г,Д,Е,Ё,Ж,З,И,Й,К,Л,М,Н,О,П,Р,С,Т,У,Ф,Х,Ц,Ч,Ш,Щ,Ы,Э,Ю,Я",
-        "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z"
+        "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z",
     ]
     for al in alpha:
         letters = al.split(",")
@@ -574,15 +599,11 @@ def edit_bookmarks(item_id=None):
                 return folder["id"]
 
     for folder in folders_to_add:
-        KinoPubClient("bookmarks/add").post(data={
-            "item": item_id,
-            "folder": get_folder_id(folder)
-        })
+        KinoPubClient("bookmarks/add").post(data={"item": item_id, "folder": get_folder_id(folder)})
     for folder in folders_to_remove:
-        KinoPubClient("bookmarks/remove-item").post(data={
-            "item": item_id,
-            "folder": get_folder_id(folder)
-        })
+        KinoPubClient("bookmarks/remove-item").post(
+            data={"item": item_id, "folder": get_folder_id(folder)}
+        )
     notice("Закладки для видео изменены")
 
 
@@ -610,7 +631,7 @@ def profile():
         "Информация о профиле",
         "Имя пользователя: [B]{}[/B]".format(user_data["username"]),
         "Дата регистрации: [B]{0:%d} {0:%B} {0:%Y}[/B]".format(reg_date),
-        "Остаток дней подписки: [B]{}[/B]".format(int(user_data["subscription"]["days"]))
+        "Остаток дней подписки: [B]{}[/B]".format(int(user_data["subscription"]["days"])),
     )
 
 
@@ -627,10 +648,9 @@ def comments(item_id=None):
             rating = " [COLOR FFD11141]({})[/COLOR]".format(i["rating"])
         else:
             rating = ""
-        message = u"{}[COLOR FFFFF000]{}[/COLOR]{}: {}\n\n".format(message,
-                                                                   i["user"]["name"],
-                                                                   rating,
-                                                                   i["message"].replace("\n", " "))
+        message = u"{}[COLOR FFFFF000]{}[/COLOR]{}: {}\n\n".format(
+            message, i["user"]["name"], rating, i["message"].replace("\n", " ")
+        )
     dialog = xbmcgui.Dialog()
     dialog.textviewer('Комментарии "{}"'.format(title), message)
 
@@ -640,7 +660,7 @@ def similar(item_id=None, title=""):
     response = KinoPubClient("items/similar").get(data={"id": item_id})
     if not response["items"]:
         dialog = xbmcgui.Dialog()
-        dialog.ok("Похожие фильмы: {0}".format(title), u"Пока тут пусто")
+        dialog.ok("Похожие фильмы: {}".format(title), u"Пока тут пусто")
     else:
         show_items(response["items"])
         xbmcplugin.endOfDirectory(request.handle, cacheToDisc=False)

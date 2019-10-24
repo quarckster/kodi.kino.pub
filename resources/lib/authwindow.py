@@ -7,9 +7,11 @@ import urllib2
 import xbmc
 import xbmcaddon
 import xbmcgui
-
-from addonutils import nav_internal_link, notice, update_device_info
-from data import __plugin__, __id__
+from addonutils import nav_internal_link
+from addonutils import notice
+from addonutils import update_device_info
+from data import __id__
+from data import __plugin__
 
 
 class AuthDialog(object):
@@ -95,7 +97,7 @@ class Auth(object):
             req = urllib2.Request(url)
             resp = urllib2.urlopen(req, udata).read()
             return json.loads(resp)
-        except urllib2.URLError, e:
+        except urllib2.URLError as e:
             if e.code == 400:
                 _data = e.read()
                 try:
@@ -117,7 +119,7 @@ class Auth(object):
         data = {
             "grant_type": "device_code",
             "client_id": self.CLIENT_ID,
-            "client_secret": self.CLIENT_SECRET
+            "client_secret": self.CLIENT_SECRET,
         }
         resp = self.request(self.OAUTH_API_URL, data)
         error = resp.get("error")
@@ -130,8 +132,7 @@ class Auth(object):
 
         xbmcaddon.Addon(id=__id__).setSetting("device_code", str(self.device_code).encode("utf-8"))
         xbmcaddon.Addon(id=__id__).setSetting(
-            "verification_uri",
-            str(self.verification_uri).encode("utf-8")
+            "verification_uri", str(self.verification_uri).encode("utf-8")
         )
         xbmcaddon.Addon(id=__id__).setSetting("interval", str(self.refresh_interval))
         return self.SUCCESS, resp
@@ -143,7 +144,7 @@ class Auth(object):
                 "grant_type": "refresh_token",
                 "refresh_token": self.refresh_token,
                 "client_id": self.CLIENT_ID,
-                "client_secret": self.CLIENT_SECRET
+                "client_secret": self.CLIENT_SECRET,
             }
         else:
             xbmc.log("{}: getting new token".format(__plugin__), level=xbmc.LOGNOTICE)
@@ -151,7 +152,7 @@ class Auth(object):
                 "grant_type": "device_token",
                 "client_id": self.CLIENT_ID,
                 "code": self.device_code,
-                "client_secret": self.CLIENT_SECRET
+                "client_secret": self.CLIENT_SECRET,
             }
         resp = self.request(self.OAUTH_API_URL, data)
         error = resp.get("error")
@@ -171,8 +172,12 @@ class Auth(object):
         self.refresh_token = resp.get("refresh_token")
         self.access_token = resp.get("access_token")
         self.access_token_expire = str(expires_in)
-        xbmc.log("{}: refresh token - {}; access token - {}; expires in - {}".format(
-            __plugin__, self.refresh_token, self.access_token, expires_in), level=xbmc.LOGNOTICE)
+        xbmc.log(
+            "{}: refresh token - {}; access token - {}; expires in - {}".format(
+                __plugin__, self.refresh_token, self.access_token, expires_in
+            ),
+            level=xbmc.LOGNOTICE,
+        )
         for key, val in resp.items():
             xbmcaddon.Addon(id=__id__).setSetting(key.encode("utf-8"), str(val).encode("utf-8"))
         xbmcaddon.Addon(id=__id__).setSetting("device_code", "")
@@ -203,10 +208,14 @@ class Auth(object):
             notice("Код ответа сервера {}".format(resp["status"]), heading="Неизвестная ошибка")
             nav_internal_link("/")
             return
-        self.window.show("\n".join([
-            "Откройте [B]{}[/B]".format(resp["verification_uri"].encode("utf-8")),
-            "и введите следующий код: [B]{}[/B]".format(resp["user_code"].encode("utf-8"))
-        ]))
+        self.window.show(
+            "\n".join(
+                [
+                    "Откройте [B]{}[/B]".format(resp["verification_uri"].encode("utf-8")),
+                    "и введите следующий код: [B]{}[/B]".format(resp["user_code"].encode("utf-8")),
+                ]
+            )
+        )
         self.verify_device_code(int(resp["interval"]))
         xbmc.log("{}: close modal auth".format(__plugin__))
 

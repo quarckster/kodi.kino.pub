@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import xbmcaddon
+
 from resources.lib import addonworker
 from resources.lib.data import __id__
 
