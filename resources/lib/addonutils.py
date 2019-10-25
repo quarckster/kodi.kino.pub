@@ -92,7 +92,7 @@ def build_plot(item):
 def build_icon_path(name):
     return xbmc.translatePath(
         "special://home/addons/{}/resources/icons/{}.png".format(__id__, name)
-        )
+    )
 
 
 def get_status(item):
