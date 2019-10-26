@@ -88,6 +88,13 @@ def build_plot(item):
     return "\n".join(final_plot)
 
 
+# Build path to icon according to it's name
+def build_icon_path(name):
+    return xbmc.translatePath(
+        "special://home/addons/{}/resources/icons/{}.png".format(__id__, name)
+    )
+
+
 def get_status(item):
     if item["type"] == "serial" and item["finished"]:
         return u"окончен"
