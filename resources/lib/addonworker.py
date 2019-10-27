@@ -25,7 +25,6 @@ from addonutils import (
 )
 from authwindow import auth
 from client import KinoPubClient
-from data import __id__
 from listitem import ExtendedListItem
 from main_menu import main_menu_items
 from player import Player
@@ -170,7 +169,7 @@ def index():
                 )
                 xbmcplugin.addDirectoryItem(request.handle, menu_item.link, li, menu_item.is_dir)
         for i in response["items"]:
-            if xbmcaddon.Addon(id=__id__).getSetting("show_{}".format(i["id"])) != "false":
+            if xbmcaddon.Addon().getSetting("show_{}".format(i["id"])) != "false":
                 img = build_icon_path(i["id"])
                 li = ExtendedListItem(i["title"].encode("utf-8"))
                 li = ExtendedListItem(i["title"].encode("utf-8"), iconImage=img, thumbnailImage=img)
@@ -349,8 +348,8 @@ def season_episodes(id, season_number):
 def play(id, index):
     properties = {}
     if (
-        "hls" in xbmcaddon.Addon(id=__id__).getSetting("stream_type")
-        and xbmcaddon.Addon(id=__id__).getSetting("inputstream_adaptive_enabled") == "true"
+        "hls" in xbmcaddon.Addon().getSetting("stream_type")
+        and xbmcaddon.Addon().getSetting("inputstream_adaptive_enabled") == "true"
         and inputstreamhelper
     ):
         helper = inputstreamhelper.Helper("hls")
@@ -375,9 +374,9 @@ def play(id, index):
         return
     url = get_mlink(
         video_data,
-        quality=xbmcaddon.Addon(id=__id__).getSetting("video_quality"),
-        stream_type=xbmcaddon.Addon(id=__id__).getSetting("stream_type"),
-        ask_quality=xbmcaddon.Addon(id=__id__).getSetting("ask_quality"),
+        quality=xbmcaddon.Addon().getSetting("video_quality"),
+        stream_type=xbmcaddon.Addon().getSetting("stream_type"),
+        ask_quality=xbmcaddon.Addon().getSetting("ask_quality"),
     )
     properties.update(
         {
@@ -411,8 +410,8 @@ def trailer(id, sid=None):
     if "files" in trailer:
         url = get_mlink(
             trailer,
-            quality=xbmcaddon.Addon(id=__id__).getSetting("video_quality"),
-            stream_type=xbmcaddon.Addon(id=__id__).getSetting("stream_type"),
+            quality=xbmcaddon.Addon().getSetting("video_quality"),
+            stream_type=xbmcaddon.Addon().getSetting("stream_type"),
         )
     elif sid is not None:
         url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid={}"

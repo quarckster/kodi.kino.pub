@@ -12,8 +12,9 @@ import logger
 import xbmc
 import xbmcaddon
 import xbmcgui
-from data import __id__
-from data import __plugin__
+
+from . import PLUGIN_ID
+from . import PLUGIN_URL
 
 
 def set_window_property(value):
@@ -92,7 +93,7 @@ def build_plot(item):
 # Build path to icon according to it's name
 def build_icon_path(name):
     return xbmc.translatePath(
-        "special://home/addons/{}/resources/icons/{}.png".format(__id__, name)
+        "special://home/addons/{}/resources/icons/{}.png".format(PLUGIN_ID, name)
     )
 
 
@@ -127,7 +128,7 @@ def video_info(item, extend=None):
 
 def get_internal_link(path, **params):
     """Form internal link for plugin navigation"""
-    return urlparse.urlunsplit(("plugin", __id__, path, urllib.urlencode(params), ""))
+    return urlparse.urlunsplit(("plugin", PLUGIN_ID, path, urllib.urlencode(params), ""))
 
 
 def nav_internal_link(action, **params):
@@ -148,7 +149,7 @@ def trailer_link(item):
 def update_device_info(force=False):
     from client import KinoPubClient
 
-    settings = xbmcaddon.Addon(id=__id__)
+    settings = xbmcaddon.Addon(id=PLUGIN_ID)
     # Update device info
     deviceInfoUpdate = settings.getSetting("device_info_update")
     if force or not deviceInfoUpdate or int(deviceInfoUpdate) + 1800 < int(time.time()):
@@ -176,7 +177,7 @@ class Request(object):
 
     @property
     def path(self):
-        return sys.argv[0].replace(__plugin__, "")
+        return sys.argv[0].replace(PLUGIN_URL, "")
 
     @property
     def args(self):

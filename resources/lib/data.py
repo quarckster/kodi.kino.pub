@@ -3,8 +3,6 @@ import xml.etree.ElementTree as ET
 import xbmc
 
 
-__id__ = "video.kino.pub"
-__plugin__ = "plugin://{}".format(__id__)
 advancedsettings_file = xbmc.translatePath("special://home/userdata/advancedsettings.xml")
 defaults = {
     ("video", "playcountminimumpercent"): 90,

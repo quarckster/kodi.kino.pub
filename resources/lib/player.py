@@ -77,7 +77,7 @@ class Player(xbmc.Player):
         logger.notice("playback stopped")
         if self.should_make_resume_point:
             data["time"] = self.marktime
-            logger("sending resume point")
+            logger.notice("sending resume point")
             KinoPubClient("watching/marktime").get(data=data)
         elif self.should_mark_as_watched and int(self.list_item.getProperty("playcount")) < 1:
             data["status"] = 1

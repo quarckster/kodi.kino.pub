@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import xbmcaddon
 from addonutils import get_internal_link
-from data import __id__
 from data import get_adv_setting
 from xbmcgui import ListItem
 
@@ -90,7 +89,7 @@ class ExtendedListItem(ListItem):
         menu_items.append((label, "Container.Update({})".format(link)))
 
     def _addSeparatorContextMenuItem(self, menu_items):
-        # 21 is the maximum number of characters when the hosrizontal scrolling doesn't appear.
+        # 21 is the maximum number of characters when the horizontal scrolling doesn't appear.
         menu_items.append(("─" * 21, ""))
 
     def addPredefinedContextMenuItems(self, items=None):
@@ -116,5 +115,5 @@ class ExtendedListItem(ListItem):
             self.setProperties(resumetime=resumetime, totaltime=totaltime)
 
     def markAdvert(self, has_advert):
-        if xbmcaddon.Addon(id=__id__).getSetting("mark_advert") == "true" and has_advert:
+        if xbmcaddon.Addon().getSetting("mark_advert") == "true" and has_advert:
             self.setLabel("{} (!)".format(self.getLabel()))
