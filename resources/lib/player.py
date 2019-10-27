@@ -2,11 +2,11 @@
 import json
 import time
 
+import logger
 import xbmc
 import xbmcgui
 from authwindow import auth
 from client import KinoPubClient
-from data import __plugin__
 from data import get_adv_setting
 
 
@@ -59,16 +59,14 @@ class Player(xbmc.Player):
         return data
 
     def onPlayBackStarted(self):
-        xbmc.log("{}: playback started".format(__plugin__), level=xbmc.LOGNOTICE)
+        logger.notice("playback started")
         # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
         # imdb id should be 7 digits with leading zeroes with tt prepended
         imdb_id = "tt{:07d}".format(int(self.list_item.getProperty("imdbnumber")))
         ids = json.dumps({u"imdb": imdb_id})
         xbmcgui.Window(10000).setProperty("script.trakt.ids", ids)
         if self.should_refresh_token:
-            xbmc.log(
-                "{}: access token should be refreshed".format(__plugin__), level=xbmc.LOGNOTICE
-            )
+            logger.notice("access token should be refreshed")
             status, __ = auth.get_token(refresh=True)
             if status != auth.SUCCESS:
                 auth.reauth()
@@ -76,31 +74,31 @@ class Player(xbmc.Player):
     def onPlayBackStopped(self):
         self.is_playing = False
         data = self._base_data
-        xbmc.log("{}: playback stopped".format(__plugin__), level=xbmc.LOGNOTICE)
+        logger.notice("playback stopped")
         if self.should_make_resume_point:
             data["time"] = self.marktime
-            xbmc.log("{}: sending resume point".format(__plugin__), level=xbmc.LOGNOTICE)
+            logger("sending resume point")
             KinoPubClient("watching/marktime").get(data=data)
         elif self.should_mark_as_watched and int(self.list_item.getProperty("playcount")) < 1:
             data["status"] = 1
-            xbmc.log("{}: marking as watched".format(__plugin__), level=xbmc.LOGNOTICE)
+            logger.notice("marking as watched")
             KinoPubClient("watching/toggle").get(data=data)
         elif self.should_reset_resume_point:
             data["time"] = 0
-            xbmc.log("{}: resetting resume point".format(__plugin__), level=xbmc.LOGNOTICE)
+            logger.notice("resetting resume point")
             KinoPubClient("watching/marktime").get(data=data)
         else:
             return
 
     def onPlayBackEnded(self):
         self.is_playing = False
-        xbmc.log("{}: playback ended".format(__plugin__), level=xbmc.LOGNOTICE)
+        logger.notice("playback ended")
         if int(self.list_item.getProperty("playcount")) < 1:
             data = self._base_data
             data["status"] = 1
-            xbmc.log("{}: marking as watched".format(__plugin__), level=xbmc.LOGNOTICE)
+            logger.notice("marking as watched")
             KinoPubClient("watching/toggle").get(data=data)
 
     def onPlaybackError(self):
-        xbmc.log("{}: Playback error".format(__plugin__), level=xbmc.LOGNOTICE)
+        logger.error("playback error")
         self.is_playing = False

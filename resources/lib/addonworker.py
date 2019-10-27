@@ -25,7 +25,7 @@ from addonutils import (
 )
 from authwindow import auth
 from client import KinoPubClient
-from data import __plugin__, __id__
+from data import __id__
 from listitem import ExtendedListItem
 from main_menu import main_menu_items
 from player import Player
@@ -56,9 +56,6 @@ def show_pagination(pagination, action, **kwargs):
 
 
 def show_items(items, add_indexes=False):
-    xbmc.log(
-        "{}: show_items. Total items: {}".format(__plugin__, str(len(items))), level=xbmc.LOGNOTICE
-    )
     playback_data = {}
     # Fill list with items
     for index, item in enumerate(items, 1):

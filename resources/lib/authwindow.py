@@ -4,6 +4,7 @@ import time
 import urllib
 import urllib2
 
+import logger
 import xbmc
 import xbmcaddon
 import xbmcgui
@@ -11,7 +12,6 @@ from addonutils import nav_internal_link
 from addonutils import notice
 from addonutils import update_device_info
 from data import __id__
-from data import __plugin__
 
 
 class AuthDialog(object):
@@ -91,7 +91,7 @@ class Auth(object):
         self.do_login()
 
     def request(self, url, data):
-        xbmc.log("{}: request url {}, data {}".format(__plugin__, url, data), level=xbmc.LOGNOTICE)
+        logger.notice("request url {}, data {}".format(url, data))
         try:
             udata = urllib.urlencode(data)
             req = urllib2.Request(url)
@@ -139,7 +139,7 @@ class Auth(object):
 
     def get_token(self, refresh=False):
         if refresh:
-            xbmc.log("{}: refreshing token".format(__plugin__), level=xbmc.LOGNOTICE)
+            logger.notice("refreshing token")
             data = {
                 "grant_type": "refresh_token",
                 "refresh_token": self.refresh_token,
@@ -147,7 +147,7 @@ class Auth(object):
                 "client_secret": self.CLIENT_SECRET,
             }
         else:
-            xbmc.log("{}: getting new token".format(__plugin__), level=xbmc.LOGNOTICE)
+            logger.notice("getting a new token")
             data = {
                 "grant_type": "device_token",
                 "client_id": self.CLIENT_ID,
@@ -157,26 +157,25 @@ class Auth(object):
         resp = self.request(self.OAUTH_API_URL, data)
         error = resp.get("error")
         if error and error == "authorization_pending":
-            xbmc.log("{}: ERROR is {}".format(__plugin__, error), level=xbmc.LOGERROR)
+            logger.error("ERROR is {}".format(error))
             return self.PENDING_STATUS, resp
         if error and error in ["invalid_grant", "code_expired", "invalid_client"]:
-            xbmc.log("{}: ERROR is {}".format(__plugin__, error), level=xbmc.LOGERROR)
+            logger.error("ERROR is {}".format(error))
             return self.EXPIRED, resp
         if error:
-            xbmc.log("{}: ERROR is {}".format(__plugin__, error), level=xbmc.LOGERROR)
+            logger.error("ERROR is {}".format(error))
             return self.ERROR, resp
         if not resp.get("access_token"):
-            xbmc.log("{}: access token is empty".format(__plugin__), level=xbmc.LOGERROR)
+            logger.error("access token is empty")
             return self.ERROR, resp
         expires_in = int(resp.get("expires_in")) + int(time.time())
         self.refresh_token = resp.get("refresh_token")
         self.access_token = resp.get("access_token")
         self.access_token_expire = str(expires_in)
-        xbmc.log(
-            "{}: refresh token - {}; access token - {}; expires in - {}".format(
-                __plugin__, self.refresh_token, self.access_token, expires_in
-            ),
-            level=xbmc.LOGNOTICE,
+        logger.notice(
+            "refresh token - {}; access token - {}; expires in - {}".format(
+                self.refresh_token, self.access_token, expires_in
+            )
         )
         for key, val in resp.items():
             xbmcaddon.Addon(id=__id__).setSetting(key.encode("utf-8"), str(val).encode("utf-8"))
@@ -202,7 +201,6 @@ class Auth(object):
             self.window.close(cancel=True)
 
     def do_login(self):
-        xbmc.log("{}: no access_token. Show modal auth".format(__plugin__))
         status, resp = self.get_device_code()
         if status == self.ERROR:
             notice("Код ответа сервера {}".format(resp["status"]), heading="Неизвестная ошибка")
@@ -217,7 +215,6 @@ class Auth(object):
             )
         )
         self.verify_device_code(int(resp["interval"]))
-        xbmc.log("{}: close modal auth".format(__plugin__))
 
 
 auth = Auth()

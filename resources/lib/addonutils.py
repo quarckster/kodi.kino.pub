@@ -8,6 +8,7 @@ import urllib
 import urlparse
 from functools import wraps
 
+import logger
 import xbmc
 import xbmcaddon
 import xbmcgui
@@ -193,9 +194,7 @@ def route(path):
 
         @wraps(f)
         def wrapper_route(*args, **kwargs):
-            xbmc.log(
-                "{}: {}. {}".format(__plugin__, f.__name__, str(request.args)), level=xbmc.LOGNOTICE
-            )
+            logger.notice("{}. {}".format(f.__name__, str(request.args)))
             return f(*args, **kwargs)
 
         return wrapper_route

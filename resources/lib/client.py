@@ -4,10 +4,9 @@ import sys
 import urllib
 import urllib2
 
-import xbmc
+import logger
 from addonutils import notice
 from authwindow import auth
-from data import __plugin__
 
 
 class KinoPubClient(object):
@@ -17,20 +16,14 @@ class KinoPubClient(object):
         self.action = action
 
     def _make_request(self, request, timeout=600):
-        xbmc.log(
-            "{}: sending {} request to {}".format(
-                __plugin__, request.get_method(), request.get_full_url()
-            ),
-            level=xbmc.LOGNOTICE,
+        logger.notice(
+            "sending {} request to {}".format(request.get_method(), request.get_full_url())
         )
         request.add_header("Authorization", "Bearer {}".format(auth.access_token))
         try:
             response = urllib2.urlopen(request, timeout=timeout)
         except urllib2.HTTPError as e:
-            xbmc.log(
-                "{}. HTTPError. Code: {}. Message: {}".format(__plugin__, e.code, e.message),
-                level=xbmc.LOGERROR,
-            )
+            logger.error("HTTPError. Code: {}. Message: {}".format(e.code, e.message))
             if e.code in [400, 401]:
                 status, __ = auth.get_token(refresh=True)
                 if status != auth.SUCCESS:
@@ -42,20 +35,14 @@ class KinoPubClient(object):
             else:
                 notice("Код ответа сервера {}".format(e.code), "Неизвестная ошибка")
         except Exception as e:
-            xbmc.log(
-                "{}: {}. Message: {}".format(__plugin__, e.__class__.__name__, e.message),
-                level=xbmc.LOGERROR,
-            )
+            logger.error("{}. Message: {}".format(type(e).__name__, e.message))
             notice(e.message, "Ошибка")
         else:
             response = json.loads(response.read())
             if response["status"] == 200:
                 return response
             else:
-                xbmc.log(
-                    "{}: Unknown error. Code: {}".format(__plugin__, response["status"]),
-                    level=xbmc.LOGERROR,
-                )
+                logger.error("Unknown error. Code: {}".format(response["status"]))
                 notice("Код ответа сервера {}".format(response["status"]), "Неизвестная ошибка")
 
     def get(self, data=""):
