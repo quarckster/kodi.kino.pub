@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
 
-import xbmcaddon
 from addonutils import build_icon_path
 from addonutils import get_internal_link
+from settings import settings
 
 
 MainMenuItem = namedtuple("MainMenuItem", ["title", "link", "icon", "is_dir", "is_displayed"])
@@ -14,7 +14,7 @@ main_menu_items = [
         get_internal_link("search", type=None),
         build_icon_path("search"),
         False,
-        eval(xbmcaddon.Addon().getSetting("show_search").title()),
+        eval(settings.show_search.title()),
     ),
     MainMenuItem(
         "Закладки", get_internal_link("bookmarks"), build_icon_path("bookmarks"), True, True
@@ -34,34 +34,30 @@ main_menu_items = [
         get_internal_link("items", type=None),
         build_icon_path("new"),
         True,
-        eval(xbmcaddon.Addon().getSetting("show_last").title()),
+        eval(settings.show_last.title()),
     ),
     MainMenuItem(
         "Популярные",
         get_internal_link("items", type=None, shortcut="/popular"),
         build_icon_path("popular"),
         True,
-        eval(xbmcaddon.Addon().getSetting("show_popular").title()),
+        eval(settings.show_popular.title()),
     ),
     MainMenuItem(
         "Горячие",
         get_internal_link("items", type=None, shortcut="/hot"),
         build_icon_path("hot"),
         True,
-        eval(xbmcaddon.Addon().getSetting("show_hot").title()),
+        eval(settings.show_hot.title()),
     ),
     MainMenuItem(
-        "ТВ",
-        get_internal_link("tv"),
-        build_icon_path("tv"),
-        True,
-        eval(xbmcaddon.Addon().getSetting("show_tv").title()),
+        "ТВ", get_internal_link("tv"), build_icon_path("tv"), True, eval(settings.show_tv.title())
     ),
     MainMenuItem(
         "Подборки",
         get_internal_link("collections"),
         build_icon_path("collections"),
         True,
-        eval(xbmcaddon.Addon().getSetting("show_collections").title()),
+        eval(settings.show_collections.title()),
     ),
 ]

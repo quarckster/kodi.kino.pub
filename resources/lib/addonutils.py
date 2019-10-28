@@ -10,8 +10,8 @@ from functools import wraps
 
 import logger
 import xbmc
-import xbmcaddon
 import xbmcgui
+from settings import settings
 
 from . import PLUGIN_ID
 from . import PLUGIN_URL
@@ -149,10 +149,9 @@ def trailer_link(item):
 def update_device_info(force=False):
     from client import KinoPubClient
 
-    settings = xbmcaddon.Addon(id=PLUGIN_ID)
     # Update device info
-    deviceInfoUpdate = settings.getSetting("device_info_update")
-    if force or not deviceInfoUpdate or int(deviceInfoUpdate) + 1800 < int(time.time()):
+    device_info_update = settings.device_info_update
+    if force or not device_info_update or int(device_info_update) + 1800 < int(time.time()):
         result = {"build_version": "Busy", "friendly_name": "Busy"}
         while "Busy" in result.values():
             result = {
@@ -167,7 +166,7 @@ def update_device_info(force=False):
                 "software": software,
             }
         )
-        settings.setSetting("device_info_update", str(int(float(time.time()))))
+        settings.device_info_update = int(float(time.time()))
 
 
 class Request(object):

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import xbmcaddon
 from addonutils import get_internal_link
-from data import get_adv_setting
+from settings import settings
 from xbmcgui import ListItem
 
 
@@ -108,12 +107,13 @@ class ExtendedListItem(ListItem):
         if (
             resumetime is not None
             and totaltime > 0
-            and 100 * resumetime / totaltime <= get_adv_setting("video", "playcountminimumpercent")
-            and resumetime > get_adv_setting("video", "ignoresecondsatstart")
+            and 100 * resumetime / totaltime
+            <= settings.advanced("video", "playcountminimumpercent")
+            and resumetime > settings.advanced("video", "ignoresecondsatstart")
             or resumetime == 0
         ):
             self.setProperties(resumetime=resumetime, totaltime=totaltime)
 
     def markAdvert(self, has_advert):
-        if xbmcaddon.Addon().getSetting("mark_advert") == "true" and has_advert:
+        if settings.mark_advert == "true" and has_advert:
             self.setLabel("{} (!)".format(self.getLabel()))

@@ -7,7 +7,7 @@ import xbmc
 import xbmcgui
 from authwindow import auth
 from client import KinoPubClient
-from data import get_adv_setting
+from settings import settings
 
 
 class Player(xbmc.Player):
@@ -24,7 +24,7 @@ class Player(xbmc.Player):
     def should_make_resume_point(self):
         # https://kodi.wiki/view/HOW-TO:Modify_automatic_watch_and_resume_points#Settings_explained
         return (
-            self.marktime > get_adv_setting("video", "ignoresecondsatstart")
+            self.marktime > settings.advanced("video", "ignoresecondsatstart")
             and not self.should_mark_as_watched
         )
 
@@ -32,13 +32,13 @@ class Player(xbmc.Player):
     def should_mark_as_watched(self):
         return 100 * self.marktime / float(
             self.list_item.getProperty("play_duration")
-        ) > get_adv_setting("video", "playcountminimumpercent")
+        ) > settings.advanced("video", "playcountminimumpercent")
 
     @property
     def should_reset_resume_point(self):
-        return self.marktime < get_adv_setting("video", "ignoresecondsatstart") and (
+        return self.marktime < settings.advanced("video", "ignoresecondsatstart") and (
             float(self.list_item.getProperty("play_resumetime"))
-            > get_adv_setting("video", "ignoresecondsatstart")
+            > settings.advanced("video", "ignoresecondsatstart")
         )
 
     @property

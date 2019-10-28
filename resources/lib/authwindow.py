@@ -6,11 +6,11 @@ import urllib2
 
 import logger
 import xbmc
-import xbmcaddon
 import xbmcgui
 from addonutils import nav_internal_link
 from addonutils import notice
 from addonutils import update_device_info
+from settings import settings
 
 
 class AuthDialog(object):
@@ -55,33 +55,33 @@ class Auth(object):
 
     @property
     def access_token(self):
-        return xbmcaddon.Addon().getSetting("access_token")
+        return settings.access_token
 
     @access_token.setter
     def access_token(self, value):
         if value is not None:
             value = value.encode("utf-8")
-        xbmcaddon.Addon().setSetting("access_token", value)
+        settings.access_token = value
 
     @property
     def access_token_expire(self):
-        return int(xbmcaddon.Addon().getSetting("access_token_expire"))
+        return int(settings.access_token_expire)
 
     @access_token_expire.setter
     def access_token_expire(self, value):
         if value is not None:
             value = value.encode("utf-8")
-        xbmcaddon.Addon().setSetting("access_token_expire", value)
+        settings.access_token_expire = value
 
     @property
     def refresh_token(self):
-        return xbmcaddon.Addon().getSetting("refresh_token")
+        return settings.refresh_token
 
     @refresh_token.setter
     def refresh_token(self, value):
         if value is not None:
             value = value.encode("utf-8")
-        xbmcaddon.Addon().setSetting("refresh_token", value)
+        settings.refresh_token = value
 
     def reauth(self):
         self.access_token = ""
@@ -129,9 +129,9 @@ class Auth(object):
         self.verification_uri = resp["verification_uri"].encode("utf8")
         self.refresh_interval = int(resp["interval"])
 
-        xbmcaddon.Addon().setSetting("device_code", str(self.device_code).encode("utf-8"))
-        xbmcaddon.Addon().setSetting("verification_uri", str(self.verification_uri).encode("utf-8"))
-        xbmcaddon.Addon().setSetting("interval", str(self.refresh_interval))
+        settings.device_code = str(self.device_code).encode("utf-8")
+        settings.verification_uri = str(self.verification_uri).encode("utf-8")
+        settings.interval = self.refresh_interval
         return self.SUCCESS, resp
 
     def get_token(self, refresh=False):
@@ -175,8 +175,8 @@ class Auth(object):
             )
         )
         for key, val in resp.items():
-            xbmcaddon.Addon().setSetting(key.encode("utf-8"), str(val).encode("utf-8"))
-        xbmcaddon.Addon().setSetting("device_code", "")
+            setattr(settings, key.encode("utf-8"), str(val).encode("utf-8"))
+        settings.device_code = ""
         return self.SUCCESS, resp
 
     def verify_device_code(self, interval):

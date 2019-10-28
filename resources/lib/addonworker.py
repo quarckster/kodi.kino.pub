@@ -5,6 +5,7 @@ try:
     import inputstreamhelper
 except ImportError:
     inputstreamhelper = None
+from settings import settings
 import xbmc
 import xbmcaddon
 import xbmcgui
@@ -169,7 +170,7 @@ def index():
                 )
                 xbmcplugin.addDirectoryItem(request.handle, menu_item.link, li, menu_item.is_dir)
         for i in response["items"]:
-            if xbmcaddon.Addon().getSetting("show_{}".format(i["id"])) != "false":
+            if getattr(settings, "show_{}".format(i["id"])) != "false":
                 img = build_icon_path(i["id"])
                 li = ExtendedListItem(i["title"].encode("utf-8"))
                 li = ExtendedListItem(i["title"].encode("utf-8"), iconImage=img, thumbnailImage=img)
@@ -348,8 +349,8 @@ def season_episodes(id, season_number):
 def play(id, index):
     properties = {}
     if (
-        "hls" in xbmcaddon.Addon().getSetting("stream_type")
-        and xbmcaddon.Addon().getSetting("inputstream_adaptive_enabled") == "true"
+        "hls" in settings.stream_type
+        and settings.inputstream_adaptive_enabled == "true"
         and inputstreamhelper
     ):
         helper = inputstreamhelper.Helper("hls")
@@ -374,9 +375,9 @@ def play(id, index):
         return
     url = get_mlink(
         video_data,
-        quality=xbmcaddon.Addon().getSetting("video_quality"),
-        stream_type=xbmcaddon.Addon().getSetting("stream_type"),
-        ask_quality=xbmcaddon.Addon().getSetting("ask_quality"),
+        quality=settings.video_quality,
+        stream_type=settings.stream_type,
+        ask_quality=settings.ask_quality,
     )
     properties.update(
         {
@@ -408,11 +409,7 @@ def trailer(id, sid=None):
     response = KinoPubClient("items/trailer").get(data={"id": id})
     trailer = response["trailer"]
     if "files" in trailer:
-        url = get_mlink(
-            trailer,
-            quality=xbmcaddon.Addon().getSetting("video_quality"),
-            stream_type=xbmcaddon.Addon().getSetting("stream_type"),
-        )
+        url = get_mlink(trailer, quality=settings.video_quality, stream_type=settings.stream_type)
     elif sid is not None:
         url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid={}"
         url = url.format(sid)

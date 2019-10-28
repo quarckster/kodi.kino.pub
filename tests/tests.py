@@ -178,10 +178,10 @@ def test_index(mocker, index, main, xbmcplugin, ExtendedListItem):
 
 @pytest.fixture(params=itertools.product(streams, qualities), ids=lambda ids: "-".join(ids))
 def play(request, mocker, xbmcaddon):
-    from resources.lib.data import __id__
+    from resources.lib.settings import settings
 
-    xbmcaddon.Addon(id=__id__).setSetting("stream_type", request.param[0])
-    xbmcaddon.Addon(id=__id__).setSetting("video_quality", request.param[1])
+    settings.stream_type = request.param[0]
+    settings.video_quality = request.param[1]
     id_ = actionPlay_response["item"]["id"]
     title = actionPlay_response["item"]["title"].encode("utf-8")
 
