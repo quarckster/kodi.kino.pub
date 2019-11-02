@@ -60,7 +60,7 @@ class Auth(object):
     OAUTH_API_URL = "http://api.service-kp.com/oauth2/device"
 
     def __init__(self):
-        self.auth_dialog = AuthDialog()
+        self._auth_dialog = AuthDialog()
 
     def _make_request(self, payload):
         logger.notice("sending payload {} to oauth api".format(payload))
@@ -161,22 +161,22 @@ class Auth(object):
 
     def _verify_device_code(self, interval, device_code):
         steps = (5 * 60) // interval
-        self.auth_dialog.total = steps
+        self._auth_dialog.total = steps
         for i in range(steps):
-            if self.auth_dialog.iscanceled:
-                self.auth_dialog.close(cancel=True)
+            if self._auth_dialog.iscanceled:
+                self._auth_dialog.close(cancel=True)
                 break
             else:
                 try:
                     self._get_device_token(device_code)
                 except AuthPendingException:
-                    self.auth_dialog.update(i)
+                    self._auth_dialog.update(i)
                     xbmc.sleep(interval * 1000)
                 self._update_device_info()
-                self.auth_dialog.close()
+                self._auth_dialog.close()
                 break
         else:
-            self.auth_dialog.close(cancel=True)
+            self._auth_dialog.close(cancel=True)
 
     def _update_settings(self, refresh_token, access_token, expires_in):
         settings.refresh_token = refresh_token
@@ -190,7 +190,7 @@ class Auth(object):
 
     def _activate(self):
         resp = self._get_device_code()
-        self.auth_dialog.show(
+        self._auth_dialog.show(
             "\n".join(
                 [
                     "Откройте [B]{}[/B]".format(resp["verification_uri"]),
