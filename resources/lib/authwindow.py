@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import platform
 import time
 import urllib
 import urllib2
@@ -8,9 +9,23 @@ import logger
 import xbmc
 import xbmcgui
 from addonutils import nav_internal_link
-from addonutils import notice
-from addonutils import update_device_info
 from settings import settings
+
+
+class AuthException(Exception):
+    pass
+
+
+class AuthPendingException(AuthException):
+    pass
+
+
+class AuthExpiredException(AuthException):
+    pass
+
+
+class EmptyTokenException(AuthException):
+    pass
 
 
 class AuthDialog(object):
@@ -39,179 +54,163 @@ class AuthDialog(object):
 
 
 class Auth(object):
-    terminated = False
-    timer = 0
     CLIENT_ID = "xbmc"
     CLIENT_SECRET = "cgg3gtifu46urtfp2zp1nqtba0k2ezxh"
     OAUTH_API_URL = "http://api.service-kp.com/oauth2/device"
-    ERROR, PENDING_STATUS, SUCCESS, EXPIRED = range(4)
 
     def __init__(self):
-        self.window = AuthDialog()
+        self.auth_dialog = AuthDialog()
 
-    @property
-    def is_token_expired(self):
-        return self.access_token_expire < int(time.time())
-
-    @property
-    def access_token(self):
-        return settings.access_token
-
-    @access_token.setter
-    def access_token(self, value):
-        if value is not None:
-            value = value.encode("utf-8")
-        settings.access_token = value
-
-    @property
-    def access_token_expire(self):
-        return int(settings.access_token_expire)
-
-    @access_token_expire.setter
-    def access_token_expire(self, value):
-        if value is not None:
-            value = value.encode("utf-8")
-        settings.access_token_expire = value
-
-    @property
-    def refresh_token(self):
-        return settings.refresh_token
-
-    @refresh_token.setter
-    def refresh_token(self, value):
-        if value is not None:
-            value = value.encode("utf-8")
-        settings.refresh_token = value
-
-    def reauth(self):
-        self.access_token = ""
-        self.device_token = ""
-        self.refresh_token = ""
-        self.do_login()
-
-    def request(self, url, data):
-        logger.notice("request url {}, data {}".format(url, data))
+    def _make_request(self, payload):
+        logger.notice("sending payload {} to oauth api url".format(payload))
         try:
-            udata = urllib.urlencode(data)
-            req = urllib2.Request(url)
-            resp = urllib2.urlopen(req, udata).read()
-            return json.loads(resp)
-        except urllib2.URLError as e:
+            response = urllib2.urlopen(
+                urllib2.Request(self.OAUTH_API_URL), urllib.urlencode(payload)
+            ).read()
+            return json.loads(response)
+        except urllib2.HTTPError as e:
             if e.code == 400:
                 _data = e.read()
-                try:
-                    resp = json.loads(_data)
-                    return resp
-                except Exception:
-                    pass
+                response = json.loads(_data)
+                return response
             # server can respond with 429 status, so we just wait until it gives a correct response
-            if e.code == 429:
+            elif e.code == 429:
                 for _ in range(2):
                     time.sleep(3)
-                    return self.request(url, data)
-            return {"status": e.code, "error": "unknown error"}
-        xbmc.executebuiltin("XBMC.Notification(Internet problems,Connection timed out!)")
-        if self.window:
-            self.window.close()
+                    return self.request(payload)
+            else:
+                logger.fatal(
+                    "oauth request error; status: {}; message: {}".format(e.code, e.message)
+                )
+                raise
 
-    def get_device_code(self):
-        data = {
+    def _get_device_code(self):
+        payload = {
             "grant_type": "device_code",
             "client_id": self.CLIENT_ID,
             "client_secret": self.CLIENT_SECRET,
         }
-        resp = self.request(self.OAUTH_API_URL, data)
+        resp = self._make_request(payload)
+        if "error" in resp:
+            raise AuthException
+        return {
+            "device_code": resp["code"].encode("utf-8"),
+            "user_code": resp["user_code"].encode("utf-8"),
+            "verification_uri": resp["verification_uri"].encode("utf8"),
+            "refresh_interval": int(resp["interval"]),
+        }
+
+    def _refresh_token(self):
+        logger.notice("refreshing token")
+        payload = {
+            "grant_type": "refresh_token",
+            "refresh_token": settings.refresh_token,
+            "client_id": self.CLIENT_ID,
+            "client_secret": self.CLIENT_SECRET,
+        }
+        resp = self._make_request(payload)
+        if "access_token" not in resp:
+            raise EmptyTokenException
         error = resp.get("error")
-        if error:
-            return self.ERROR, resp
-        self.device_code = resp["code"].encode("utf-8")
-        self.user_code = resp["user_code"].encode("utf-8")
-        self.verification_uri = resp["verification_uri"].encode("utf8")
-        self.refresh_interval = int(resp["interval"])
+        if error and error in ["invalid_grant", "code_expired", "invalid_client"]:
+            logger.error(error)
+            self._activate()
+            return
+        self._update_settings(
+            resp["refresh_token"].encode("utf-8"),
+            resp["access_token"].encode("utf-8"),
+            resp["expires_in"],
+        )
 
-        settings.device_code = str(self.device_code).encode("utf-8")
-        settings.verification_uri = str(self.verification_uri).encode("utf-8")
-        settings.interval = self.refresh_interval
-        return self.SUCCESS, resp
-
-    def get_token(self, refresh=False):
-        if refresh:
-            logger.notice("refreshing token")
-            data = {
-                "grant_type": "refresh_token",
-                "refresh_token": self.refresh_token,
-                "client_id": self.CLIENT_ID,
-                "client_secret": self.CLIENT_SECRET,
-            }
-        else:
-            logger.notice("getting a new token")
-            data = {
-                "grant_type": "device_token",
-                "client_id": self.CLIENT_ID,
-                "code": self.device_code,
-                "client_secret": self.CLIENT_SECRET,
-            }
-        resp = self.request(self.OAUTH_API_URL, data)
+    def _get_device_token(self, device_code):
+        logger.notice("getting a new device token")
+        payload = {
+            "grant_type": "device_token",
+            "client_id": self.CLIENT_ID,
+            "code": device_code,
+            "client_secret": self.CLIENT_SECRET,
+        }
+        resp = self._make_request(payload)
         error = resp.get("error")
         if error and error == "authorization_pending":
-            logger.error("ERROR is {}".format(error))
-            return self.PENDING_STATUS, resp
+            raise AuthPendingException
         if error and error in ["invalid_grant", "code_expired", "invalid_client"]:
-            logger.error("ERROR is {}".format(error))
-            return self.EXPIRED, resp
-        if error:
-            logger.error("ERROR is {}".format(error))
-            return self.ERROR, resp
-        if not resp.get("access_token"):
-            logger.error("access token is empty")
-            return self.ERROR, resp
-        expires_in = int(resp.get("expires_in")) + int(time.time())
-        self.refresh_token = resp.get("refresh_token")
-        self.access_token = resp.get("access_token")
-        self.access_token_expire = str(expires_in)
-        logger.notice(
-            "refresh token - {}; access token - {}; expires in - {}".format(
-                self.refresh_token, self.access_token, expires_in
-            )
+            raise AuthExpiredException
+        self._update_settings(
+            resp["refresh_token"].encode("utf-8"),
+            resp["access_token"].encode("utf-8"),
+            resp["expires_in"],
         )
-        for key, val in resp.items():
-            setattr(settings, key.encode("utf-8"), str(val).encode("utf-8"))
-        settings.device_code = ""
-        return self.SUCCESS, resp
 
-    def verify_device_code(self, interval):
+    def _update_device_info(self):
+        from client import KinoPubClient
+
+        result = {"build_version": "Busy", "friendly_name": "Busy"}
+        while "Busy" in result.values():
+            result = {
+                "build_version": xbmc.getInfoLabel("System.BuildVersion"),
+                "friendly_name": xbmc.getInfoLabel("System.FriendlyName"),
+            }
+        software = "Kodi {}".format(result["build_version"].split()[0])
+        KinoPubClient("device/notify").post(
+            data={
+                "title": result["friendly_name"],
+                "hardware": platform.machine(),
+                "software": software,
+            }
+        )
+
+    def _verify_device_code(self, interval, device_code):
         steps = (5 * 60) // interval
-        self.window.total = steps
+        self.auth_dialog.total = steps
         for i in range(steps):
-            if self.window.iscanceled:
-                self.window.close(cancel=True)
+            if self.auth_dialog.iscanceled:
+                self.auth_dialog.close(cancel=True)
                 break
             else:
-                success, resp = self.get_token()
-                if success == self.SUCCESS:
-                    update_device_info(force=True)
-                    self.window.close()
+                try:
+                    self._get_device_token(device_code)
+                except AuthPendingException:
+                    self.auth_dialog.update(i)
+                    xbmc.sleep(interval * 1000)
+                else:
+                    self._update_device_info()
+                    self.auth_dialog.close()
                     break
-                self.window.update(i)
-                xbmc.sleep(interval * 1000)
         else:
-            self.window.close(cancel=True)
+            self.auth_dialog.close(cancel=True)
 
-    def do_login(self):
-        status, resp = self.get_device_code()
-        if status == self.ERROR:
-            notice("Код ответа сервера {}".format(resp["status"]), heading="Неизвестная ошибка")
-            nav_internal_link("/")
-            return
-        self.window.show(
+    def _update_settings(self, refresh_token, access_token, expires_in):
+        settings.refresh_token = refresh_token
+        settings.access_token = access_token
+        settings.access_token_expire = str(expires_in + int(time.time()))
+        logger.notice(
+            "refresh token - {}; access token - {}; expires in - {}".format(
+                refresh_token, access_token, expires_in
+            )
+        )
+
+    def _activate(self):
+        resp = self._get_device_code()
+        self.auth_dialog.show(
             "\n".join(
                 [
-                    "Откройте [B]{}[/B]".format(resp["verification_uri"].encode("utf-8")),
-                    "и введите следующий код: [B]{}[/B]".format(resp["user_code"].encode("utf-8")),
+                    "Откройте [B]{}[/B]".format(resp["verification_uri"]),
+                    "и введите следующий код: [B]{}[/B]".format(resp["user_code"]),
                 ]
             )
         )
-        self.verify_device_code(int(resp["interval"]))
+        self._verify_device_code(resp["refresh_interval"], resp["device_code"])
+
+    @property
+    def is_token_expired(self):
+        return int(settings.access_token_expire) < int(time.time())
+
+    def get_token(self):
+        if not settings.access_token:
+            self._activate()
+        if self.is_token_expired:
+            self._refresh_token()
 
 
 auth = Auth()

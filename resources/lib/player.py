@@ -44,7 +44,7 @@ class Player(xbmc.Player):
     @property
     def should_refresh_token(self):
         return int(time.time()) + int(self.list_item.getProperty("play_duration")) >= int(
-            auth.access_token_expire
+            settings.access_token_expire
         )
 
     @property
@@ -67,9 +67,7 @@ class Player(xbmc.Player):
         xbmcgui.Window(10000).setProperty("script.trakt.ids", ids)
         if self.should_refresh_token:
             logger.notice("access token should be refreshed")
-            status, __ = auth.get_token(refresh=True)
-            if status != auth.SUCCESS:
-                auth.reauth()
+            auth.get_token()
 
     def onPlayBackStopped(self):
         self.is_playing = False

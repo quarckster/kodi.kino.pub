@@ -147,13 +147,20 @@ def add_default_headings(type=None, fmt="slp"):
 
 @route("/login")
 def login():
-    auth.reauth()
+    auth.get_token()
+
+
+@route("/reset_auth")
+def reset_auth():
+    settings.access_token = ""
+    settings.access_token_expire = ""
+    settings.refresh_token = ""
 
 
 @route("/")
 def index():
     """Main screen - show type list"""
-    if not auth.access_token:
+    if not settings.access_token:
         # Use icons from lib for default headings
         li = ExtendedListItem("Активировать устройство", iconImage=build_icon_path("activate"))
         xbmcplugin.addDirectoryItem(request.handle, get_internal_link("login"), li, False)

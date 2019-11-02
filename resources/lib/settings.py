@@ -18,7 +18,9 @@ class Settings(object):
         return xbmcaddon.Addon().getSetting(name)
 
     def __setattr__(self, name, value):
-        xbmcaddon.Addon().setSetting(name, str(value))
+        if value is not None:
+            value = str(value)
+        xbmcaddon.Addon().setSetting(name, value)
 
     def _get_adv_setting(self, *args):
         try:

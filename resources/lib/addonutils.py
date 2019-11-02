@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
-import platform
 import re
 import sys
-import time
 import urllib
 import urlparse
 from functools import wraps
@@ -11,7 +9,6 @@ from functools import wraps
 import logger
 import xbmc
 import xbmcgui
-from settings import settings
 
 from . import PLUGIN_ID
 from . import PLUGIN_URL
@@ -90,8 +87,8 @@ def build_plot(item):
     return "\n".join(final_plot)
 
 
-# Build path to icon according to it's name
 def build_icon_path(name):
+    """Build a path to an icon according to its name"""
     return xbmc.translatePath(
         "special://home/addons/{}/resources/icons/{}.png".format(PLUGIN_ID, name)
     )
@@ -144,29 +141,6 @@ def trailer_link(item):
         trailer = item["trailer"]
         return get_internal_link("trailer", id=item["id"], sid=trailer["id"])
     return None
-
-
-def update_device_info(force=False):
-    from client import KinoPubClient
-
-    # Update device info
-    device_info_update = settings.device_info_update
-    if force or not device_info_update or int(device_info_update) + 1800 < int(time.time()):
-        result = {"build_version": "Busy", "friendly_name": "Busy"}
-        while "Busy" in result.values():
-            result = {
-                "build_version": xbmc.getInfoLabel("System.BuildVersion"),
-                "friendly_name": xbmc.getInfoLabel("System.FriendlyName"),
-            }
-        software = "Kodi {}".format(result["build_version"].split()[0])
-        KinoPubClient("device/notify").post(
-            data={
-                "title": result["friendly_name"],
-                "hardware": platform.machine(),
-                "software": software,
-            }
-        )
-        settings.device_info_update = int(float(time.time()))
 
 
 class Request(object):

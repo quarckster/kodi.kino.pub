@@ -7,6 +7,7 @@ import urllib2
 import logger
 from addonutils import notice
 from authwindow import auth
+from settings import settings
 
 
 class KinoPubClient(object):
@@ -19,17 +20,14 @@ class KinoPubClient(object):
         logger.notice(
             "sending {} request to {}".format(request.get_method(), request.get_full_url())
         )
-        request.add_header("Authorization", "Bearer {}".format(auth.access_token))
+        request.add_header("Authorization", "Bearer {}".format(settings.access_token))
         try:
             response = urllib2.urlopen(request, timeout=timeout)
         except urllib2.HTTPError as e:
-            logger.error("HTTPError. Code: {}. Message: {}".format(e.code, e.message))
+            logger.error("HTTPError. Code: {}.".format(e.code))
             if e.code in [400, 401]:
-                status, __ = auth.get_token(refresh=True)
-                if status != auth.SUCCESS:
-                    # reset access_token
-                    auth.reauth()
-                if auth.access_token:
+                auth.get_token()
+                if settings.access_token:
                     return self._make_request(request)
                 sys.exit()
             else:
