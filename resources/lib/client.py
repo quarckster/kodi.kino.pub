@@ -5,9 +5,9 @@ import urllib
 import urllib2
 
 import logger
-from addonutils import notice
-from authwindow import auth
+from auth import auth
 from settings import settings
+from utils import notice
 
 
 class KinoPubClient(object):

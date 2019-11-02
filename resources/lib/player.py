@@ -5,7 +5,7 @@ import time
 import logger
 import xbmc
 import xbmcgui
-from authwindow import auth
+from auth import auth
 from client import KinoPubClient
 from settings import settings
 

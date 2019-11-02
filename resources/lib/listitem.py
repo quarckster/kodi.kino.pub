@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from addonutils import get_internal_link
 from settings import settings
+from utils import get_internal_link
 from xbmcgui import ListItem
 
 

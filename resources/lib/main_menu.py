@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
 
-from addonutils import build_icon_path
-from addonutils import get_internal_link
 from settings import settings
+from utils import build_icon_path
+from utils import get_internal_link
 
 
 MainMenuItem = namedtuple("MainMenuItem", ["title", "link", "icon", "is_dir", "is_displayed"])

@@ -10,7 +10,7 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
-from addonutils import (
+from utils import (
     get_internal_link,
     get_mlink,
     nav_internal_link,
@@ -24,7 +24,7 @@ from addonutils import (
     set_window_property,
     build_icon_path,
 )
-from authwindow import auth
+from auth import auth
 from client import KinoPubClient
 from listitem import ExtendedListItem
 from main_menu import main_menu_items
