@@ -304,16 +304,16 @@ def season_episodes(id, season_number):
     season_number = int(season_number)
     season = item["seasons"][season_number - 1]
     watching_season = watching_info["seasons"][season_number - 1]
-    watching_episode_numbers = [episode["number"] for episode in watching_season["episodes"]]
     selectedEpisode = False
     xbmcplugin.setContent(request.handle, "episodes")
     playback_data = {}
     for episode in season["episodes"]:
         # In tvshow season could be a case when some episodes are not available, but episode numbers
         # in response payload are set correctly.
-        if episode["number"] not in watching_episode_numbers:
+        try:
+            watching_episode = watching_season["episodes"][episode["number"] - 1]
+        except IndexError:
             continue
-        watching_episode = watching_season["episodes"][episode["number"] - 1]
         episode_title = "s{:02d}e{:02d}".format(season_number, episode["number"])
         if episode["title"]:
             episode_title = "{} | {}".format(episode_title, episode["title"].encode("utf-8"))
