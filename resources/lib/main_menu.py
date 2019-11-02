@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
+
 from collections import namedtuple
 
-from settings import settings
-from utils import build_icon_path
-from utils import get_internal_link
+from resources.lib.settings import settings
+from resources.lib.utils import build_icon_path
+from resources.lib.utils import get_internal_link
 
 
 MainMenuItem = namedtuple("MainMenuItem", ["title", "link", "icon", "is_dir", "is_displayed"])

@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
+
 import json
 import sys
 import urllib
 import urllib2
 
-import logger
-from auth import auth
-from settings import settings
-from utils import notice
+from resources.lib import logger
+from resources.lib.auth import auth
+from resources.lib.settings import settings
+from resources.lib.utils import notice
 
 
 class KinoPubClient(object):

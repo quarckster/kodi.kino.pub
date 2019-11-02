@@ -1,6 +1,10 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
+
 import xbmc
 
-from . import PLUGIN_ID
+from resources.lib import PLUGIN_ID
 
 
 def _log(message, level):

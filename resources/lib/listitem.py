@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
-from settings import settings
-from utils import get_internal_link
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
+
 from xbmcgui import ListItem
+
+from resources.lib.settings import settings
+from resources.lib.utils import get_internal_link
 
 
 class ExtendedListItem(ListItem):
@@ -40,7 +45,7 @@ class ExtendedListItem(ListItem):
         in_watchlist = self.getProperty("in_watchlist")
         if in_watchlist == "":
             return
-        label = u"Не буду смотреть" if int(in_watchlist) else u"Буду смотреть"
+        label = "Не буду смотреть" if int(in_watchlist) else "Буду смотреть"
         link = get_internal_link(
             "toggle_watchlist", id=self.getProperty("id"), added=int(not int(in_watchlist))
         )
@@ -52,7 +57,7 @@ class ExtendedListItem(ListItem):
         video_number = self.getVideoInfoTag().getEpisode()
         video_number = video_number if video_number != -1 else 1
         watched = int(self.getVideoInfoTag().getPlayCount()) > 0
-        label = u"Отметить как непросмотренное" if watched else u"Отметить как просмотренное"
+        label = "Отметить как непросмотренное" if watched else "Отметить как просмотренное"
         if self.getVideoInfoTag().getMediaType() == "tvshow":
             return
         elif self.getVideoInfoTag().getMediaType() == "season":
@@ -70,20 +75,20 @@ class ExtendedListItem(ListItem):
         if self.getVideoInfoTag().getMediaType() == "season":
             return
         item_id = self.getProperty("id")
-        label = u"Изменить закладки"
+        label = "Изменить закладки"
         link = get_internal_link("edit_bookmarks", item_id=item_id)
         menu_items.append((label, "Container.Update({})".format(link)))
 
     def _addCommentsContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
-        label = u"Комментарии KinoPub"
+        label = "Комментарии KinoPub"
         link = get_internal_link("comments", item_id=item_id)
         menu_items.append((label, "Container.Update({})".format(link)))
 
     def _addSimilarContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
         title = self.getLabel()
-        label = u"Похожие фильмы"
+        label = "Похожие фильмы"
         link = get_internal_link("similar", item_id=item_id, title=title)
         menu_items.append((label, "Container.Update({})".format(link)))
 

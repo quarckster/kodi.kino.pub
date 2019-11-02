@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
+
 import json
 import time
 
-import logger
 import xbmc
 import xbmcgui
-from auth import auth
-from client import KinoPubClient
-from settings import settings
+
+from resources.lib import logger
+from resources.lib.auth import auth
+from resources.lib.client import KinoPubClient
+from resources.lib.settings import settings
 
 
 class Player(xbmc.Player):
@@ -63,7 +68,7 @@ class Player(xbmc.Player):
         # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
         # imdb id should be 7 digits with leading zeroes with tt prepended
         imdb_id = "tt{:07d}".format(int(self.list_item.getProperty("imdbnumber")))
-        ids = json.dumps({u"imdb": imdb_id})
+        ids = json.dumps({"imdb": imdb_id})
         xbmcgui.Window(10000).setProperty("script.trakt.ids", ids)
         if self.should_refresh_token:
             logger.notice("access token should be refreshed")
