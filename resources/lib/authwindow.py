@@ -9,6 +9,7 @@ import logger
 import xbmc
 import xbmcgui
 from addonutils import nav_internal_link
+from addonutils import notice
 from settings import settings
 
 
@@ -62,7 +63,7 @@ class Auth(object):
         self.auth_dialog = AuthDialog()
 
     def _make_request(self, payload):
-        logger.notice("sending payload {} to oauth api url".format(payload))
+        logger.notice("sending payload {} to oauth api".format(payload))
         try:
             response = urllib2.urlopen(
                 urllib2.Request(self.OAUTH_API_URL), urllib.urlencode(payload)
@@ -70,8 +71,15 @@ class Auth(object):
             return json.loads(response)
         except urllib2.HTTPError as e:
             if e.code == 400:
-                _data = e.read()
-                response = json.loads(_data)
+                response = json.loads(e.read())
+                error = response.get("error")
+                if error and error in ["code_expired", "authorization_expired"]:
+                    raise AuthExpiredException
+                if error and error == "authorization_pending":
+                    raise AuthPendingException
+                if error:
+                    notice("Ошибка аутентификации")
+                    raise AuthException(error)
                 return response
             # server can respond with 429 status, so we just wait until it gives a correct response
             elif e.code == 429:
@@ -82,6 +90,7 @@ class Auth(object):
                 logger.fatal(
                     "oauth request error; status: {}; message: {}".format(e.code, e.message)
                 )
+                notice("Код ответа сервера {}".format(response["status"]), "Неизвестная ошибка")
                 raise
 
     def _get_device_code(self):
@@ -91,36 +100,12 @@ class Auth(object):
             "client_secret": self.CLIENT_SECRET,
         }
         resp = self._make_request(payload)
-        if "error" in resp:
-            raise AuthException
         return {
             "device_code": resp["code"].encode("utf-8"),
             "user_code": resp["user_code"].encode("utf-8"),
             "verification_uri": resp["verification_uri"].encode("utf8"),
             "refresh_interval": int(resp["interval"]),
         }
-
-    def _refresh_token(self):
-        logger.notice("refreshing token")
-        payload = {
-            "grant_type": "refresh_token",
-            "refresh_token": settings.refresh_token,
-            "client_id": self.CLIENT_ID,
-            "client_secret": self.CLIENT_SECRET,
-        }
-        resp = self._make_request(payload)
-        if "access_token" not in resp:
-            raise EmptyTokenException
-        error = resp.get("error")
-        if error and error in ["invalid_grant", "code_expired", "invalid_client"]:
-            logger.error(error)
-            self._activate()
-            return
-        self._update_settings(
-            resp["refresh_token"].encode("utf-8"),
-            resp["access_token"].encode("utf-8"),
-            resp["expires_in"],
-        )
 
     def _get_device_token(self, device_code):
         logger.notice("getting a new device token")
@@ -131,11 +116,25 @@ class Auth(object):
             "client_secret": self.CLIENT_SECRET,
         }
         resp = self._make_request(payload)
-        error = resp.get("error")
-        if error and error == "authorization_pending":
-            raise AuthPendingException
-        if error and error in ["invalid_grant", "code_expired", "invalid_client"]:
-            raise AuthExpiredException
+        self._update_settings(
+            resp["refresh_token"].encode("utf-8"),
+            resp["access_token"].encode("utf-8"),
+            resp["expires_in"],
+        )
+
+    def _refresh_token(self):
+        logger.notice("refreshing token")
+        payload = {
+            "grant_type": "refresh_token",
+            "refresh_token": settings.refresh_token,
+            "client_id": self.CLIENT_ID,
+            "client_secret": self.CLIENT_SECRET,
+        }
+        try:
+            resp = self._make_request(payload)
+        except AuthExpiredException:
+            self._activate()
+            return
         self._update_settings(
             resp["refresh_token"].encode("utf-8"),
             resp["access_token"].encode("utf-8"),
@@ -173,10 +172,9 @@ class Auth(object):
                 except AuthPendingException:
                     self.auth_dialog.update(i)
                     xbmc.sleep(interval * 1000)
-                else:
-                    self._update_device_info()
-                    self.auth_dialog.close()
-                    break
+                self._update_device_info()
+                self.auth_dialog.close()
+                break
         else:
             self.auth_dialog.close(cancel=True)
 
@@ -209,7 +207,7 @@ class Auth(object):
     def get_token(self):
         if not settings.access_token:
             self._activate()
-        if self.is_token_expired:
+        else:
             self._refresh_token()
 
 
