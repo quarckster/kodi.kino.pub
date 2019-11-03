@@ -15,8 +15,8 @@ DIR=video.kino.pub-$VERSION
 mkdir $DIR
 echo "Copying the files to a temporary directory"
 echo "=========================================="
-VERSION=$VERSION envsubst < addon.xml > $DIR/addon.xml
-rsync -rv --exclude=*.pyc resources addon.py LICENSE $DIR
+VERSION=$VERSION envsubst < src/addon.xml > $DIR/addon.xml
+rsync -rv --exclude=*.pyc src/resources src/addon.py LICENSE $DIR
 echo
 echo "Creating the addon archive"
 echo "=========================="
