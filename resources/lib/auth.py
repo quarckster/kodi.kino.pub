@@ -148,12 +148,9 @@ class Auth(object):
                 "friendly_name": xbmc.getInfoLabel("System.FriendlyName"),
             }
         software = "Kodi {}".format(result["build_version"].split()[0])
+        title = result["friendly_name"] if result["friendly_name"] != "unknown" else platform.node()
         KinoPubClient("device/notify").post(
-            data={
-                "title": result["friendly_name"],
-                "hardware": platform.machine(),
-                "software": software,
-            }
+            data={"title": title, "hardware": platform.machine(), "software": software}
         )
 
     def _verify_device_code(self, interval, device_code):

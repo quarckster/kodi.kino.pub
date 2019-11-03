@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from __future__ import division
-from __future__ import unicode_literals
 
 from datetime import date
 
@@ -64,7 +62,7 @@ def show_items(items, add_indexes=False):
     playback_data = {}
     # Fill list with items
     for index, item in enumerate(items, 1):
-        title = item["title"]
+        title = item["title"].encode("utf-8")
         title = "{}. {}".format(index, title) if add_indexes else title
         li = ExtendedListItem(title, poster=item["posters"]["big"], properties={"id": item["id"]})
         if "in_watchlist" in item:
@@ -185,7 +183,7 @@ def index():
         for i in response["items"]:
             if getattr(settings, "show_{}".format(i["id"])) != "false":
                 img = build_icon_path(i["id"])
-                li = ExtendedListItem(i["title"], iconImage=img, thumbnailImage=img)
+                li = ExtendedListItem(i["title"].encode("utf-8"), iconImage=img, thumbnailImage=img)
                 link = get_internal_link("item_index", type=i["id"])
                 xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     xbmcplugin.endOfDirectory(request.handle)
@@ -201,7 +199,7 @@ def default_headings(type):
 def tv():
     response = KinoPubClient("tv/index").get()
     for ch in response["channels"]:
-        li = ExtendedListItem(ch["title"], iconImage=ch["logos"]["s"])
+        li = ExtendedListItem(ch["title"].encode("utf-8"), iconImage=ch["logos"]["s"])
         xbmcplugin.addDirectoryItem(request.handle, ch["stream"], li, False)
     xbmcplugin.endOfDirectory(request.handle)
 
@@ -211,7 +209,7 @@ def genres(type):
     response = KinoPubClient("genres").get(data={"type": type})
     add_default_headings(type)
     for genre in response["items"]:
-        li = ExtendedListItem(genre["title"])
+        li = ExtendedListItem(genre["title"].encode("utf-8"))
         link = get_internal_link("items", type=type, genre=genre["id"])
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     xbmcplugin.endOfDirectory(request.handle)
@@ -270,7 +268,7 @@ def episodes(id):
         watching_episode = watching_info["videos"][video["number"] - 1]
         episode_title = "e{:02d}".format(video["number"])
         if video["title"]:
-            episode_title = "{} | {}".format(episode_title, video["title"])
+            episode_title = "{} | {}".format(episode_title, video["title"].encode("utf-8"))
         info = extract_video_info(
             item,
             {
@@ -321,7 +319,7 @@ def season_episodes(id, season_number):
             continue
         episode_title = "s{:02d}e{:02d}".format(season_number, episode["number"])
         if episode["title"]:
-            episode_title = "{} | {}".format(episode_title, episode["title"])
+            episode_title = "{} | {}".format(episode_title, episode["title"].encode("utf-8"))
         info = extract_video_info(
             item,
             {
@@ -453,10 +451,13 @@ def bookmarks(folder_id=None, page=None):
         for folder in response["items"]:
             img = build_icon_path("bookmark")
             li = ExtendedListItem(
-                folder["title"],
+                folder["title"].encode("utf-8"),
                 iconImage=img,
                 thumbnailImage=img,
-                properties={"folder-id": str(folder["id"]), "views": str(folder["views"])},
+                properties={
+                    "folder-id": str(folder["id"]).encode("utf-8"),
+                    "views": str(folder["views"]).encode("utf-8"),
+                },
             )
             remove_link = get_internal_link("remove_bookmarks_folder", folder_id=folder["id"])
             li.addContextMenuItems([("Удалить", "Container.Update({})".format(remove_link))])
@@ -476,7 +477,9 @@ def watching():
     response = KinoPubClient("watching/serials").get(data={"subscribed": 1})
     xbmcplugin.setContent(request.handle, "tvshows")
     for item in response["items"]:
-        title = "{} : [COLOR FFFFF000]+{}[/COLOR]".format(item["title"], str(item["new"]))
+        title = "{} : [COLOR FFFFF000]+{}[/COLOR]".format(
+            item["title"].encode("utf-8"), str(item["new"])
+        )
         li = ExtendedListItem(
             title,
             str(item["new"]),
@@ -496,7 +499,7 @@ def watching_movies():
     playback_data = {}
     for i, item in enumerate(KinoPubClient("watching/movies").get()["items"]):
         li = ExtendedListItem(
-            item["title"],
+            item["title"].encode("utf-8"),
             poster=item["posters"]["big"],
             properties={"id": item["id"]},
             video_info={"mediatype": mediatype_map[item["type"]]},
@@ -524,7 +527,7 @@ def watching_movies():
             playback_data[i] = {
                 "video_info": video_info,
                 "poster": item["posters"]["big"],
-                "title": item["title"],
+                "title": item["title"].encode("utf-8"),
             }
             isdir = False
         xbmcplugin.addDirectoryItem(request.handle, link, li, isdir)
@@ -552,7 +555,9 @@ def collections(sort=None, page=None):
     link = get_internal_link("collections", sort="-views")
     xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     for item in response["items"]:
-        li = ExtendedListItem(item["title"], thumbnailImage=item["posters"]["medium"])
+        li = ExtendedListItem(
+            item["title"].encode("utf-8"), thumbnailImage=item["posters"]["medium"]
+        )
         link = get_internal_link("collection_view", id=item["id"])
         xbmcplugin.addDirectoryItem(request.handle, link, li, True)
     show_pagination(response["pagination"], "collections", sort=sort)
@@ -654,7 +659,7 @@ def profile():
     dialog.ok(
         "Информация о профиле",
         "Имя пользователя: [B]{}[/B]".format(user_data["username"]),
-        "Дата регистрации: [B]{0:%d} {0:%B} {0:%Y}[/B]".format(reg_date),
+        "Дата регистрации: [B]{0:%d}.{0:%m}.{0:%Y}[/B]".format(reg_date),
         "Остаток дней подписки: [B]{}[/B]".format(int(user_data["subscription"]["days"])),
     )
 
@@ -663,7 +668,7 @@ def profile():
 def comments(item_id=None):
     response = KinoPubClient("items/comments").get(data={"id": item_id})
     comments = response["comments"]
-    title = response["item"]["title"]
+    title = response["item"]["title"].encode("utf-8")
     message = "" if comments else "Пока тут пусто"
     for i in comments:
         if int(i["rating"]) > 0:

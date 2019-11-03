@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from __future__ import division
-from __future__ import unicode_literals
 
 import json
 import re
@@ -83,7 +81,7 @@ def build_plot(item):
     if item["imdb_rating"]:
         final_plot.append("IMDB: {}".format(str(round(item["imdb_rating"], 1))))
     if item["kinopoisk_rating"]:
-        final_plot.append("Кинопоиск: {}".format(str(round(item["kinopoisk_rating"], 1))))
+        final_plot.append(u"Кинопоиск: {}".format(str(round(item["kinopoisk_rating"], 1))))
     # a new line between the ratings and the plot
     if item["imdb_rating"] or item["kinopoisk_rating"]:
         final_plot.append("")
@@ -100,9 +98,9 @@ def build_icon_path(name):
 
 def get_status(item):
     if item["type"] == "serial" and item["finished"]:
-        return "окончен"
+        return u"окончен"
     elif item["type"] == "serial" and not item["finished"]:
-        return "в эфире"
+        return u"в эфире"
     else:
         return
 

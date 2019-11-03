@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import itertools
 import json
 import os
@@ -50,7 +48,7 @@ class FakeAddon(object):
         self._settings[setting_id] = value
 
     def getLocalizedString(self, id_):
-        return {32000: "Привет, мир!", 32001: "Я тебя люблю."}.get(id_)
+        return {32000: u"Привет, мир!", 32001: u"Я тебя люблю."}.get(id_)
 
 
 class FakeListItem(object):
@@ -133,39 +131,39 @@ def test_index(mocker, index, main, xbmcplugin, ExtendedListItem):
 
     main()
     expected_results = [
-        (handle, plugin.format("profile"), "Профиль", "profile", False),
-        (handle, plugin.format("search?type=None"), "Поиск", "search", False),
-        (handle, plugin.format("bookmarks"), "Закладки", "bookmarks", True),
-        (handle, plugin.format("watching"), "Я смотрю", "watching", True),
-        (handle, plugin.format("watching_movies"), "Недосмотренные", "watching_movies", True),
-        (handle, plugin.format("items?type=None"), "Последние", "new", True),
+        (handle, plugin.format("profile"), u"Профиль", "profile", False),
+        (handle, plugin.format("search?type=None"), u"Поиск", "search", False),
+        (handle, plugin.format("bookmarks"), u"Закладки", "bookmarks", True),
+        (handle, plugin.format("watching"), u"Я смотрю", "watching", True),
+        (handle, plugin.format("watching_movies"), u"Недосмотренные", "watching_movies", True),
+        (handle, plugin.format("items?type=None"), u"Последние", "new", True),
         (
             handle,
             plugin.format("items?type=None&shortcut=%2Fpopular"),
-            "Популярные",
+            u"Популярные",
             "popular",
             True,
         ),
-        (handle, plugin.format("items?type=None&shortcut=%2Fhot"), "Горячие", "hot", True),
-        (handle, plugin.format("tv"), "ТВ", "tv", True),
-        (handle, plugin.format("collections"), "Подборки", "collections", True),
-        (handle, plugin.format("item_index?type=movie"), "Фильмы", "movie", True),
-        (handle, plugin.format("item_index?type=serial"), "Сериалы", "serial", True),
-        (handle, plugin.format("item_index?type=tvshow"), "ТВ шоу", "tvshow", True),
-        (handle, plugin.format("item_index?type=4k"), "4K", "4k", True),
-        (handle, plugin.format("item_index?type=3d"), "3D", "3d", True),
-        (handle, plugin.format("item_index?type=concert"), "Концерты", "concert", True),
+        (handle, plugin.format("items?type=None&shortcut=%2Fhot"), u"Горячие", "hot", True),
+        (handle, plugin.format("tv"), u"ТВ", "tv", True),
+        (handle, plugin.format("collections"), u"Подборки", "collections", True),
+        (handle, plugin.format("item_index?type=movie"), u"Фильмы", "movie", True),
+        (handle, plugin.format("item_index?type=serial"), u"Сериалы", "serial", True),
+        (handle, plugin.format("item_index?type=tvshow"), u"ТВ шоу", "tvshow", True),
+        (handle, plugin.format("item_index?type=4k"), u"4K", "4k", True),
+        (handle, plugin.format("item_index?type=3d"), u"3D", "3d", True),
+        (handle, plugin.format("item_index?type=concert"), u"Концерты", "concert", True),
         (
             handle,
             plugin.format("item_index?type=documovie"),
-            "Документальные фильмы",
+            u"Документальные фильмы",
             "documovie",
             True,
         ),
         (
             handle,
             plugin.format("item_index?type=docuserial"),
-            "Документальные сериалы",
+            u"Документальные сериалы",
             "docuserial",
             True,
         ),
@@ -173,7 +171,7 @@ def test_index(mocker, index, main, xbmcplugin, ExtendedListItem):
     for result in expected_results:
         handle_, link, title, icon, is_directory = result
         img = build_icon_path(icon)
-        ExtendedListItem.assert_any_call(title, iconImage=img, thumbnailImage=img)
+        ExtendedListItem.assert_any_call(title.encode("utf-8"), iconImage=img, thumbnailImage=img)
         li = ExtendedListItem()
         xbmcplugin.addDirectoryItem.assert_any_call(handle_, link, li, is_directory)
     xbmcplugin.endOfDirectory.assert_called_once_with(handle)
@@ -181,12 +179,10 @@ def test_index(mocker, index, main, xbmcplugin, ExtendedListItem):
 
 @pytest.fixture(params=itertools.product(streams, qualities), ids=lambda ids: "-".join(ids))
 def play(request, mocker, xbmcaddon):
-    from resources.lib.settings import settings
-
-    settings.stream_type = request.param[0]
-    settings.video_quality = request.param[1]
+    xbmcaddon.Addon().setSetting("stream_type", request.param[0])
+    xbmcaddon.Addon().setSetting("video_quality", request.param[1])
     id_ = actionPlay_response["item"]["id"]
-    title = actionPlay_response["item"]["title"]
+    title = actionPlay_response["item"]["title"].encode("utf-8")
 
     def side_effect(value):
         if value == "items/{}".format(id_):
@@ -218,7 +214,7 @@ def play(request, mocker, xbmcaddon):
 def test_play(play, main, ExtendedListItem, xbmcplugin):
     stream, video_quality = play
     main()
-    title = actionPlay_response["item"]["title"]
+    title = actionPlay_response["item"]["title"].encode("utf-8")
     link = "https://example.com/{}/{}".format(stream, video_quality.rstrip("p"))
     ExtendedListItem.assert_called_with(
         title,
@@ -279,7 +275,7 @@ def test_items(main, items, ExtendedListItem, xbmcplugin, mocker):
     for item in actionItems_response["items"]:
         expected_results.append(
             {
-                "title": item["title"],
+                "title": item["title"].encode("utf-8"),
                 "id": item["id"],
                 "poster": item["posters"]["big"],
                 "video_info": make_info(item),
@@ -380,7 +376,7 @@ def test_view_season_episodes(request, main, view_season_episodes, ExtendedListI
         watching_episode = watching_season["episodes"][episode["number"] - 1]
         episode_title = "s{:02d}e{:02d}".format(season["number"], episode["number"])
         if episode["title"]:
-            episode_title = "{} | {}".format(episode_title, episode["title"])
+            episode_title = "{} | {}".format(episode_title, episode["title"].encode("utf-8"))
         info = video_info(
             item,
             {
@@ -438,7 +434,7 @@ def test_view_episodes(request, main, view_episodes, ExtendedListItem, xbmcplugi
         watching_episode = watching_info["videos"][video["number"] - 1]
         episode_title = "e{:02d}".format(video["number"])
         if video["title"]:
-            episode_title = "{} | {}".format(episode_title, video["title"])
+            episode_title = "{} | {}".format(episode_title, video["title"].encode("utf-8"))
         info = video_info(
             item,
             {
