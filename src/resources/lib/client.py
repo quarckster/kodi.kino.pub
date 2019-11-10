@@ -13,7 +13,7 @@ from resources.lib.utils import notice
 
 
 class KinoPubClient(object):
-    url = "http://api.service-kp.com/v1"
+    url = "https://api.service-kp.com/v1"
 
     def __init__(self, action):
         self.action = action
@@ -27,13 +27,14 @@ class KinoPubClient(object):
             response = urllib2.urlopen(request, timeout=timeout)
         except urllib2.HTTPError as e:
             logger.error("HTTPError. Code: {}.".format(e.code))
-            if e.code in [400, 401]:
+            if e.code == 401:
                 auth.get_token()
                 if settings.access_token:
                     return self._make_request(request)
                 sys.exit()
             else:
-                notice("Код ответа сервера {}".format(e.code), "Неизвестная ошибка")
+                notice("Код ответа сервера {}".format(e.code), "Ошибка")
+                sys.exit()
         except Exception as e:
             logger.error("{}. Message: {}".format(type(e).__name__, e.message))
             notice(e.message, "Ошибка")

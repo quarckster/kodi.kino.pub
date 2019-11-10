@@ -3,8 +3,8 @@ from __future__ import absolute_import
 
 from xbmcgui import ListItem
 
+from resources.lib.routing import plugin
 from resources.lib.settings import settings
-from resources.lib.utils import get_internal_link
 
 
 class ExtendedListItem(ListItem):
@@ -44,10 +44,10 @@ class ExtendedListItem(ListItem):
         if in_watchlist == "":
             return
         label = "Не буду смотреть" if int(in_watchlist) else "Буду смотреть"
-        link = get_internal_link(
-            "toggle_watchlist", id=self.getProperty("id"), added=int(not int(in_watchlist))
+        url = plugin.build_url(
+            "toggle_watchlist", self.getProperty("id"), int(not int(in_watchlist))
         )
-        menu_items.append((label, "Container.Update({})".format(link)))
+        menu_items.append((label, "Container.Update({})".format(url)))
 
     def _addWatchedContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
@@ -59,36 +59,36 @@ class ExtendedListItem(ListItem):
         if self.getVideoInfoTag().getMediaType() == "tvshow":
             return
         elif self.getVideoInfoTag().getMediaType() == "season":
-            kwargs = {"id": item_id, "season": season_number}
+            kwargs = {"season": season_number}
         elif self.getProperty("subtype") == "multi":
-            kwargs = {"id": item_id}
+            kwargs = {}
         elif season_number != -1:
-            kwargs = {"id": item_id, "season": season_number, "video": video_number}
+            kwargs = {"season": season_number, "video": video_number}
         else:
-            kwargs = {"id": item_id, "video": video_number}
-        link = get_internal_link("toggle_watched", **kwargs)
-        menu_items.append((label, "Container.Update({})".format(link)))
+            kwargs = {"video": video_number}
+        url = plugin.build_url("toggle_watched", item_id, **kwargs)
+        menu_items.append((label, "Container.Update({})".format(url)))
 
     def _addBookmarksContextMenuItem(self, menu_items):
         if self.getVideoInfoTag().getMediaType() == "season":
             return
         item_id = self.getProperty("id")
         label = "Изменить закладки"
-        link = get_internal_link("edit_bookmarks", item_id=item_id)
-        menu_items.append((label, "Container.Update({})".format(link)))
+        url = plugin.build_url("edit_bookmarks", item_id)
+        menu_items.append((label, "Container.Update({})".format(url)))
 
     def _addCommentsContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
         label = "Комментарии KinoPub"
-        link = get_internal_link("comments", item_id=item_id)
-        menu_items.append((label, "Container.Update({})".format(link)))
+        url = plugin.build_url("comments", item_id)
+        menu_items.append((label, "Container.Update({})".format(url)))
 
     def _addSimilarContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
         title = self.getLabel()
         label = "Похожие фильмы"
-        link = get_internal_link("similar", item_id=item_id, title=title)
-        menu_items.append((label, "Container.Update({})".format(link)))
+        url = plugin.build_url("similar", item_id, title=title)
+        menu_items.append((label, u"Container.Update({})".format(url)))
 
     def _addSeparatorContextMenuItem(self, menu_items):
         # 21 is the maximum number of characters when the horizontal scrolling doesn't appear.

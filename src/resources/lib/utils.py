@@ -4,20 +4,15 @@ from __future__ import absolute_import
 import json
 import re
 import sys
-import urllib
-import urlparse
-from functools import wraps
 
 import xbmc
 import xbmcgui
 
-from resources.lib import logger
 from resources.lib import PLUGIN_ID
-from resources.lib import PLUGIN_URL
 
 
 def set_window_property(value):
-    xbmcgui.Window(10000).clearProperty("video.kino.pub-playback_dict")
+    xbmcgui.Window(10000).clearProperty("video.kino.pub-playback_data")
     if not isinstance(value, basestring):
         value = json.dumps(value)
     xbmcgui.Window(10000).setProperty("video.kino.pub-playback_data", value)
@@ -25,7 +20,7 @@ def set_window_property(value):
 
 def get_window_property(index):
     data = json.loads(xbmcgui.Window(10000).getProperty("video.kino.pub-playback_data"))[index]
-    xbmcgui.Window(10000).clearProperty("video.kino.pub-playback_dict")
+    xbmcgui.Window(10000).clearProperty("video.kino.pub-playback_data")
     return data
 
 
@@ -125,54 +120,14 @@ def video_info(item, extend=None):
     return info
 
 
-def get_internal_link(path, **params):
-    """Form internal link for plugin navigation"""
-    return urlparse.urlunsplit(("plugin", PLUGIN_ID, path, urllib.urlencode(params), ""))
-
-
-def nav_internal_link(action, **params):
-    xbmc.executebuiltin("Container.Update({})".format(get_internal_link(action, **params)))
-
-
 def notice(message, heading="", time=4000):
     xbmc.executebuiltin('XBMC.Notification("{}", "{}", "{}")'.format(heading, message, time))
 
 
 def trailer_link(item):
+    from resources.lib.routing import plugin
+
     if item.get("trailer"):
         trailer = item["trailer"]
-        return get_internal_link("trailer", id=item["id"], sid=trailer["id"])
+        return plugin.build_url("trailer", item["id"], trailer["id"])
     return None
-
-
-class Request(object):
-    @property
-    def handle(self):
-        return int(sys.argv[1])
-
-    @property
-    def path(self):
-        return sys.argv[0].replace(PLUGIN_URL, "")
-
-    @property
-    def args(self):
-        return dict(urlparse.parse_qsl(sys.argv[2].lstrip("?")))
-
-
-request = Request()
-
-ROUTES = dict()
-
-
-def route(path):
-    def decorator_route(f):
-        ROUTES[path] = f
-
-        @wraps(f)
-        def wrapper_route(*args, **kwargs):
-            logger.notice("{}. {}".format(f.__name__, str(request.args)))
-            return f(*args, **kwargs)
-
-        return wrapper_route
-
-    return decorator_route

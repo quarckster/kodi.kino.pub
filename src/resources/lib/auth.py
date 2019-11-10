@@ -14,7 +14,6 @@ import xbmcgui
 
 from resources.lib import logger
 from resources.lib.settings import settings
-from resources.lib.utils import nav_internal_link
 from resources.lib.utils import notice
 
 
@@ -45,7 +44,9 @@ class AuthDialog(object):
             self._dialog = None
             xbmc.executebuiltin("Container.Refresh")
         if cancel:
-            nav_internal_link("/")
+            from resources.lib.routing import plugin
+
+            plugin.redirect("/")
 
     def update(self, step):
         position = int(100 * step / float(self.total))
@@ -204,6 +205,3 @@ class Auth(object):
             self._activate()
         else:
             self._refresh_token()
-
-
-auth = Auth()
