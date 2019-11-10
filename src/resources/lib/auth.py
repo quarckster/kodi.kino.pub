@@ -43,7 +43,7 @@ class AuthDialog(object):
             self._dialog = None
             xbmc.executebuiltin("Container.Refresh")
         if cancel:
-            self.plugin.redirect("/")
+            self.plugin.routing.redirect("/")
 
     def update(self, step):
         position = int(100 * step / float(self.total))
@@ -138,8 +138,6 @@ class Auth(object):
         self._update_settings(resp["refresh_token"], resp["access_token"], resp["expires_in"])
 
     def _update_device_info(self):
-        from resources.lib.client import KinoPubClient
-
         result = {"build_version": "Busy", "friendly_name": "Busy"}
         while "Busy" in result.values():
             result = {
@@ -148,7 +146,7 @@ class Auth(object):
             }
         software = "Kodi {}".format(result["build_version"].split()[0])
         title = result["friendly_name"] if result["friendly_name"] != "unknown" else platform.node()
-        KinoPubClient("device/notify").post(
+        self.plugin.client("device/notify").post(
             data={"title": title, "hardware": platform.machine(), "software": software}
         )
 

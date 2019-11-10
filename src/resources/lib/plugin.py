@@ -12,7 +12,6 @@ from resources.lib.auth import Auth
 from resources.lib.client import KinoPubClient
 from resources.lib.listitem import ExtendedListItem
 from resources.lib.logger import Logger
-from resources.lib.player import Player
 from resources.lib.routing import Routing
 from resources.lib.settings import Settings
 
@@ -35,9 +34,6 @@ class Plugin(object):
         self.routing = Routing(self)
         self.main_menu_items = self._main_menu_items()
 
-    def player(self, list_item):
-        return Player(self, list_item)
-
     def client(self, endpoint):
         return KinoPubClient(self, endpoint)
 
@@ -56,15 +52,15 @@ class Plugin(object):
     ):
         return ExtendedListItem(
             name,
-            label2="",
-            iconImage="",
-            thumbnailImage="",
-            path="",
-            poster=None,
-            video_info=None,
-            properties=None,
-            addContextMenuItems=False,
-            subtitles=None,
+            label2=label2,
+            iconImage=iconImage,
+            thumbnailImage=thumbnailImage,
+            path=path,
+            poster=poster,
+            video_info=video_info,
+            properties=properties,
+            addContextMenuItems=addContextMenuItems,
+            subtitles=subtitles,
             plugin=self,
         )
 

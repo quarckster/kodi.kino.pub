@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from lib.main import plugin
+from resources.lib.main import plugin
 
 
 if __name__ == "__main__":

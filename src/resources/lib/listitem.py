@@ -33,6 +33,10 @@ class ExtendedListItem(ListItem):
             self.setResumeTime(video_info.get("time"))
         if poster:
             self.setArt({"poster": poster})
+        if iconImage:
+            self.setArt({"icon": iconImage})
+        if thumbnailImage:
+            self.setArt({"thumb": thumbnailImage})
         if subtitles:
             self.setSubtitles(subtitles)
         if addContextMenuItems:
@@ -43,7 +47,7 @@ class ExtendedListItem(ListItem):
         if in_watchlist == "":
             return
         label = "Не буду смотреть" if int(in_watchlist) else "Буду смотреть"
-        url = self.plugin.build_url(
+        url = self.plugin.routing.build_url(
             "toggle_watchlist", self.getProperty("id"), int(not int(in_watchlist))
         )
         menu_items.append((label, "Container.Update({})".format(url)))
@@ -65,7 +69,7 @@ class ExtendedListItem(ListItem):
             kwargs = {"season": season_number, "video": video_number}
         else:
             kwargs = {"video": video_number}
-        url = self.plugin.build_url("toggle_watched", item_id, **kwargs)
+        url = self.plugin.routing.build_url("toggle_watched", item_id, **kwargs)
         menu_items.append((label, "Container.Update({})".format(url)))
 
     def _addBookmarksContextMenuItem(self, menu_items):
@@ -73,20 +77,20 @@ class ExtendedListItem(ListItem):
             return
         item_id = self.getProperty("id")
         label = "Изменить закладки"
-        url = self.plugin.build_url("edit_bookmarks", item_id)
+        url = self.plugin.routing.build_url("edit_bookmarks", item_id)
         menu_items.append((label, "Container.Update({})".format(url)))
 
     def _addCommentsContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
         label = "Комментарии KinoPub"
-        url = self.plugin.build_url("comments", item_id)
+        url = self.plugin.routing.build_url("comments", item_id)
         menu_items.append((label, "Container.Update({})".format(url)))
 
     def _addSimilarContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
         title = self.getLabel()
         label = "Похожие фильмы"
-        url = self.plugin.build_url("similar", item_id, title=title)
+        url = self.plugin.routing.build_url("similar", item_id, title=title)
         menu_items.append((label, u"Container.Update({})".format(url)))
 
     def _addSeparatorContextMenuItem(self, menu_items):

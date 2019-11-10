@@ -13,7 +13,7 @@ import xbmcaddon
 import xbmcgui
 import xbmcplugin
 
-from lib.utils import (
+from resources.lib.utils import (
     get_mlink,
     notice,
     trailer_link,
@@ -21,6 +21,7 @@ from lib.utils import (
     get_window_property,
     set_window_property,
 )
+from resources.lib.player import Player
 from resources.lib.plugin import Plugin
 
 
@@ -406,8 +407,8 @@ def play(item_id, index):
         poster=playback_data["poster"],
         subtitles=[subtitle["url"] for subtitle in video_data["subtitles"]],
     )
-    player = plugin.player(li)
     xbmcplugin.setResolvedUrl(plugin.handle, True, li)
+    player = Player(li)
     while player.is_playing:
         player.set_marktime()
         xbmc.sleep(1000)

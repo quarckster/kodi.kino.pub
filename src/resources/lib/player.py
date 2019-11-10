@@ -9,8 +9,8 @@ import xbmcgui
 
 
 class Player(xbmc.Player):
-    def __init__(self, plugin, list_item):
-        self.plugin = plugin
+    def __init__(self, list_item):
+        self.plugin = list_item.plugin
         self.list_item = list_item
         self.is_playing = True
         self.marktime = 0
