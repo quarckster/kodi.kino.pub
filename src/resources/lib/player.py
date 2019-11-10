@@ -7,14 +7,10 @@ import time
 import xbmc
 import xbmcgui
 
-from resources.lib import logger
-from resources.lib.auth import auth
-from resources.lib.client import KinoPubClient
-from resources.lib.settings import settings
-
 
 class Player(xbmc.Player):
-    def __init__(self, list_item=None):
+    def __init__(self, plugin, list_item):
+        self.plugin = plugin
         self.list_item = list_item
         self.is_playing = True
         self.marktime = 0
@@ -27,7 +23,7 @@ class Player(xbmc.Player):
     def should_make_resume_point(self):
         # https://kodi.wiki/view/HOW-TO:Modify_automatic_watch_and_resume_points#Settings_explained
         return (
-            self.marktime > settings.advanced("video", "ignoresecondsatstart")
+            self.marktime > self.plugin.settings.advanced("video", "ignoresecondsatstart")
             and not self.should_mark_as_watched
         )
 
@@ -35,19 +31,19 @@ class Player(xbmc.Player):
     def should_mark_as_watched(self):
         return 100 * self.marktime / float(
             self.list_item.getProperty("play_duration")
-        ) > settings.advanced("video", "playcountminimumpercent")
+        ) > self.plugin.settings.advanced("video", "playcountminimumpercent")
 
     @property
     def should_reset_resume_point(self):
-        return self.marktime < settings.advanced("video", "ignoresecondsatstart") and (
+        return self.marktime < self.plugin.settings.advanced("video", "ignoresecondsatstart") and (
             float(self.list_item.getProperty("play_resumetime"))
-            > settings.advanced("video", "ignoresecondsatstart")
+            > self.plugin.settings.advanced("video", "ignoresecondsatstart")
         )
 
     @property
     def should_refresh_token(self):
         return int(time.time()) + int(self.list_item.getProperty("play_duration")) >= int(
-            settings.access_token_expire
+            self.plugin.settings.access_token_expire
         )
 
     @property
@@ -62,44 +58,44 @@ class Player(xbmc.Player):
         return data
 
     def onPlayBackStarted(self):
-        logger.notice("playback started")
+        self.plugin.logger.notice("playback started")
         # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
         # imdb id should be 7 digits with leading zeroes with tt prepended
         imdb_id = "tt{:07d}".format(int(self.list_item.getProperty("imdbnumber")))
         ids = json.dumps({"imdb": imdb_id})
         xbmcgui.Window(10000).setProperty("script.trakt.ids", ids)
         if self.should_refresh_token:
-            logger.notice("access token should be refreshed")
-            auth.get_token()
+            self.plugin.logger.notice("access token should be refreshed")
+            self.plugin.auth.get_token()
 
     def onPlayBackStopped(self):
         self.is_playing = False
         data = self._base_data
-        logger.notice("playback stopped")
+        self.plugin.logger.notice("playback stopped")
         if self.should_make_resume_point:
             data["time"] = self.marktime
-            logger.notice("sending resume point")
-            KinoPubClient("watching/marktime").get(data=data)
+            self.plugin.logger.notice("sending resume point")
+            self.plugin.client("watching/marktime").get(data=data)
         elif self.should_mark_as_watched and int(self.list_item.getProperty("playcount")) < 1:
             data["status"] = 1
-            logger.notice("marking as watched")
-            KinoPubClient("watching/toggle").get(data=data)
+            self.plugin.logger.notice("marking as watched")
+            self.plugin.client("watching/toggle").get(data=data)
         elif self.should_reset_resume_point:
             data["time"] = 0
-            logger.notice("resetting resume point")
-            KinoPubClient("watching/marktime").get(data=data)
+            self.plugin.logger.notice("resetting resume point")
+            self.plugin.client("watching/marktime").get(data=data)
         else:
             return
 
     def onPlayBackEnded(self):
         self.is_playing = False
-        logger.notice("playback ended")
+        self.plugin.logger.notice("playback ended")
         if int(self.list_item.getProperty("playcount")) < 1:
             data = self._base_data
             data["status"] = 1
-            logger.notice("marking as watched")
-            KinoPubClient("watching/toggle").get(data=data)
+            self.plugin.logger.notice("marking as watched")
+            self.plugin.client("watching/toggle").get(data=data)
 
     def onPlaybackError(self):
-        logger.error("playback error")
+        self.plugin.logger.error("playback error")
         self.is_playing = False

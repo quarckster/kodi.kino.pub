@@ -1,10 +1,6 @@
 #!/usr/bin/python
-from resources.lib import addonworker
-
-
-def main():
-    addonworker.init()
+from lib.main import plugin
 
 
 if __name__ == "__main__":
-    main()
+    plugin.run()

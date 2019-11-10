@@ -8,8 +8,6 @@ import sys
 import xbmc
 import xbmcgui
 
-from resources.lib import PLUGIN_ID
-
 
 def set_window_property(value):
     xbmcgui.Window(10000).clearProperty("video.kino.pub-playback_data")
@@ -84,13 +82,6 @@ def build_plot(item):
     return "\n".join(final_plot)
 
 
-def build_icon_path(name):
-    """Build a path to an icon according to its name"""
-    return xbmc.translatePath(
-        "special://home/addons/{}/resources/icons/{}.png".format(PLUGIN_ID, name)
-    )
-
-
 def get_status(item):
     if item["type"] == "serial" and item["finished"]:
         return u"окончен"
@@ -125,9 +116,9 @@ def notice(message, heading="", time=4000):
 
 
 def trailer_link(item):
-    from resources.lib.routing import plugin
+    from resources.lib.main import plugin
 
     if item.get("trailer"):
         trailer = item["trailer"]
-        return plugin.build_url("trailer", item["id"], trailer["id"])
+        return plugin.routing.build_url("trailer", item["id"], trailer["id"])
     return None

@@ -16,7 +16,7 @@ mkdir $DIR
 echo "Copying the files to a temporary directory"
 echo "=========================================="
 VERSION=$VERSION envsubst < src/addon.xml > $DIR/addon.xml
-rsync -rv --exclude=*.pyc src/resources src/addon.py LICENSE $DIR
+rsync -rv --exclude=*.pyc src/resources src/lib src/addon.py LICENSE $DIR
 echo
 echo "Creating the addon archive"
 echo "=========================="

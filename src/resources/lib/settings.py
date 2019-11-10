@@ -31,6 +31,3 @@ class Settings(object):
             return self.defaults.get(args)
         elem = root.find("./{}".format("/".join(args)))
         return elem.text if elem else self.defaults.get(args)
-
-
-settings = Settings()

@@ -12,8 +12,6 @@ import urllib2
 import xbmc
 import xbmcgui
 
-from resources.lib import logger
-from resources.lib.settings import settings
 from resources.lib.utils import notice
 
 
@@ -34,8 +32,9 @@ class EmptyTokenException(AuthException):
 
 
 class AuthDialog(object):
-    def __init__(self):
+    def __init__(self, plugin):
         self.total = 0
+        self.plugin = plugin
         self._dialog = xbmcgui.DialogProgress()
 
     def close(self, cancel=False):
@@ -44,9 +43,7 @@ class AuthDialog(object):
             self._dialog = None
             xbmc.executebuiltin("Container.Refresh")
         if cancel:
-            from resources.lib.routing import plugin
-
-            plugin.redirect("/")
+            self.plugin.redirect("/")
 
     def update(self, step):
         position = int(100 * step / float(self.total))
@@ -65,11 +62,12 @@ class Auth(object):
     CLIENT_SECRET = "cgg3gtifu46urtfp2zp1nqtba0k2ezxh"
     OAUTH_API_URL = "http://api.service-kp.com/oauth2/device"
 
-    def __init__(self):
-        self._auth_dialog = AuthDialog()
+    def __init__(self, plugin):
+        self._auth_dialog = AuthDialog(plugin)
+        self.plugin = plugin
 
     def _make_request(self, payload):
-        logger.notice("sending payload {} to oauth api".format(payload))
+        self.plugin.logger.notice("sending payload {} to oauth api".format(payload))
         try:
             response = urllib2.urlopen(
                 urllib2.Request(self.OAUTH_API_URL), urllib.urlencode(payload)
@@ -93,7 +91,7 @@ class Auth(object):
                     time.sleep(3)
                     return self.request(payload)
             else:
-                logger.fatal(
+                self.plugin.logger.fatal(
                     "oauth request error; status: {}; message: {}".format(e.code, e.message)
                 )
                 notice("Код ответа сервера {}".format(response["status"]), "Неизвестная ошибка")
@@ -114,7 +112,7 @@ class Auth(object):
         }
 
     def _get_device_token(self, device_code):
-        logger.notice("getting a new device token")
+        self.plugin.logger.notice("getting a new device token")
         payload = {
             "grant_type": "device_token",
             "client_id": self.CLIENT_ID,
@@ -125,10 +123,10 @@ class Auth(object):
         self._update_settings(resp["refresh_token"], resp["access_token"], resp["expires_in"])
 
     def _refresh_token(self):
-        logger.notice("refreshing token")
+        self.plugin.logger.notice("refreshing token")
         payload = {
             "grant_type": "refresh_token",
-            "refresh_token": settings.refresh_token,
+            "refresh_token": self.plugin.settings.refresh_token,
             "client_id": self.CLIENT_ID,
             "client_secret": self.CLIENT_SECRET,
         }
@@ -175,10 +173,10 @@ class Auth(object):
             self._auth_dialog.close(cancel=True)
 
     def _update_settings(self, refresh_token, access_token, expires_in):
-        settings.refresh_token = refresh_token
-        settings.access_token = access_token
-        settings.access_token_expire = str(expires_in + int(time.time()))
-        logger.notice(
+        self.plugin.settings.refresh_token = refresh_token
+        self.plugin.settings.access_token = access_token
+        self.plugin.settings.access_token_expire = str(expires_in + int(time.time()))
+        self.plugin.logger.notice(
             "refresh token - {}; access token - {}; expires in - {}".format(
                 refresh_token, access_token, expires_in
             )
@@ -198,10 +196,10 @@ class Auth(object):
 
     @property
     def is_token_expired(self):
-        return int(settings.access_token_expire) < int(time.time())
+        return int(self.plugin.settings.access_token_expire) < int(time.time())
 
     def get_token(self):
-        if not settings.access_token:
+        if not self.plugin.settings.access_token:
             self._activate()
         else:
             self._refresh_token()

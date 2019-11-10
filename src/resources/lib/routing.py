@@ -1,41 +1,25 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 
 import re
-import sys
 from urllib import urlencode
-from urlparse import parse_qsl
-from urlparse import urlsplit
 from urlparse import urlunsplit
 
 import xbmc
-
-from resources.lib import logger
-from resources.lib import PLUGIN_ID
-from resources.lib import PLUGIN_URL
-from resources.lib.auth import Auth
-from resources.lib.settings import Settings
 
 
 class RoutingException(Exception):
     pass
 
 
-class Plugin(object):
-    def __init__(self):
+class Routing(object):
+    def __init__(self, plugin):
         self._rules = {}
-        self.path = urlsplit(sys.argv[0]).path or "/"
-        self.handle = int(sys.argv[1])
-        self.kwargs = dict(parse_qsl(sys.argv[2].lstrip("?")))
-        self.base_url = PLUGIN_URL
-        self.auth = Auth()
-        self.settings = Settings()
+        self.plugin = plugin
 
     def route_for(self, path):
-        if path.startswith(self.base_url):
-            path = path.split(self.base_url, 1)[1]
+        if path.startswith(self.plugin.PLUGIN_URL):
+            path = path.split(self.plugin.PLUGIN_URL, 1)[1]
 
         for view_fun, rules in self._rules.iteritems():
             for rule in rules:
@@ -45,7 +29,7 @@ class Plugin(object):
 
     def build_url(self, func_name, *args, **kwargs):
         path = u"/".join([func_name] + map(unicode, list(args)))
-        url = urlunsplit(("plugin", PLUGIN_ID, path, urlencode(kwargs), ""))
+        url = urlunsplit(("plugin", self.plugin.PLUGIN_ID, path, urlencode(kwargs), ""))
         return url
 
     def route(self, pattern):
@@ -61,21 +45,26 @@ class Plugin(object):
             self._rules[func] = []
         self._rules[func].append(rule)
 
-    def run(self):
-        self._dispatch(self.path)
-
     def redirect(self, path):
         xbmc.executebuiltin("Container.Update({})".format(path))
 
-    def _dispatch(self, path):
+    def dispatch(self, path):
         for view_func, rules in self._rules.iteritems():
             for rule in rules:
                 kwargs = rule.match(path)
                 if kwargs is not None:
-                    logger.debug("Dispatching to '{}', args: {}".format(view_func.__name__, kwargs))
+                    self.plugin.logger.debug(
+                        "Dispatching to '{}', args: {}".format(view_func.__name__, kwargs)
+                    )
                     view_func(**kwargs)
                     return
-        raise RoutingException('No route to path "{}"'.format(path))
+        raise RoutingException('No route to path "{}"'.format(self.path))
+
+    def build_icon_path(self, name):
+        """Build a path to an icon according to its name"""
+        return xbmc.translatePath(
+            "special://home/addons/{}/resources/media/{}.png".format(self.plugin.PLUGIN_ID, name)
+        )
 
 
 class UrlRule(object):
@@ -114,6 +103,3 @@ class UrlRule(object):
 
     def __str__(self):
         return u"UrlRule(pattern={}, keywords={})".format(self._pattern, self._keywords)
-
-
-plugin = Plugin()

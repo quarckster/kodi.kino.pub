@@ -3,9 +3,6 @@ from __future__ import absolute_import
 
 from xbmcgui import ListItem
 
-from resources.lib.routing import plugin
-from resources.lib.settings import settings
-
 
 class ExtendedListItem(ListItem):
     def __new__(cls, name, label2="", iconImage="", thumbnailImage="", path="", **kwargs):
@@ -25,8 +22,10 @@ class ExtendedListItem(ListItem):
         properties=None,
         addContextMenuItems=False,
         subtitles=None,
+        plugin=None,
     ):
         super(ExtendedListItem, self).__init__(name, label2, iconImage, thumbnailImage, path)
+        self.plugin = plugin
         if properties:
             self.setProperties(**properties)
         if video_info:
@@ -44,7 +43,7 @@ class ExtendedListItem(ListItem):
         if in_watchlist == "":
             return
         label = "Не буду смотреть" if int(in_watchlist) else "Буду смотреть"
-        url = plugin.build_url(
+        url = self.plugin.build_url(
             "toggle_watchlist", self.getProperty("id"), int(not int(in_watchlist))
         )
         menu_items.append((label, "Container.Update({})".format(url)))
@@ -66,7 +65,7 @@ class ExtendedListItem(ListItem):
             kwargs = {"season": season_number, "video": video_number}
         else:
             kwargs = {"video": video_number}
-        url = plugin.build_url("toggle_watched", item_id, **kwargs)
+        url = self.plugin.build_url("toggle_watched", item_id, **kwargs)
         menu_items.append((label, "Container.Update({})".format(url)))
 
     def _addBookmarksContextMenuItem(self, menu_items):
@@ -74,20 +73,20 @@ class ExtendedListItem(ListItem):
             return
         item_id = self.getProperty("id")
         label = "Изменить закладки"
-        url = plugin.build_url("edit_bookmarks", item_id)
+        url = self.plugin.build_url("edit_bookmarks", item_id)
         menu_items.append((label, "Container.Update({})".format(url)))
 
     def _addCommentsContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
         label = "Комментарии KinoPub"
-        url = plugin.build_url("comments", item_id)
+        url = self.plugin.build_url("comments", item_id)
         menu_items.append((label, "Container.Update({})".format(url)))
 
     def _addSimilarContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
         title = self.getLabel()
         label = "Похожие фильмы"
-        url = plugin.build_url("similar", item_id, title=title)
+        url = self.plugin.build_url("similar", item_id, title=title)
         menu_items.append((label, u"Container.Update({})".format(url)))
 
     def _addSeparatorContextMenuItem(self, menu_items):
@@ -111,12 +110,12 @@ class ExtendedListItem(ListItem):
             resumetime is not None
             and totaltime > 0
             and 100 * resumetime / totaltime
-            <= settings.advanced("video", "playcountminimumpercent")
-            and resumetime > settings.advanced("video", "ignoresecondsatstart")
+            <= self.plugin.settings.advanced("video", "playcountminimumpercent")
+            and resumetime > self.plugin.settings.advanced("video", "ignoresecondsatstart")
             or resumetime == 0
         ):
             self.setProperties(resumetime=resumetime, totaltime=totaltime)
 
     def markAdvert(self, has_advert):
-        if settings.mark_advert == "true" and has_advert:
+        if self.plugin.settings.mark_advert == "true" and has_advert:
             self.setLabel("{} (!)".format(self.getLabel()))
