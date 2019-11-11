@@ -407,8 +407,8 @@ def play(item_id, index):
         poster=playback_data["poster"],
         subtitles=[subtitle["url"] for subtitle in video_data["subtitles"]],
     )
+    player = Player(list_item=li)
     xbmcplugin.setResolvedUrl(plugin.handle, True, li)
-    player = Player(li)
     while player.is_playing:
         player.set_marktime()
         xbmc.sleep(1000)
