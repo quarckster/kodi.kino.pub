@@ -33,7 +33,7 @@ def get_mlink(video, stream_type=None, quality=None, ask_quality="false"):
 
     Args:
         video: a dict from api call
-        quality: video quality (480p, 720p, 1080p)
+        quality: video quality (480p, 720p, 1080p, 2160p)
         stream_type: hls, hls2, hls4, http
         ask_quality: "false" or "true"
     """

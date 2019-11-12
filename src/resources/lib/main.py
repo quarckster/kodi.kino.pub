@@ -177,7 +177,7 @@ def index():
                 )
                 xbmcplugin.addDirectoryItem(plugin.handle, menu_item.url, li, menu_item.is_dir)
         for i in response["items"]:
-            if getattr(plugin.settings, "show_{}".format(i["id"])) != "false":
+            if getattr(plugin.settings, "show_{}".format(i["id"])) == "true":
                 img = plugin.routing.build_icon_path(i["id"])
                 li = plugin.list_item(i["title"], iconImage=img, thumbnailImage=img)
                 url = plugin.routing.build_url("item_index", i["id"])
