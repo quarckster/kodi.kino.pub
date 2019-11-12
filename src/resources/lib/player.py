@@ -48,13 +48,13 @@ class Player(xbmc.Player):
 
     @property
     def _base_data(self):
-        id = self.list_item.getProperty("id")
+        item_id = self.list_item.getProperty("item_id")
         video_number = self.list_item.getProperty("video_number")
         season_number = self.list_item.getProperty("season_number")
         if season_number:
-            data = {"id": id, "season": season_number, "video": video_number}
+            data = {"id": item_id, "season": season_number, "video": video_number}
         else:
-            data = {"id": id, "video": video_number}
+            data = {"id": item_id, "video": video_number}
         return data
 
     def onPlayBackStarted(self):

@@ -391,7 +391,7 @@ def play(item_id, index):
     )
     properties.update(
         {
-            "id": item_id,
+            "item_id": item_id,
             "play_duration": video_info["duration"],
             "play_resumetime": video_info["time"],
             "video_number": video_info.get("episode", 1),
