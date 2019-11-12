@@ -22,12 +22,6 @@ def get_window_property(index):
     return data
 
 
-def dict_merge(old, new):
-    n = old.copy()
-    n.update(new)
-    return n
-
-
 def get_mlink(video, stream_type=None, quality=None, ask_quality="false"):
     """Get media link.
 
