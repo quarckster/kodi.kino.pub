@@ -33,10 +33,6 @@ class ExtendedListItem(ListItem):
             self.setResumeTime(video_info.get("time"))
         if poster:
             self.setArt({"poster": poster})
-        if iconImage:
-            self.setArt({"icon": iconImage})
-        if thumbnailImage:
-            self.setArt({"thumb": thumbnailImage})
         if subtitles:
             self.setSubtitles(subtitles)
         if addContextMenuItems:
