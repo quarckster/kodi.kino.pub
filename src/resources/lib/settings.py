@@ -17,6 +17,8 @@ class Settings(object):
     def __getattr__(self, name):
         if name == "advanced":
             return self._get_adv_setting
+        if name.startswith("show_"):
+            return eval(xbmcaddon.Addon().getSetting(name).title())
         return xbmcaddon.Addon().getSetting(name)
 
     def __setattr__(self, name, value):

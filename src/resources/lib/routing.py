@@ -3,6 +3,7 @@ from __future__ import absolute_import
 
 import re
 from urllib import urlencode
+from urlparse import parse_qsl
 from urlparse import urlunsplit
 
 import xbmc
@@ -29,8 +30,13 @@ class Routing(object):
 
     def build_url(self, func_name, *args, **kwargs):
         path = u"/".join([func_name] + map(unicode, list(args)))
-        url = urlunsplit(("plugin", self.plugin.PLUGIN_ID, path, urlencode(kwargs), ""))
-        return url
+        return urlunsplit(("plugin", self.plugin.PLUGIN_ID, path, urlencode(kwargs), ""))
+
+    def add_kwargs_to_url(self, **kwargs):
+        dict_query = dict(parse_qsl(self.plugin.kwargs))
+        dict_query.update(kwargs)
+        query_params = urlencode(dict_query)
+        return urlunsplit(("plugin", self.plugin.PLUGIN_ID, self.plugin.path, query_params, ""))
 
     def route(self, pattern):
         def decorator(func):
