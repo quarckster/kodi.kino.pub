@@ -464,7 +464,7 @@ def bookmarks():
 def show_bookmark_folder(folder_id):
     response = plugin.client("bookmarks/{}".format(folder_id)).get()
     show_items(response["items"], content_type="all")
-    show_pagination(response["pagination"], "bookmarks", folder_id=folder_id)
+    show_pagination(response["pagination"])
 
 
 @plugin.routing.route("/watching")
