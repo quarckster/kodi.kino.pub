@@ -18,12 +18,12 @@
         <setting id="show_hot" type="bool" label="Горячие" default="true"/>
         <setting id="show_tv" type="bool" label="ТВ" default="true"/>
         <setting id="show_collections" type="bool" label="Подборки" default="true"/>
-        <setting id="show_movie" type="bool" label="Фильмы" default="true"/>
-        <setting id="show_serial" type="bool" label="Сериалы" default="true"/>
-        <setting id="show_tvshow" type="bool" label="ТВ шоу" default="true"/>
+        <setting id="show_movies" type="bool" label="Фильмы" default="true"/>
+        <setting id="show_serials" type="bool" label="Сериалы" default="true"/>
+        <setting id="show_tvshows" type="bool" label="ТВ шоу" default="true"/>
         <setting id="show_3d" type="bool" label="3D" default="true"/>
-        <setting id="show_concert" type="bool" label="Концерты" default="true"/>
-        <setting id="show_documovie" type="bool" label="Документальные фильмы" default="true"/>
-        <setting id="show_docuserial" type="bool" label="Документальные сериалы" default="true"/>
+        <setting id="show_concerts" type="bool" label="Концерты" default="true"/>
+        <setting id="show_documovies" type="bool" label="Документальные фильмы" default="true"/>
+        <setting id="show_docuserials" type="bool" label="Документальные сериалы" default="true"/>
     </category>
 </settings>
