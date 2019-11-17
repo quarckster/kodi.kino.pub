@@ -112,7 +112,6 @@ def notice(message, heading="", time=4000):
 def trailer_link(item):
     from resources.lib.main import plugin
 
-    if item.get("trailer"):
-        trailer = item["trailer"]
-        return plugin.routing.build_url("trailer", item["id"], trailer["id"])
+    if "trailer" in item:
+        return plugin.routing.build_url("trailer", item["id"])
     return None

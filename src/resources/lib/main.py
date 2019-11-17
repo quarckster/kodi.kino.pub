@@ -433,10 +433,7 @@ def play(item_id, index):
 @plugin.routing.route("/trailer/<item_id>")
 def trailer(item_id):
     response = plugin.client("items/trailer").get(data={"id": item_id})
-    trailer = response["trailer"]
-    url = get_mlink(
-        trailer, quality=plugin.settings.video_quality, stream_type=plugin.settings.stream_type
-    )
+    url = response["trailer"][0]["url"]
     li = plugin.list_item("Трейлер", path=url)
     xbmcplugin.setResolvedUrl(plugin.handle, True, li)
 
