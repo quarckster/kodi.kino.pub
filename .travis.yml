@@ -1,6 +1,4 @@
 stages:
-  - lint
-  - test
   - name: deploy
     if: tag IS true
 jobs:
