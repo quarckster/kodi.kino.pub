@@ -1,4 +1,6 @@
 stages:
+  - lint
+  # - test
   - name: deploy
     if: tag IS true
 jobs:
@@ -11,14 +13,14 @@ jobs:
         - pip install -U pre-commit
       script:
         - pre-commit run --all
-    - stage: test
-      language: python
-      python:
-        - "2.7"
-      install:
-        - pip install -U pytest pytest-mock
-      script:
-        - pytest -vv tests/tests.py
+    # - stage: test
+    #   language: python
+    #   python:
+    #     - "2.7"
+    #   install:
+    #     - pip install -U pytest pytest-mock
+    #   script:
+    #     - pytest -vv tests/tests.py
     - stage: deploy
       language: minimal
       script: bash build.sh
