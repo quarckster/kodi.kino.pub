@@ -155,7 +155,7 @@ class Plugin(object):
             ),
             MainMenuItem(
                 "ТВ шоу",
-                self.routing.build_url("items", "tv_shows"),
+                self.routing.build_url("items", "tvshow"),
                 self.routing.build_icon_path("tvshows"),
                 True,
                 self.settings.show_tvshows,
