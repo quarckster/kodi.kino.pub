@@ -18,6 +18,7 @@ class ExtendedListItem(ListItem):
         thumbnailImage="",
         path="",
         poster=None,
+        fanart=None,
         video_info=None,
         properties=None,
         addContextMenuItems=False,
@@ -33,6 +34,8 @@ class ExtendedListItem(ListItem):
             self.setResumeTime(video_info.get("time"))
         if poster:
             self.setArt({"poster": poster})
+        if fanart:
+            self.setArt({"fanart": fanart})
         if subtitles:
             self.setSubtitles(subtitles)
         if addContextMenuItems:
