@@ -32,8 +32,8 @@ class Routing(object):
         return urlunsplit(("plugin", self.plugin.PLUGIN_ID, path, urlencode(kwargs), ""))
 
     def add_kwargs_to_url(self, **kwargs):
-        kwargs.update(self.plugin.kwargs)
-        query_params = urlencode(kwargs)
+        self.plugin.kwargs.update(kwargs)
+        query_params = urlencode(self.plugin.kwargs)
         return urlunsplit(("plugin", self.plugin.PLUGIN_ID, self.plugin.path, query_params, ""))
 
     def route(self, pattern):
