@@ -57,7 +57,12 @@ def show_items(items, content_type, add_indexes=False):
     for index, item in enumerate(items, 1):
         title = item["title"]
         title = u"{}. {}".format(index, title) if add_indexes else title
-        li = plugin.list_item(title, poster=item["posters"]["big"], properties={"id": item["id"]})
+        li = plugin.list_item(
+            title,
+            poster=item["posters"]["big"],
+            fanart=item["posters"]["wide"],
+            properties={"id": item["id"]}
+            )
         if "in_watchlist" in item:
             li.setProperty("in_watchlist", str(int(item["in_watchlist"])))
         video_info = extract_video_info(
@@ -263,6 +268,7 @@ def seasons(item_id):
                 },
             ),
             poster=item["posters"]["big"],
+            fanart=item["posters"]["wide"],
             properties={"id": item["id"]},
             addContextMenuItems=True,
         )
@@ -301,6 +307,7 @@ def episodes(item_id):
             thumbnailImage=video["thumbnail"],
             video_info=info,
             poster=item["posters"]["big"],
+            fanart=item["posters"]["wide"],
             properties={"id": item["id"], "isPlayable": "true"},
             addContextMenuItems=True,
         )
@@ -352,6 +359,7 @@ def season_episodes(item_id, season_number):
             episode_title,
             thumbnailImage=episode["thumbnail"],
             poster=item["posters"]["big"],
+            fanart=item["posters"]["wide"],
             video_info=info,
             properties={"id": item["id"], "isPlayable": "true"},
             addContextMenuItems=True,
@@ -421,6 +429,7 @@ def play(item_id, index):
         path=url,
         properties=properties,
         poster=playback_data["poster"],
+        fanart=playback_data["fanart"],
         subtitles=[subtitle["url"] for subtitle in video_data["subtitles"]],
     )
     player = Player(list_item=li)
@@ -477,6 +486,7 @@ def watching():
             title,
             str(item["new"]),
             poster=item["posters"]["big"],
+            fanart=item["posters"]["wide"],
             properties={"id": str(item["id"]), "in_watchlist": "1"},
             video_info={"mediatype": content_type_map[item["type"]]},
             addContextMenuItems=True,
@@ -494,6 +504,7 @@ def watching_movies():
         li = plugin.list_item(
             item["title"],
             poster=item["posters"]["big"],
+            fanart=item["posters"]["wide"],
             properties={"id": item["id"]},
             video_info={"mediatype": content_type_map[item["type"]]},
             addContextMenuItems=True,
@@ -520,6 +531,7 @@ def watching_movies():
             playback_data[i] = {
                 "video_info": video_info,
                 "poster": item["posters"]["big"],
+                "fanart": item["posters"]["wide"],
                 "title": item["title"],
             }
             isdir = False
