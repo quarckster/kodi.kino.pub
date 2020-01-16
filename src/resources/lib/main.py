@@ -429,7 +429,6 @@ def play(item_id, index):
         path=url,
         properties=properties,
         poster=playback_data["poster"],
-        fanart=playback_data["fanart"],
         subtitles=[subtitle["url"] for subtitle in video_data["subtitles"]],
     )
     player = Player(list_item=li)
@@ -486,7 +485,6 @@ def watching():
             title,
             str(item["new"]),
             poster=item["posters"]["big"],
-            fanart=item["posters"]["wide"],
             properties={"id": str(item["id"]), "in_watchlist": "1"},
             video_info={"mediatype": content_type_map[item["type"]]},
             addContextMenuItems=True,
@@ -504,7 +502,6 @@ def watching_movies():
         li = plugin.list_item(
             item["title"],
             poster=item["posters"]["big"],
-            fanart=item["posters"]["wide"],
             properties={"id": item["id"]},
             video_info={"mediatype": content_type_map[item["type"]]},
             addContextMenuItems=True,
@@ -531,7 +528,6 @@ def watching_movies():
             playback_data[i] = {
                 "video_info": video_info,
                 "poster": item["posters"]["big"],
-                "fanart": item["posters"]["wide"],
                 "title": item["title"],
             }
             isdir = False
