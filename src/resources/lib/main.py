@@ -61,8 +61,8 @@ def show_items(items, content_type, add_indexes=False):
             title,
             poster=item["posters"]["big"],
             fanart=item["posters"]["wide"],
-            properties={"id": item["id"]}
-            )
+            properties={"id": item["id"]},
+        )
         if "in_watchlist" in item:
             li.setProperty("in_watchlist", str(int(item["in_watchlist"])))
         video_info = extract_video_info(
