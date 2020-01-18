@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
 
 import json
 import re
@@ -11,7 +11,7 @@ import xbmcgui
 
 def set_window_property(value):
     xbmcgui.Window(10000).clearProperty("video.kino.pub-playback_data")
-    if not isinstance(value, basestring):
+    if not isinstance(value, str):
         value = json.dumps(value)
     xbmcgui.Window(10000).setProperty("video.kino.pub-playback_data", value)
 
@@ -44,10 +44,10 @@ def get_mlink(video, stream_type=None, quality=None, ask_quality="false"):
     files = {f["quality"]: f["url"] for f in video["files"]}
     flatten_urls_dict = {
         "{}@{}".format(quality, stream): url
-        for quality, urls in files.items()
-        for stream, url in urls.items()
+        for quality, urls in list(files.items())
+        for stream, url in list(urls.items())
     }
-    urls_list = natural_sort(flatten_urls_dict.keys())
+    urls_list = natural_sort(list(flatten_urls_dict.keys()))
     if ask_quality == "true":
         dialog = xbmcgui.Dialog()
         result = dialog.select("Выберите качество видео", urls_list)
@@ -60,7 +60,7 @@ def get_mlink(video, stream_type=None, quality=None, ask_quality="false"):
             return files[quality][stream_type]
         except KeyError:
             # if there is no such quality then return a link with the highest available quality
-            return files[natural_sort(files.keys())[-1]][stream_type]
+            return files[natural_sort(list(files.keys()))[-1]][stream_type]
 
 
 def build_plot(item):
@@ -68,7 +68,7 @@ def build_plot(item):
     if item["imdb_rating"]:
         final_plot.append("IMDB: {}".format(str(round(item["imdb_rating"], 1))))
     if item["kinopoisk_rating"]:
-        final_plot.append(u"Кинопоиск: {}".format(str(round(item["kinopoisk_rating"], 1))))
+        final_plot.append("Кинопоиск: {}".format(str(round(item["kinopoisk_rating"], 1))))
     # a new line between the ratings and the plot
     if item["imdb_rating"] or item["kinopoisk_rating"]:
         final_plot.append("")
@@ -78,9 +78,9 @@ def build_plot(item):
 
 def get_status(item):
     if item["type"] == "serial" and item["finished"]:
-        return u"окончен"
+        return "окончен"
     elif item["type"] == "serial" and not item["finished"]:
-        return u"в эфире"
+        return "в эфире"
     else:
         return
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
 
 from datetime import date
 
@@ -56,7 +56,7 @@ def show_items(items, content_type, add_indexes=False):
     # Fill list with items
     for index, item in enumerate(items, 1):
         title = item["title"]
-        title = u"{}. {}".format(index, title) if add_indexes else title
+        title = "{}. {}".format(index, title) if add_indexes else title
         li = plugin.list_item(
             title,
             poster=item["posters"]["big"],
@@ -201,10 +201,10 @@ def genre_items(content_type, genre):
 def alphabet(content_type):
     # fmt: off
     letters = [
-        u"А", u"Б", u"В", u"Г", u"Д", u"Е", u"Ё", u"Ж", u"З", u"И", u"Й", u"К", u"Л", u"М", u"Н",
-        u"О", u"П", u"Р", u"С", u"Т", u"У", u"Ф", u"Х", u"Ц", u"Ч", u"Ш", u"Щ", u"Ы", u"Э", u"Ю",
-        u"Я", u"A", u"B", u"C", u"D", u"E", u"F", u"G", u"H", u"I", u"J", u"K", u"L", u"M", u"N",
-        u"O", u"P", u"Q", u"R", u"S", u"T", u"U", u"V", u"W", u"X", u"Y", u"Z",
+        "А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Л", "М", "Н",
+        "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ы", "Э", "Ю",
+        "Я", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
+        "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
     ]
     # fmt: on
     for letter in letters:
@@ -290,7 +290,7 @@ def episodes(item_id):
         watching_episode = watching_info["videos"][video["number"] - 1]
         episode_title = "e{:02d}".format(video["number"])
         if video["title"]:
-            episode_title = u"{} | {}".format(episode_title, video["title"])
+            episode_title = "{} | {}".format(episode_title, video["title"])
         info = extract_video_info(
             item,
             {
@@ -342,7 +342,7 @@ def season_episodes(item_id, season_number):
             continue
         episode_title = "s{:02d}e{:02d}".format(season_number, episode["number"])
         if episode["title"]:
-            episode_title = u"{} | {}".format(episode_title, episode["title"])
+            episode_title = "{} | {}".format(episode_title, episode["title"])
         info = extract_video_info(
             item,
             {
@@ -480,7 +480,7 @@ def watching():
     response = plugin.client("watching/serials").get(data={"subscribed": 1})
     xbmcplugin.setContent(plugin.handle, "tvshows")
     for item in response["items"]:
-        title = u"{} : [COLOR FFFFF000]+{}[/COLOR]".format(item["title"], item["new"])
+        title = "{} : [COLOR FFFFF000]+{}[/COLOR]".format(item["title"], item["new"])
         li = plugin.list_item(
             title,
             str(item["new"]),
@@ -670,11 +670,11 @@ def comments(item_id):
             rating = " [COLOR FFD11141]({})[/COLOR]".format(i["rating"])
         else:
             rating = ""
-        message = u"{}[COLOR FFFFF000]{}[/COLOR]{}: {}\n\n".format(
+        message = "{}[COLOR FFFFF000]{}[/COLOR]{}: {}\n\n".format(
             message, i["user"]["name"], rating, i["message"].replace("\n", " ")
         )
     dialog = xbmcgui.Dialog()
-    dialog.textviewer(u'Комментарии "{}"'.format(title), message)
+    dialog.textviewer('Комментарии "{}"'.format(title), message)
 
 
 @plugin.routing.route("/similar/<item_id>")

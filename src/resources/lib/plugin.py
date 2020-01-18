@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
 
 import sys
 from collections import namedtuple
-from urlparse import parse_qsl
-from urlparse import urlsplit
+from urllib.parse import parse_qsl
+from urllib.parse import urlsplit
 
 import xbmcaddon
 

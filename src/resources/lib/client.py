@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
 
 import json
 import sys
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 
 from resources.lib.utils import notice
 
@@ -22,8 +22,8 @@ class KinoPubClient(object):
         )
         request.add_header("Authorization", "Bearer {}".format(self.plugin.settings.access_token))
         try:
-            response = urllib2.urlopen(request, timeout=timeout)
-        except urllib2.HTTPError as e:
+            response = urllib.request.urlopen(request, timeout=timeout)
+        except urllib.error.HTTPError as e:
             self.plugin.logger.error("HTTPError. Code: {}.".format(e.code))
             if e.code == 401:
                 self.plugin.auth.get_token()
@@ -34,8 +34,8 @@ class KinoPubClient(object):
                 notice("Код ответа сервера {}".format(e.code), "Ошибка")
                 sys.exit()
         except Exception as e:
-            self.plugin.logger.error("{}. Message: {}".format(type(e).__name__, e.message))
-            notice(e.message, "Ошибка")
+            self.plugin.logger.error("{}. Message: {}".format(type(e).__name__, e.reason))
+            notice(e.reason, "Ошибка")
         else:
             response = json.loads(response.read())
             if response["status"] == 200:
@@ -45,11 +45,11 @@ class KinoPubClient(object):
                 notice("Код ответа сервера {}".format(response["status"]), "Неизвестная ошибка")
 
     def get(self, data=""):
-        data = "?{}".format(urllib.urlencode(data)) if data else ""
-        request = urllib2.Request("{}/{}{}".format(self.url, self.action, data))
+        data = "?{}".format(urllib.parse.urlencode(data)) if data else ""
+        request = urllib.request.Request("{}/{}{}".format(self.url, self.action, data))
         return self._make_request(request)
 
     def post(self, data=""):
-        data = urllib.urlencode(data)
-        request = urllib2.Request("{}/{}".format(self.url, self.action), data=data)
+        data = urllib.parse.urlencode(data)
+        request = urllib.request.Request("{}/{}".format(self.url, self.action), data=data)
         return self._make_request(request)

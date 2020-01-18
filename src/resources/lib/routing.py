@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
 
 import re
-from urllib import urlencode
-from urlparse import urlunsplit
+from urllib.parse import urlencode
+from urllib.parse import urlunsplit
 
 import xbmc
 
@@ -21,14 +21,14 @@ class Routing(object):
         if path.startswith(self.plugin.PLUGIN_URL):
             path = path.split(self.plugin.PLUGIN_URL, 1)[1]
 
-        for view_fun, rules in self._rules.iteritems():
+        for view_fun, rules in self._rules.items():
             for rule in rules:
                 if rule.match(path) is not None:
                     return view_fun
         return None
 
     def build_url(self, func_name, *args, **kwargs):
-        path = u"/".join([func_name] + map(unicode, list(args)))
+        path = "/".join([func_name] + list(map(str, list(args))))
         return urlunsplit(("plugin", self.plugin.PLUGIN_ID, path, urlencode(kwargs), ""))
 
     def add_kwargs_to_url(self, **kwargs):
@@ -53,7 +53,7 @@ class Routing(object):
         xbmc.executebuiltin("Container.Update({})".format(path))
 
     def dispatch(self, path):
-        for view_func, rules in self._rules.iteritems():
+        for view_func, rules in self._rules.items():
             for rule in rules:
                 kwargs = rule.match(path)
                 if kwargs is not None:
@@ -96,8 +96,8 @@ class UrlRule(object):
             except TypeError:
                 return None
 
-        url_kwargs = {((k, v) for k, v in kwargs.items() if k in self._keywords)}
-        qs_kwargs = {((k, v) for k, v in kwargs.items() if k not in self._keywords)}
+        url_kwargs = {((k, v) for k, v in list(kwargs.items()) if k in self._keywords)}
+        qs_kwargs = {((k, v) for k, v in list(kwargs.items()) if k not in self._keywords)}
 
         query = "?{}".format(urlencode(qs_kwargs)) if qs_kwargs else ""
         try:
@@ -106,4 +106,4 @@ class UrlRule(object):
             return None
 
     def __str__(self):
-        return u"UrlRule(pattern={}, keywords={})".format(self._pattern, self._keywords)
+        return "UrlRule(pattern={}, keywords={})".format(self._pattern, self._keywords)

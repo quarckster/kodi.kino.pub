@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
 
 from xbmcgui import ListItem
 
@@ -90,7 +90,7 @@ class ExtendedListItem(ListItem):
         title = self.getLabel()
         label = "Похожие фильмы"
         url = self.plugin.routing.build_url("similar", item_id, title=title)
-        menu_items.append((label, u"Container.Update({})".format(url)))
+        menu_items.append((label, "Container.Update({})".format(url)))
 
     def _addSeparatorContextMenuItem(self, menu_items):
         # 21 is the maximum number of characters when the horizontal scrolling doesn't appear.
@@ -104,7 +104,7 @@ class ExtendedListItem(ListItem):
         self.addContextMenuItems(menu_items)
 
     def setProperties(self, **properties):
-        for prop, value in properties.items():
+        for prop, value in list(properties.items()):
             self.setProperty(prop, str(value))
 
     def setResumeTime(self, resumetime, totaltime=None):
