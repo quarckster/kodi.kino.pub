@@ -18,7 +18,6 @@ def set_window_property(value):
 
 def get_window_property(index):
     data = json.loads(xbmcgui.Window(10000).getProperty("video.kino.pub-playback_data"))[index]
-    xbmcgui.Window(10000).clearProperty("video.kino.pub-playback_data")
     return data
 
 
