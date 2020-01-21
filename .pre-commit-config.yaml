@@ -4,7 +4,7 @@ repos:
   rev: v1.7.0
   hooks:
   - id: reorder-python-imports
-    language_version: python2
+    language_version: python3
     args:
       - --application-directories=.:src
 - repo: https://github.com/psf/black
@@ -17,13 +17,13 @@ repos:
   rev: v2.3.0
   hooks:
   - id: trailing-whitespace
-    language_version: python2
+    language_version: python3
   - id: end-of-file-fixer
-    language_version: python2
+    language_version: python3
   - id: debug-statements
-    language_version: python2
+    language_version: python3
   - id: flake8
-    language_version: python2
+    language_version: python3
     args:
       - --max-line-length=100
       - --ignore=W503,E203
@@ -31,4 +31,4 @@ repos:
   rev: v1.24.1
   hooks:
   - id: pyupgrade
-    language_version: python2
+    language_version: python3

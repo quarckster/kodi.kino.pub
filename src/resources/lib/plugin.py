@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-
-
 import sys
 from collections import namedtuple
 from urllib.parse import parse_qsl

@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-
-
 import json
 import sys
-import urllib.request, urllib.parse, urllib.error
-import urllib.request, urllib.error, urllib.parse
+import urllib.error
+import urllib.parse
+import urllib.request
 
 from resources.lib.utils import notice
 
