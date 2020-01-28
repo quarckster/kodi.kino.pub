@@ -47,7 +47,7 @@ class ExtendedListItem(ListItem):
             return
         label = "Не буду смотреть" if int(in_watchlist) else "Буду смотреть"
         url = self.plugin.routing.build_url(
-            "toggle_watchlist", self.getProperty("id"), int(not int(in_watchlist))
+            "toggle_watchlist", self.getProperty("id"), added=int(not int(in_watchlist))
         )
         menu_items.append((label, "Container.Update({})".format(url)))
 

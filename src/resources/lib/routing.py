@@ -62,7 +62,7 @@ class Routing(object):
                     )
                     view_func(**kwargs)
                     return
-        raise RoutingException('No route to path "{}"'.format(self.path))
+        raise RoutingException('No route to path "{}"'.format(path))
 
     def build_icon_path(self, name):
         """Build a path to an icon according to its name"""
