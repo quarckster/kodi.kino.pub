@@ -59,14 +59,18 @@ class Player(xbmc.Player):
 
     def onPlayBackStarted(self):
         self.plugin.logger.notice("playback started")
-        # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
-        # imdb id should be 7 digits with leading zeroes with tt prepended
-        imdb_id = "tt{:07d}".format(int(self.list_item.getProperty("imdbnumber")))
-        ids = json.dumps({"imdb": imdb_id})
-        xbmcgui.Window(10000).setProperty("script.trakt.ids", ids)
         if self.should_refresh_token:
             self.plugin.logger.notice("access token should be refreshed")
             self.plugin.auth.get_token()
+        # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
+        # imdb id should be 7 digits with leading zeroes with tt prepended
+        try:
+            imdb_id = "tt{:07d}".format(int(self.list_item.getProperty("imdbnumber")))
+        except ValueError:
+            self.plugin.logger.notice("imdb number is missing, skip scrobbling")
+            return
+        ids = json.dumps({"imdb": imdb_id})
+        xbmcgui.Window(10000).setProperty("script.trakt.ids", ids)
 
     def onPlayBackStopped(self):
         self.is_playing = False
