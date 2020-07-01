@@ -14,6 +14,7 @@ from resources.lib.listitem import ExtendedListItem
 from resources.lib.logger import Logger
 from resources.lib.routing import Routing
 from resources.lib.settings import Settings
+from resources.lib.search_history import SearchHistory
 
 
 MainMenuItem = namedtuple("MainMenuItem", ["title", "url", "icon", "is_dir", "is_displayed"])
@@ -32,6 +33,7 @@ class Plugin(object):
         self.auth = Auth(self)
         self.logger = Logger(self)
         self.routing = Routing(self)
+        self.search_history = SearchHistory(self)
         self.main_menu_items = self._main_menu_items()
 
     def client(self, endpoint):
@@ -82,7 +84,7 @@ class Plugin(object):
                 "Поиск",
                 self.routing.build_url("search", "all"),
                 self.routing.build_icon_path("search"),
-                False,
+                True,
                 self.settings.show_search,
             ),
             MainMenuItem(

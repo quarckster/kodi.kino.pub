@@ -155,7 +155,7 @@ def render_heading(name, localized_name, content_type, is_dir):
 
 @plugin.routing.route("/items/<content_type>")
 def headings(content_type):
-    render_heading("search", "Поиск", content_type, False)
+    render_heading("search", "Поиск", content_type, True)
     render_heading("fresh", "Последние", content_type, True)
     render_heading("hot", "Горячие", content_type, True)
     render_heading("popular", "Популярные", content_type, True)
@@ -234,8 +234,8 @@ def alphabet_items(content_type, letter):
     show_pagination(response["pagination"])
 
 
-@plugin.routing.route("/search/<content_type>")
-def search(content_type):
+@plugin.routing.route("/new_search/<content_type>")
+def new_search(content_type):
     kbd = xbmc.Keyboard()
     kbd.setHeading("Поиск")
     kbd.doModal()
@@ -246,8 +246,27 @@ def search(content_type):
         plugin.routing.redirect(url)
 
 
+@plugin.routing.route("/search/<content_type>")
+def search(content_type):
+    img = plugin.routing.build_icon_path("search")
+    li = plugin.list_item("Новый Поиск", iconImage=img, thumbnailImage=img)
+    url = plugin.routing.build_url("new_search", content_type)
+    xbmcplugin.addDirectoryItem(plugin.handle, url, li, False)
+
+    for history_item in plugin.search_history.recent:
+        img = plugin.routing.build_icon_path("search_history")
+        li = plugin.list_item(history_item.encode("utf8"), iconImage=img, thumbnailImage=img)
+        url = plugin.routing.build_url(
+            "search", content_type, "results", title=history_item.encode("utf8")
+        )
+        xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
+    xbmcplugin.endOfDirectory(plugin.handle)
+
+
 @plugin.routing.route("/search/<content_type>/results")
 def search_results(content_type):
+    plugin.search_history.save(plugin.kwargs["title"].decode("utf8"))
+
     data = {
         "type": None if content_type == "all" else content_type.rstrip("s"),
         "title": plugin.kwargs["title"],
@@ -256,6 +275,14 @@ def search_results(content_type):
     response = plugin.client("items").get(data=data)
     show_items(response["items"], content_type)
     show_pagination(response["pagination"])
+
+
+@plugin.routing.route("/clean_search_history")
+def clean_search_history():
+    confirm = xbmcgui.Dialog().yesno("kino.pub", "Очистить историю поиска?")
+    if confirm:
+        plugin.search_history.clean()
+        xbmc.executebuiltin("Container.Refresh")
 
 
 @plugin.routing.route("/seasons/<item_id>")

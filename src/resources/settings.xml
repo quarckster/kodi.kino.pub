@@ -8,6 +8,9 @@
         <setting type="lsep" label="Требуется InputStream Adaptive"/>
         <setting id="inputstream_adaptive_enabled" type="bool" label="Использовать inputstream adaptive" default="false" enable="System.HasAddon(inputstream.adaptive)"/>
         <setting id="inputstream_helper_install" type="action" label="Установить inputstream helper" action="RunPlugin(plugin://$ID/inputstream_helper_install)" enable="System.HasAddon(inputstream.adaptive)"/>
+        <setting type="lsep" label="Настройки истории поиска" />
+        <setting id="history_max_qty" type="select" label="Сохранять в истории поиска (записей)" values="10|15|20" default="10"/>
+        <setting id="reset_search_history" type="action" label="Очистить историю поиска" action="RunPlugin(plugin://$ID/clean_search_history)"/>
         <setting type="sep" />
         <setting id="reset_auth" type="action" label="Сбросить аутентификацию" action="RunPlugin(plugin://$ID/reset_auth)"/>
     </category>
