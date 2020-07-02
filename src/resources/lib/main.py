@@ -496,7 +496,7 @@ def watching():
             str(item["new"]),
             poster=item["posters"]["big"],
             properties={"id": str(item["id"]), "in_watchlist": "1"},
-            video_info={"mediatype": content_type_map[item["type"]]},
+            video_info={"mediatype": content_type_map[item["type"].lower()]},
             addContextMenuItems=True,
         )
         url = plugin.routing.build_url("seasons", item["id"])
@@ -513,7 +513,7 @@ def watching_movies():
             item["title"],
             poster=item["posters"]["big"],
             properties={"id": item["id"]},
-            video_info={"mediatype": content_type_map[item["type"]]},
+            video_info={"mediatype": content_type_map[item["type"].lower()]},
             addContextMenuItems=True,
         )
         if item["subtype"] == "multi":
