@@ -55,12 +55,12 @@ def show_items(items, content_type, add_indexes=False):
     Available content strings
 
     ======= ======== ========= ============
-    files   songs    artists   albums      
+    files   songs    artists   albums
     movies  tvshows  episodes  musicvideos
     videos  images   games
     ======= ======== ========= ============
     """
-    container_content_type =  "{}s".format(content_type_map[content_type.rstrip("s")])
+    container_content_type = "{}s".format(content_type_map[content_type.rstrip("s")])
     xbmcplugin.setContent(plugin.handle, container_content_type)
     playback_data = {}
     # Fill list with items
