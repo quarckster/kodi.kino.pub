@@ -13,8 +13,8 @@ from resources.lib.client import KinoPubClient
 from resources.lib.listitem import ExtendedListItem
 from resources.lib.logger import Logger
 from resources.lib.routing import Routing
-from resources.lib.settings import Settings
 from resources.lib.search_history import SearchHistory
+from resources.lib.settings import Settings
 
 
 MainMenuItem = namedtuple("MainMenuItem", ["title", "url", "icon", "is_dir", "is_displayed"])
