@@ -113,6 +113,10 @@ def show_items(items, content_type, add_indexes=False):
         li.addPredefinedContextMenuItems()
         li.markAdvert(item["advert"])
         xbmcplugin.addDirectoryItem(plugin.handle, link, li, isdir)
+    xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_UNSORTED)
+    xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_VIDEO_RATING)
+    xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_VIDEO_YEAR)
+    xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_LABEL)
 
 
 @plugin.routing.route("/login")

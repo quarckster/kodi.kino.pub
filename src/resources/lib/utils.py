@@ -85,10 +85,11 @@ def get_status(item):
 
 
 def video_info(item, extend=None):
+    rating = item.get("imdb_rating") or item.get("kinopoisk_rating") or 0.0
     info = {
         "year": int(item["year"]),
         "genre": ", ".join([x["title"] for x in item["genres"]]),
-        "rating": float(item["rating"]),
+        "rating": float(rating),
         "cast": [x.strip() for x in item["cast"].split(",")],
         "director": item["director"],
         "plot": build_plot(item),
