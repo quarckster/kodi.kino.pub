@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/quarckster/kodi.kino.pub.svg?branch=master)](https://travis-ci.org/quarckster/kodi.kino.pub)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/28217532-a2a0-408c-a780-e6270c7568ee/deploy-status)](https://app.netlify.com/sites/kodi-kino-pub/deploys)
 
 Kodi add-on for kino.pub
 =======================
