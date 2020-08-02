@@ -12,12 +12,29 @@ fi
 
 DIR=video.kino.pub-$VERSION
 
-mkdir $DIR
-echo "Copying the files to a temporary directory"
-echo "=========================================="
-VERSION=$VERSION envsubst < src/addon.xml > $DIR/addon.xml
-rsync -rv --exclude=*.pyc src/resources src/addon.py LICENSE $DIR
-echo
-echo "Creating the addon archive"
-echo "=========================="
-zip -rv -9 -m $DIR.zip $DIR
+function build_addon() {
+    mkdir $DIR
+    echo "Copying the files to a temporary directory"
+    echo "=========================================="
+    VERSION=$VERSION envsubst < src/addon.xml > $DIR/addon.xml
+    rsync -rv --exclude=*.pyc src/resources src/addon.py LICENSE $DIR
+    echo
+    echo "Creating the addon archive"
+    echo "=========================="
+    zip -rv -9 -m $DIR.zip $DIR
+}
+
+function deploy_netlify() {
+    echo "Deploying files to Netlify"
+    echo "=========================="
+    mkdir -p repo.kino.pub repo/video.kino.pub
+    VERSION=$VERSION envsubst < repo_src/addons.xml > repo/addons.xml
+    md5sum repo/addons.xml | cut -d " " -f 1 > repo/addons.xml.md5
+    cp repo_src/addon.xml repo_src/icon.png repo.kino.pub/
+    zip -rv -9 -m repo/repo.kino.pub.zip repo.kino.pub
+    mv $DIR.zip repo/video.kino.pub
+    node_modules/netlify-cli/bin/run deploy --dir=repo --prod --auth=$NETLIFY_AUTH_TOKEN --site=$NETLIFY_SITE_ID
+}
+
+build_addon
+deploy_netlify

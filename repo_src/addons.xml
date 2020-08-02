@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addons>
+    <addon id="repo.kino.pub" name="Kino.pub Add-On Repository" version="1.1.0" provider-name="quarckster">
+        <extension point="xbmc.addon.repository" name="Kino.pub Add-On Repository">
+            <dir>
+                <info compressed="false">https://kodi-kino-pub.netlify.app/addons.xml</info>
+                <checksum>https://kodi-kino-pub.netlify.app/addons.xml.md5</checksum>
+                <datadir zip="true">https://kodi-kino-pub.netlify.app/</datadir>
+            </dir>
+        </extension>
+        <extension point="xbmc.addon.metadata">
+            <summary>kino.pub - онлайн-кинотеатр.</summary>
+            <description></description>
+            <disclaimer></disclaimer>
+            <platform>all</platform>
+        </extension>
+    </addon>
+
+    <addon id="video.kino.pub" name="kino.pub" version="${VERSION}" provider-name="quarckster">
+        <requires>
+            <import addon="xbmc.python" version="2.25.0"/>
+            <import addon="script.module.inputstreamhelper" version="0.3.4" optional="true"/>
+        </requires>
+        <extension point="xbmc.python.pluginsource" library="addon.py">
+            <provides>video</provides>
+        </extension>
+        <extension point="xbmc.addon.metadata">
+            <summary>kino.pub - онлайн-кинотеатр.</summary>
+            <platform>all</platform>
+            <license>BSD-3-Clause</license>
+            <source>https://github.com/quarckster/kodi.kino.pub</source>
+        </extension>
+    </addon>
+</addons>
