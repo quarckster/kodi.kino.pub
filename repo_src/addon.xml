@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="repo.kino.pub" name="Kino.pub Add-On Repository" version="1.1.0" provider-name="quarckster">
+    <extension point="xbmc.addon.repository" name="Kino.pub Add-On Repository">
+        <dir>
+            <info compressed="false">https://kodi-kino-pub.netlify.app/addons.xml</info>
+            <checksum>https://kodi-kino-pub.netlify.app/addons.xml.md5</checksum>
+            <datadir zip="true">https://kodi-kino-pub.netlify.app/</datadir>
+        </dir>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary>kino.pub - онлайн-кинотеатр.</summary>
+        <description></description>
+        <disclaimer></disclaimer>
+        <platform>all</platform>
+    </extension>
+</addon>
