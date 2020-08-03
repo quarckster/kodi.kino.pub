@@ -13,9 +13,8 @@ function check_version() {
     DIR=video.kino.pub-"$VERSION"
 }
 
-
 function build() {
-    check_version
+    check_version $1
     mkdir "$DIR"
     echo "Copying the files to a temporary directory"
     echo "=========================================="
@@ -28,8 +27,7 @@ function build() {
 }
 
 function deploy() {
-    check_version
-    build
+    build $1
     echo "Deploying files to Netlify"
     echo "=========================="
     mkdir -p repo.kino.pub repo/video.kino.pub
