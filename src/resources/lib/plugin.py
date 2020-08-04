@@ -193,3 +193,20 @@ class Plugin(object):
                 self.settings.show_docuserials,
             ),
         ]
+
+    def sorting(self):
+        sorting = {
+            "дате обновления": "updated",
+            "дате добавления": "created",
+            "году": "year",
+            "названию": "title",
+            "рейтингу": "rating",
+            "просмотрам": "views",
+            "зрителям": "watchers",
+        }
+        direction = {"по убыванию": "-", "по возрастанию": ""}
+        return {
+            "sort": "{}{}".format(
+                sorting[self.settings.sort_by], direction[self.settings.sort_direction]
+            )
+        }

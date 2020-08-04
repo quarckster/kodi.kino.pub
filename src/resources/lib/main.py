@@ -159,12 +159,14 @@ def render_heading(name, localized_name, content_type, is_dir):
 
 @plugin.routing.route("/items/<content_type>")
 def headings(content_type):
+    sorting_label = "По {} {}".format(plugin.settings.sort_by, plugin.settings.sort_direction)
     render_heading("search", "Поиск", content_type, True)
     render_heading("fresh", "Последние", content_type, True)
     render_heading("hot", "Горячие", content_type, True)
     render_heading("popular", "Популярные", content_type, True)
     render_heading("alphabet", "По алфавиту", content_type, True)
     render_heading("genres", "Жанры", content_type, True)
+    render_heading("sort", sorting_label, content_type, True)
     xbmcplugin.endOfDirectory(plugin.handle)
 
 
@@ -179,7 +181,11 @@ def items(content_type, heading):
     else:
         data = {"type": None if content_type == "all" else content_type.rstrip("s")}
         data.update(plugin.kwargs)
-        response = plugin.client("items/{}".format(heading)).get(data=data)
+        if heading == "sort":
+            data.update(plugin.sorting())
+            response = plugin.client("items").get(data=data)
+        else:
+            response = plugin.client("items/{}".format(heading)).get(data=data)
         show_items(response["items"], content_type)
         show_pagination(response["pagination"])
 
@@ -207,6 +213,7 @@ def genre_items(content_type, genre):
     content_type = content_type.rstrip("s")
     data = {"type": content_type, "genre": genre}
     data.update(plugin.kwargs)
+    data.update(plugin.sorting())
     response = plugin.client("items").get(data=data)
     show_items(response["items"], content_type)
     show_pagination(response["pagination"])
@@ -233,6 +240,7 @@ def alphabet_items(content_type, letter):
     content_type = content_type.rstrip("s")
     data = {"type": content_type, "letter": letter}
     data.update(plugin.kwargs)
+    data.update(plugin.sorting())
     response = plugin.client("items").get(data=data)
     show_items(response["items"], content_type)
     show_pagination(response["pagination"])
@@ -276,6 +284,7 @@ def search_results(content_type):
         "title": plugin.kwargs["title"],
     }
     data.update(plugin.kwargs)
+    data.update(plugin.sorting())
     response = plugin.client("items").get(data=data)
     show_items(response["items"], content_type)
     show_pagination(response["pagination"])
