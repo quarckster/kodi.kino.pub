@@ -159,14 +159,13 @@ def render_heading(name, localized_name, content_type, is_dir):
 
 @plugin.routing.route("/items/<content_type>")
 def headings(content_type):
-    sorting_label = "По {} {}".format(plugin.settings.sort_by, plugin.settings.sort_direction)
     render_heading("search", "Поиск", content_type, True)
     render_heading("fresh", "Последние", content_type, True)
     render_heading("hot", "Горячие", content_type, True)
     render_heading("popular", "Популярные", content_type, True)
     render_heading("alphabet", "По алфавиту", content_type, True)
     render_heading("genres", "Жанры", content_type, True)
-    render_heading("sort", sorting_label, content_type, True)
+    render_heading("sort", plugin._sorting_title(), content_type, True)
     xbmcplugin.endOfDirectory(plugin.handle)
 
 

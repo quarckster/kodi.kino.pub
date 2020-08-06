@@ -9,7 +9,7 @@
         <setting id="inputstream_adaptive_enabled" type="bool" label="Использовать inputstream adaptive" default="false" enable="System.HasAddon(inputstream.adaptive)"/>
         <setting id="inputstream_helper_install" type="action" label="Установить inputstream helper" action="RunPlugin(plugin://$ID/inputstream_helper_install)" enable="System.HasAddon(inputstream.adaptive)"/>
         <setting type="lsep" label="Сортировка"/>
-        <setting id="sort_by" type="labelenum" label="Сортировать по" values="дате обновления|дате добавления|году|названию|рейтингу|просмотрам|зрителям"/>
+        <setting id="sort_by" type="labelenum" label="Сортировать по" values="дате обновления|дате добавления|году|названию|рейтингу|Кинопоиску|IMDB|просмотрам|зрителям"/>
         <setting id="sort_direction" type="labelenum" label="Направление сортировки" values="по убыванию|по возрастанию"/>
         <setting type="lsep" label="Настройки истории поиска" />
         <setting id="history_max_qty" type="select" label="Сохранять в истории поиска (записей)" values="10|15|20" default="10"/>
@@ -22,6 +22,7 @@
         <setting id="show_last" type="bool" label="Последние" default="true"/>
         <setting id="show_popular" type="bool" label="Популярные" default="true"/>
         <setting id="show_hot" type="bool" label="Горячие" default="true"/>
+        <setting id="show_sort" type="bool" label="Сортировка" default="true"/>
         <setting id="show_tv" type="bool" label="ТВ" default="true"/>
         <setting id="show_collections" type="bool" label="Подборки" default="true"/>
         <setting id="show_movies" type="bool" label="Фильмы" default="true"/>
