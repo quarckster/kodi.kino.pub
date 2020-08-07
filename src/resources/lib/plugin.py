@@ -200,7 +200,7 @@ class Plugin(object):
                 self.settings.show_docuserials,
             ),
         ]
-    
+
     def _sorting_title(self):
         return "По {} {}".format(self.settings.sort_by, self.settings.sort_direction)
 
