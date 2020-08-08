@@ -13,29 +13,43 @@ function check_version() {
     DIR=video.kino.pub-"$VERSION"
 }
 
-function build() {
+function build_video_addon() {
     check_version $1
+    echo "Creating video.kino.pub add-on archive"
+    echo "======================================"
     mkdir "$DIR"
-    echo "Copying the files to a temporary directory"
-    echo "=========================================="
     VERSION="$VERSION" envsubst < src/addon.xml > "$DIR"/addon.xml
     rsync -rv --exclude=*.pyc src/resources src/addon.py LICENSE "$DIR"
-    echo
-    echo "Creating the addon archive"
-    echo "=========================="
     zip -rv -9 -m "$DIR".zip "$DIR"
+    echo
+}
+
+function build_repo_addon() {
+    echo "Creating repo.kino.pub add-on archive"
+    echo "====================================="
+    mkdir repo.kino.pub
+    cp repo_src/addon.xml repo_src/icon.png repo.kino.pub/
+    zip -rv -9 -m repo.kino.pub.zip repo.kino.pub
+    echo
+}
+
+function create_repo() {
+    build_video_addon $1
+    build_repo_addon
+    echo "Creating repository add-on directory structure"
+    echo "=============================================="
+    mkdir -p repo/video.kino.pub
+    VERSION="$VERSION" envsubst < repo_src/addons.xml > repo/addons.xml
+    md5sum repo/addons.xml | cut -d " " -f 1 > repo/addons.xml.md5
+    mv repo.kino.pub.zip repo/
+    mv "$DIR".zip repo/video.kino.pub/
+    echo
 }
 
 function deploy() {
-    build $1
+    create_repo $1
     echo "Deploying files to Netlify"
     echo "=========================="
-    mkdir -p repo.kino.pub repo/video.kino.pub
-    VERSION="$VERSION" envsubst < repo_src/addons.xml > repo/addons.xml
-    md5sum repo/addons.xml | cut -d " " -f 1 > repo/addons.xml.md5
-    cp repo_src/addon.xml repo_src/icon.png repo.kino.pub/
-    zip -rv -9 -m repo/repo.kino.pub.zip repo.kino.pub
-    mv "$DIR".zip repo/video.kino.pub
     node_modules/netlify-cli/bin/run deploy --dir=repo --prod --auth="$NETLIFY_AUTH_TOKEN" --site="$NETLIFY_SITE_ID"
 }
 

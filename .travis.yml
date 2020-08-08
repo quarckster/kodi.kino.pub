@@ -26,7 +26,7 @@ jobs:
     - stage: deploy_github
       language: minimal
       script:
-        - bash make.sh build
+        - bash make.sh build_video_addon
       deploy:
         provider: releases
         skip_cleanup: true
