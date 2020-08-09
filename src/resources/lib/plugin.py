@@ -130,7 +130,7 @@ class Plugin(object):
                 self.settings.show_hot,
             ),
             MainMenuItem(
-                self._sorting_title(),
+                self.sorting_title,
                 self.routing.build_url("items", "all", "sort"),
                 self.routing.build_icon_path("sort"),
                 True,
@@ -201,10 +201,12 @@ class Plugin(object):
             ),
         ]
 
-    def _sorting_title(self):
+    @property
+    def sorting_title(self):
         return "По {} {}".format(self.settings.sort_by, self.settings.sort_direction)
 
-    def sorting(self):
+    @property
+    def sorting_params(self):
         sorting = {
             "дате обновления": "updated",
             "дате добавления": "created",

@@ -165,7 +165,7 @@ def headings(content_type):
     render_heading("popular", "Популярные", content_type, True)
     render_heading("alphabet", "По алфавиту", content_type, True)
     render_heading("genres", "Жанры", content_type, True)
-    render_heading("sort", plugin._sorting_title(), content_type, True)
+    render_heading("sort", plugin.sorting_title, content_type, True)
     xbmcplugin.endOfDirectory(plugin.handle)
 
 
@@ -181,7 +181,7 @@ def items(content_type, heading):
         data = {"type": None if content_type == "all" else content_type.rstrip("s")}
         data.update(plugin.kwargs)
         if heading == "sort":
-            data.update(plugin.sorting())
+            data.update(plugin.sorting_params)
             response = plugin.client("items").get(data=data)
         else:
             response = plugin.client("items/{}".format(heading)).get(data=data)
@@ -212,7 +212,7 @@ def genre_items(content_type, genre):
     content_type = content_type.rstrip("s")
     data = {"type": content_type, "genre": genre}
     data.update(plugin.kwargs)
-    data.update(plugin.sorting())
+    data.update(plugin.sorting_params)
     response = plugin.client("items").get(data=data)
     show_items(response["items"], content_type)
     show_pagination(response["pagination"])
@@ -239,7 +239,7 @@ def alphabet_items(content_type, letter):
     content_type = content_type.rstrip("s")
     data = {"type": content_type, "letter": letter}
     data.update(plugin.kwargs)
-    data.update(plugin.sorting())
+    data.update(plugin.sorting_params)
     response = plugin.client("items").get(data=data)
     show_items(response["items"], content_type)
     show_pagination(response["pagination"])
@@ -283,7 +283,7 @@ def search_results(content_type):
         "title": plugin.kwargs["title"],
     }
     data.update(plugin.kwargs)
-    data.update(plugin.sorting())
+    data.update(plugin.sorting_params)
     response = plugin.client("items").get(data=data)
     show_items(response["items"], content_type)
     show_pagination(response["pagination"])

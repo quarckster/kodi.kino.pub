@@ -9,8 +9,8 @@
         <setting id="inputstream_adaptive_enabled" type="bool" label="Использовать inputstream adaptive" default="false" enable="System.HasAddon(inputstream.adaptive)"/>
         <setting id="inputstream_helper_install" type="action" label="Установить inputstream helper" action="RunPlugin(plugin://$ID/inputstream_helper_install)" enable="System.HasAddon(inputstream.adaptive)"/>
         <setting type="lsep" label="Сортировка"/>
-        <setting id="sort_by" type="labelenum" label="Сортировать по" values="дате обновления|дате добавления|году|названию|рейтингу|Кинопоиску|IMDB|просмотрам|зрителям"/>
-        <setting id="sort_direction" type="labelenum" label="Направление сортировки" values="по убыванию|по возрастанию"/>
+        <setting id="sort_by" type="select" label="Сортировать по" values="дате обновления|дате добавления|году|названию|рейтингу|Кинопоиску|IMDB|просмотрам|зрителям" default="рейтингу"/>
+        <setting id="sort_direction" type="select" label="Направление сортировки" values="по убыванию|по возрастанию" default="по убыванию"/>
         <setting type="lsep" label="Настройки истории поиска" />
         <setting id="history_max_qty" type="select" label="Сохранять в истории поиска (записей)" values="10|15|20" default="10"/>
         <setting id="reset_search_history" type="action" label="Очистить историю поиска" action="RunPlugin(plugin://$ID/clean_search_history)"/>
