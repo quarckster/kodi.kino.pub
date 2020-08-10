@@ -130,6 +130,13 @@ class Plugin(object):
                 self.settings.show_hot,
             ),
             MainMenuItem(
+                self.sorting_title,
+                self.routing.build_url("items", "all", "sort"),
+                self.routing.build_icon_path("sort"),
+                True,
+                self.settings.show_sort,
+            ),
+            MainMenuItem(
                 "ТВ",
                 self.routing.build_url("tv"),
                 self.routing.build_icon_path("tv"),
@@ -193,3 +200,27 @@ class Plugin(object):
                 self.settings.show_docuserials,
             ),
         ]
+
+    @property
+    def sorting_title(self):
+        return "По {} {}".format(self.settings.sort_by, self.settings.sort_direction)
+
+    @property
+    def sorting_params(self):
+        sorting = {
+            "дате обновления": "updated",
+            "дате добавления": "created",
+            "году": "year",
+            "названию": "title",
+            "рейтингу": "rating",
+            "Кинопоиску": "kinopoisk_rating",
+            "IMDB": "imdb_rating",
+            "просмотрам": "views",
+            "зрителям": "watchers",
+        }
+        direction = {"по убыванию": "-", "по возрастанию": ""}
+        return {
+            "sort": "{}{}".format(
+                sorting[self.settings.sort_by], direction[self.settings.sort_direction]
+            )
+        }
