@@ -115,3 +115,12 @@ def trailer_link(item):
     if "trailer" in item:
         return plugin.routing.build_url("trailer", item["id"])
     return None
+
+
+def item_index(items, item):
+    return next((index for (index, d) in enumerate(items) if d["id"] == item["id"]), None)
+
+
+def exclude_anime(items):
+    # anime genre has id equal 25
+    return list(filter(lambda x: all(i["id"] != 25 for i in x["genres"]), items))
