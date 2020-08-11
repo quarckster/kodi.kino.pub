@@ -18,6 +18,8 @@ from resources.lib.utils import (
     video_info as extract_video_info,
     get_window_property,
     set_window_property,
+    item_index,
+    exclude_anime,
 )
 from resources.lib.player import Player
 from resources.lib.plugin import Plugin
@@ -127,6 +129,45 @@ def headings(content_type):
     xbmcplugin.endOfDirectory(plugin.handle)
 
 
+def fetch_content_type_items(content_type, heading, **kwargs):
+    data = {"type": None if content_type == "all" else content_type.rstrip("s")}
+
+    if kwargs.get("start_from") is not None:
+        del kwargs["start_from"]
+    data.update(kwargs)
+    if heading == "sort":
+        data.update(plugin.sorting_params)
+        response = plugin.client("items").get(data=data)
+    else:
+        response = plugin.client("items/{}".format(heading)).get(data=data)
+    return response
+
+
+def collect_non_anime_items(content_type, heading, initial_items=[], **kwargs):
+    # start_from show index of item in items list collecting should start from
+    start_from = 0 if not kwargs.get("start_from") else int(kwargs["start_from"])
+
+    response = fetch_content_type_items(content_type, heading, **kwargs)
+    pagination = response["pagination"]
+    page_size = int(pagination["perpage"])
+    excluded_items = exclude_anime(response["items"][start_from:])
+
+    if len(excluded_items) + len(initial_items) < page_size:
+        initial_items.extend(excluded_items)
+        if int(pagination["current"]) + 1 < int(pagination["total"]):
+            kwargs.update({"page": pagination["current"] + 1, "start_from": 0})
+            initial_items, pagination, start_from = collect_non_anime_items(
+                content_type, heading, initial_items, **kwargs
+            )
+    else:
+        count_items_to_extend = page_size - len(initial_items)
+        items_for_extend = excluded_items[:count_items_to_extend]
+        start_from = item_index(response["items"], items_for_extend[-1]) + 1
+        initial_items.extend(items_for_extend)
+
+    return initial_items, pagination, start_from
+
+
 @plugin.routing.route("/items/<content_type>/<heading>")
 def items(content_type, heading):
     if heading == "alphabet":
@@ -136,59 +177,14 @@ def items(content_type, heading):
     elif heading == "search":
         search(content_type)
     else:
-        data = {"type": None if content_type == "all" else content_type.rstrip("s")}
-
-        def fetch_items(heading, **kwargs):
-            if kwargs.get("start_from") is not None:
-                del kwargs["start_from"]
-            data.update(kwargs)
-            if heading == "sort":
-                data.update(plugin.sorting_params)
-                response = plugin.items.get("items", data)
-            else:
-                response = plugin.items.get("items/{}".format(heading), data)
-            return response
-
-        # collect items from several API pages if needed
-        def non_anime_items(heading, initial_items=[], **kwargs):
-            def last_item_index(items, item):
-                return next(
-                    (index for (index, d) in enumerate(items) if d["id"] == item["id"]), None
-                )
-
-            def exclude_anime(items):
-                # anime genre has id equal 25
-                return list(filter(lambda x: all(i["id"] != 25 for i in x["genres"]), items))
-
-            # start_from show index of item in items list collecting should start from
-            start_from = 0 if not kwargs.get("start_from") else int(kwargs["start_from"])
-
-            response = fetch_items(heading, **kwargs)
-            pagination = response["pagination"]
-            page_size = int(pagination["perpage"])
-            excluded_items = exclude_anime(response["items"][start_from:])
-
-            if len(excluded_items) + len(initial_items) < page_size:
-                initial_items.extend(excluded_items)
-                if int(pagination["current"]) + 1 < int(pagination["total"]):
-                    kwargs.update({"page": pagination["current"] + 1, "start_from": 0})
-                    initial_items, pagination, start_from = non_anime_items(
-                        heading, initial_items, **kwargs
-                    )
-            else:
-                count_items_to_extend = page_size - len(initial_items)
-                items_for_extend = excluded_items[:count_items_to_extend]
-                start_from = last_item_index(response["items"], items_for_extend[-1]) + 1
-                initial_items.extend(items_for_extend)
-
-            return initial_items, pagination, start_from
-
         if plugin.settings.exclude_anime == "true":
-            items, pagination, start_from = non_anime_items(heading, **plugin.kwargs)
+            items, pagination, start_from = collect_non_anime_items(
+                content_type, heading, **plugin.kwargs
+            )
             render_items(items, content_type)
             render_pagination(pagination, include_current=True, start_from=start_from)
         else:
-            response = fetch_items(heading, **plugin.kwargs)
+            response = fetch_content_type_items(content_type, heading, **plugin.kwargs)
             render_items(response["items"], content_type)
             render_pagination(response["pagination"])
 
