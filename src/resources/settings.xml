@@ -5,6 +5,7 @@
         <setting id="stream_type" type="select" label="Тип стриминга" values="http|hls|hls2|hls4" enable="eq(1,false)" default="hls"/>
         <setting id="ask_quality" type="bool" label="Задавать вопрос о качестве видео перед воспроизведением" default="false"/>
         <setting id="mark_advert" type="bool" label="Отмечать видео с рекламой (!)" default="false"/>
+        <setting id="exclude_anime" type="bool" label="Исключать аниме" default="false"/>
         <setting type="lsep" label="Требуется InputStream Adaptive"/>
         <setting id="inputstream_adaptive_enabled" type="bool" label="Использовать inputstream adaptive" default="false" enable="System.HasAddon(inputstream.adaptive)"/>
         <setting id="inputstream_helper_install" type="action" label="Установить inputstream helper" action="RunPlugin(plugin://$ID/inputstream_helper_install)" enable="System.HasAddon(inputstream.adaptive)"/>
