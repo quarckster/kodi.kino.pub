@@ -12,6 +12,7 @@ from resources.lib.auth import Auth
 from resources.lib.client import KinoPubClient
 from resources.lib.listitem import ExtendedListItem
 from resources.lib.logger import Logger
+from resources.lib.modeling import ItemsCollection
 from resources.lib.routing import Routing
 from resources.lib.search_history import SearchHistory
 from resources.lib.settings import Settings
@@ -35,6 +36,7 @@ class Plugin(object):
         self.routing = Routing(self)
         self.search_history = SearchHistory(self)
         self.main_menu_items = self._main_menu_items()
+        self.items = ItemsCollection(self)
 
     def client(self, endpoint):
         return KinoPubClient(self, endpoint)
