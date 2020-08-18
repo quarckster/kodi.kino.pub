@@ -137,9 +137,9 @@ def fetch_content_type_items(content_type, heading, **kwargs):
     data.update(kwargs)
     if heading == "sort":
         data.update(plugin.sorting_params)
-        response = plugin.client("items").get(data=data)
+        response = plugin.items.get("items", data)
     else:
-        response = plugin.client("items/{}".format(heading)).get(data=data)
+        response = plugin.items.get("items/{}".format(heading), data)
     return response
 
 
@@ -148,9 +148,9 @@ def collect_non_anime_items(content_type, heading, initial_items=[], **kwargs):
     start_from = 0 if not kwargs.get("start_from") else int(kwargs["start_from"])
 
     response = fetch_content_type_items(content_type, heading, **kwargs)
-    pagination = response["pagination"]
+    pagination = response.pagination
     page_size = int(pagination["perpage"])
-    excluded_items = exclude_anime(response["items"][start_from:])
+    excluded_items = exclude_anime(response.items[start_from:])
 
     if len(excluded_items) + len(initial_items) < page_size:
         initial_items.extend(excluded_items)
