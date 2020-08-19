@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
+import json
 import sys
 from collections import namedtuple
 from urlparse import parse_qsl
 from urlparse import urlsplit
 
 import xbmcaddon
+import xbmcgui
 
 from resources.lib.auth import Auth
 from resources.lib.client import KinoPubClient
@@ -226,3 +228,16 @@ class Plugin(object):
                 sorting[self.settings.sort_by], direction[self.settings.sort_direction]
             )
         }
+
+    def set_window_property(self, value):
+        xbmcgui.Window(10000).clearProperty("video.kino.pub-playback_data")
+        if not isinstance(value, basestring):
+            value = json.dumps(value)
+        xbmcgui.Window(10000).setProperty("video.kino.pub-playback_data", value)
+
+    def get_window_property(self, item_id):
+        try:
+            items = json.loads(xbmcgui.Window(10000).getProperty("video.kino.pub-playback_data"))
+        except ValueError:
+            items = {}
+        return items.get(item_id, {})

@@ -1,7 +1,17 @@
 # -*- coding: utf-8 -*-
+import re
+import sys
 from collections import namedtuple
 
+import xbmcgui
+
 from resources.lib.utils import cached_property
+from resources.lib.utils import notice
+
+try:
+    import inputstreamhelper
+except ImportError:
+    inputstreamhelper = None
 
 Response = namedtuple("Response", ["items", "pagination"])
 
@@ -41,19 +51,31 @@ class ItemsCollection(object):
             tvshows.append(self.instantiate(item_id=item["id"], item=item))
         return tvshows
 
-    def _get_item(self, item_id):
+    def get_api_item(self, item_id):
         return self.plugin.client("items/{}".format(item_id)).get()["item"]
 
-    def instantiate(self, item_id=None, item=None, index=None):
-        if item_id and not item:
-            item = self._get_item(item_id)
+    def _get_item_entity(self, item_id=None, item=None, index=None):
         if item and item_id:
-            item.update(self._get_item(item_id))
-        if item["subtype"] == "multi":
-            item_entity = Multi
+            item.update(self.get_api_item(item_id))
+        if item_id and not item:
+            item = self.get_api_item(item_id)
+        if item.get("subtype") == "multi":
+            return item, Multi
         else:
-            item_entity = self.content_type_map[item["type"]]
+            return item, self.content_type_map[item["type"]]
+
+    def instantiate(self, item_id=None, item=None, index=None):
+        item, item_entity = self._get_item_entity(item_id, item, index)
         return item_entity(self, item, index=index)
+
+    def instantiate_playable(self, item_id=None, item=None, season_index=None, index=None):
+        item, item_entity = self._get_item_entity(item_id, item, index)
+        if item_entity is TVShow:
+            return item_entity(self, item).seasons[int(season_index) - 1].episodes[int(index) - 1]
+        elif item_entity is Multi:
+            return item_entity(self, item).videos[int(index)]
+        else:
+            return item_entity(self, item, index)
 
 
 class ItemEntity(object):
@@ -63,12 +85,17 @@ class ItemEntity(object):
         self.index = index
         self.item_id = self.item.get("id")
         self.title = self.item.get("title")
-        self.number = self.item.get("number")
         self.poster = self.item.get("posters", {}).get("big")
 
     @property
     def plugin(self):
         return self.parent.plugin
+
+    @property
+    def items_collection(self):
+        if isinstance(self.parent, ItemsCollection):
+            return self.parent
+        return self.parent.items_collection
 
     @property
     def plot(self):
@@ -124,7 +151,7 @@ class ItemEntity(object):
     def list_item(self):
         li = self.plugin.list_item(
             getattr(self, "li_title", self.title),
-            poster=self.item.get("posters", {}).get("big"),
+            poster=self.poster,
             fanart=self.item.get("posters", {}).get("wide"),
             thumbnailImage=self.item.get("thumbnail", ""),
             properties={"id": self.item_id},
@@ -139,6 +166,88 @@ class ItemEntity(object):
     def __repr__(self):
         return "{!r}, item_id: {}, title: {}".format(
             type(self).__name__, self.item_id, self.title.encode("utf-8")
+        )
+
+
+class PlayableItem(ItemEntity):
+    isdir = False
+
+    @property
+    def media_url(self):
+        quality = self.plugin.settings.video_quality
+        stream_type = self.plugin.settings.stream_type
+        ask_quality = self.plugin.settings.ask_quality
+
+        def natural_sort(line):
+            def convert(text):
+                return int(text) if text.isdigit() else text.lower()
+
+            def alphanum_key(key):
+                return [convert(c) for c in re.split("([0-9]+)", key)]
+
+            return sorted(line, key=alphanum_key)
+
+        files = {f["quality"]: f["url"] for f in self.video_data["files"]}
+        flatten_urls_dict = {
+            "{}@{}".format(quality, stream): url
+            for quality, urls in files.items()
+            for stream, url in urls.items()
+        }
+        urls_list = natural_sort(flatten_urls_dict.keys())
+        if ask_quality == "true":
+            dialog = xbmcgui.Dialog()
+            result = dialog.select("Выберите качество видео", urls_list)
+            if result == -1:
+                sys.exit()
+            else:
+                return flatten_urls_dict[urls_list[result]]
+        else:
+            try:
+                return files[quality][stream_type]
+            except KeyError:
+                # if there is no such quality then return a link with the highest available quality
+                return files[natural_sort(files.keys())[-1]][stream_type]
+
+    @property
+    def list_item(self):
+        li = super(PlayableItem, self).list_item
+        li.setProperty("isPlayable", "true")
+        return li
+
+    @property
+    def hls_properties(self):
+        if (
+            "hls" in self.plugin.settings.stream_type
+            and self.plugin.settings.inputstream_adaptive_enabled == "true"
+            and inputstreamhelper
+        ):
+            helper = inputstreamhelper.Helper("hls")
+            if not helper.check_inputstream():
+                notice("HLS поток не поддерживается")
+                return {}
+            else:
+                return {
+                    "inputstreamaddon": helper.inputstream_addon,
+                    "inputstream.adaptive.manifest_type": "hls",
+                }
+        return {}
+
+    @property
+    def playable_list_item(self):
+        properties = {
+            "item_id": self.item_id,
+            "play_duration": self.video_info["duration"],
+            "play_resumetime": self.video_info["time"],
+            "playcount": self.video_info["playcount"],
+            "imdbnumber": self.video_info["imdbnumber"],
+        }
+        properties.update(self.hls_properties)
+        return self.plugin.list_item(
+            getattr(self, "li_title", self.title),
+            path=self.media_url,
+            properties=properties,
+            poster=self.poster,
+            subtitles=[subtitle["url"] for subtitle in self.video_data["subtitles"]],
         )
 
 
@@ -159,7 +268,9 @@ class TVShow(ItemEntity):
 
     @property
     def seasons(self):
-        return [Season(self, season) for season in self.item["seasons"]]
+        return [
+            Season(self, item=season, index=i) for i, season in enumerate(self.item["seasons"], 1)
+        ]
 
 
 class Season(ItemEntity):
@@ -169,27 +280,29 @@ class Season(ItemEntity):
     def __init__(self, *args, **kwargs):
         super(Season, self).__init__(*args, **kwargs)
         self.tvshow = self.parent
-        self.title = "Сезон {}".format(self.number)
+        self.title = "Сезон {}".format(self.index)
         self.item_id = self.tvshow.item_id
-        self.url = self.plugin.routing.build_url("season_episodes", self.item_id, self.number)
-        self.watching_info = self.tvshow.watching_info["seasons"][self.number - 1]
+        self.url = self.plugin.routing.build_url("season_episodes", self.item_id, self.index)
+        self.watching_info = self.tvshow.watching_info["seasons"][int(self.index) - 1]
         self.watching_status = self.watching_info["status"]
 
     @property
     def episodes(self):
-        return [SeasonEpisode(self, episode_item) for episode_item in self.item["episodes"]]
+        return [
+            SeasonEpisode(self, item=episode_item, index=i)
+            for i, episode_item in enumerate(self.item["episodes"], 1)
+        ]
 
     @property
     def video_info(self):
         base_video_info = self.tvshow.video_info
         base_video_info.update(
-            {"season": self.number, "playcount": self.watching_status, "mediatype": self.mediatype}
+            {"season": self.index, "playcount": self.watching_status, "mediatype": self.mediatype}
         )
         return base_video_info
 
 
-class SeasonEpisode(ItemEntity):
-    isdir = False
+class SeasonEpisode(PlayableItem):
     mediatype = "episode"
 
     def __init__(self, *args, **kwargs):
@@ -197,14 +310,17 @@ class SeasonEpisode(ItemEntity):
         self.season = self.parent
         self.tvshow = self.season.tvshow
         self.item_id = self.tvshow.item_id
-        self.url = self.plugin.routing.build_url("play", self.item_id, self.number)
-        self.li_title = "s{:02d}e{:02d}".format(self.season.number, self.number)
+        self.video_data = self.item
+        self.url = self.plugin.routing.build_url(
+            "play", self.item_id, "seasons", self.season.index, "episodes", self.index
+        )
+        self.li_title = "s{:02d}e{:02d}".format(self.season.index, self.index)
         if self.title:
             self.li_title = u"{} | {}".format(self.li_title, self.title)
         try:
             # In a tvshow season could be a case when some episodes are not available, but episode
             # numbers in response payload are set correctly.
-            self.watching_info = self.season.watching_info["episodes"][self.number - 1]
+            self.watching_info = self.season.watching_info["episodes"][int(self.index) - 1]
             self.watching_status = self.watching_info["status"]
         except IndexError:
             self.watching_info = self.watching_status = None
@@ -214,8 +330,8 @@ class SeasonEpisode(ItemEntity):
         base_video_info = self.tvshow.video_info
         base_video_info.update(
             {
-                "season": self.season.number,
-                "episode": self.number,
+                "season": self.season.index,
+                "episode": self.index,
                 "tvshowtitle": self.tvshow.title,
                 "time": self.watching_info["time"],
                 "duration": self.watching_info["duration"],
@@ -226,9 +342,9 @@ class SeasonEpisode(ItemEntity):
         return base_video_info
 
     @property
-    def list_item(self):
-        li = super(SeasonEpisode, self).list_item
-        li.setProperty("isPlayable", "true")
+    def playable_list_item(self):
+        li = super(SeasonEpisode, self).playable_list_item
+        li.setProperties(video_number=self.index, season_number=self.season.index)
         return li
 
 
@@ -241,7 +357,10 @@ class Multi(ItemEntity):
 
     @property
     def videos(self):
-        return [Episode(self, episode_item) for episode_item in self.item["videos"]]
+        return [
+            Episode(self, item=episode_item, index=i)
+            for i, episode_item in enumerate(self.item["videos"], 1)
+        ]
 
     @property
     def list_item(self):
@@ -256,15 +375,17 @@ class Multi(ItemEntity):
         return base_video_info
 
 
-class Episode(ItemEntity):
-    isdir = False
+class Episode(PlayableItem):
     mediatype = "episode"
 
     def __init__(self, *args, **kwargs):
         super(Episode, self).__init__(*args, **kwargs)
         self.item_id = self.parent.item_id
-        self.url = self.plugin.routing.build_url("play", self.item_id, self.number)
-        self.li_title = "e{:02d}".format(self.number)
+        self.video_data = self.item
+        self.url = self.plugin.routing.build_url(
+            "play", self.item_id, "seasons", 1, "episodes", self.index
+        )
+        self.li_title = "e{:02d}".format(self.index)
         if self.title:
             self.li_title = u"{} | {}".format(self.li_title, self.title)
 
@@ -273,7 +394,7 @@ class Episode(ItemEntity):
         base_video_info = self.parent.video_info
         base_video_info.update(
             {
-                "episode": self.number,
+                "episode": self.index,
                 "tvshowtitle": self.title,
                 "time": self.watching_info["time"],
                 "duration": self.watching_info["duration"],
@@ -284,23 +405,30 @@ class Episode(ItemEntity):
         return base_video_info
 
     @property
-    def list_item(self):
-        li = super(Episode, self).list_item
-        li.setProperty("isPlayable", "true")
-        return li
+    def watching_info(self):
+        return self.parent.watching_info["videos"][int(self.index) - 1]
 
     @property
-    def watching_info(self):
-        return self.parent.watching_info["videos"][self.number - 1]
+    def playable_list_item(self):
+        li = super(SeasonEpisode, self).playable_list_item
+        li.setProperties(video_number=self.index)
+        return li
 
 
-class Movie(ItemEntity):
-    isdir = False
+class Movie(PlayableItem):
     mediatype = "movie"
 
     def __init__(self, *args, **kwargs):
         super(Movie, self).__init__(*args, **kwargs)
-        self.url = self.plugin.routing.build_url("play", self.item_id, self.index)
+        self.url = self.plugin.routing.build_url(
+            "play", self.item_id, "seasons", 1, "episodes", self.index
+        )
+
+    @property
+    def video_data(self):
+        if "videos" in self.item:
+            return self.item["videos"][0]
+        return self.items_collection.get_api_item(self.item_id)["videos"][0]
 
     @property
     def video_info(self):
@@ -319,10 +447,15 @@ class Movie(ItemEntity):
     @property
     def list_item(self):
         li = super(Movie, self).list_item
-        li.setProperty("isPlayable", "true")
         li.setResumeTime(self.watching_info["time"], self.watching_info["duration"])
         return li
 
     @cached_property
     def watching_info(self):
         return self.plugin.client("watching").get(data={"id": self.item_id})["item"]["videos"][0]
+
+    @property
+    def playable_list_item(self):
+        li = super(Movie, self).playable_list_item
+        li.setProperties(video_number=1)
+        return li
