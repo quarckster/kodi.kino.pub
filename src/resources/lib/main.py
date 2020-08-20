@@ -43,7 +43,7 @@ def render_pagination(pagination):
     xbmcplugin.endOfDirectory(plugin.handle, cacheToDisc=False)
 
 
-def render_items(items, content_type, add_indexes=False):
+def render_items(items, content_type):
     """
     Available content strings
 
@@ -58,7 +58,7 @@ def render_items(items, content_type, add_indexes=False):
     playback_data = {}
     for index, item in enumerate(items, 1):
         if not item.isdir:
-            playback_data[item.item_id] = item.item
+            playback_data[item.item_id] = item
         xbmcplugin.addDirectoryItem(plugin.handle, item.url, item.list_item, item.isdir)
     plugin.set_window_property(playback_data)
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_UNSORTED)
@@ -87,7 +87,7 @@ def index():
         li = plugin.list_item(
             "Активировать устройство", iconImage=plugin.routing.build_icon_path("activate")
         )
-        xbmcplugin.addDirectoryItem(plugin.handle, plugin.routing.build_url("login"), li, False)
+        xbmcplugin.addDirectoryItem(plugin.handle, plugin.routing.build_url("login/"), li, False)
     else:
         for menu_item in plugin.main_menu_items:
             if menu_item.is_displayed:
@@ -101,7 +101,7 @@ def index():
 def render_heading(name, localized_name, content_type, is_dir):
     img = plugin.routing.build_icon_path(name)
     li = plugin.list_item(localized_name, iconImage=img, thumbnailImage=img)
-    url = plugin.routing.build_url("items", content_type, name)
+    url = plugin.routing.build_url("items", content_type, "{}/".format(name))
     xbmcplugin.addDirectoryItem(plugin.handle, url, li, is_dir)
 
 
@@ -150,7 +150,7 @@ def genres(content_type):
     response = plugin.client("genres").get(data={"type": content_type.rstrip("s")})
     for genre in response["items"]:
         li = plugin.list_item(genre["title"])
-        url = plugin.routing.build_url("items", content_type, "genres", genre["id"])
+        url = plugin.routing.build_url("items", content_type, "genres", "{}/".format(genre["id"]))
         xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
     xbmcplugin.endOfDirectory(plugin.handle)
 
@@ -177,7 +177,9 @@ def alphabet(content_type):
     # fmt: on
     for letter in letters:
         li = plugin.list_item(letter)
-        url = plugin.routing.build_url("items", content_type, "alphabet", letter, sort="title")
+        url = plugin.routing.build_url(
+            "items", content_type, "alphabet", u"{}/".format(letter), sort="title"
+        )
         xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
     xbmcplugin.endOfDirectory(plugin.handle)
 
@@ -201,7 +203,7 @@ def new_search(content_type):
     if kbd.isConfirmed():
         title = kbd.getText()
         plugin.logger.notice(title)
-        url = plugin.routing.build_url("search", content_type, "results", title=title)
+        url = plugin.routing.build_url("search", content_type, "results/", title=title)
         plugin.routing.redirect(url)
 
 
@@ -209,14 +211,14 @@ def new_search(content_type):
 def search(content_type):
     img = plugin.routing.build_icon_path("search")
     li = plugin.list_item("Новый Поиск", iconImage=img, thumbnailImage=img)
-    url = plugin.routing.build_url("new_search", content_type)
+    url = plugin.routing.build_url("new_search", "{}/".format(content_type))
     xbmcplugin.addDirectoryItem(plugin.handle, url, li, False)
 
     for history_item in plugin.search_history.recent:
         img = plugin.routing.build_icon_path("search_history")
         li = plugin.list_item(history_item.encode("utf8"), iconImage=img, thumbnailImage=img)
         url = plugin.routing.build_url(
-            "search", content_type, "results", title=history_item.encode("utf8")
+            "search", content_type, "results/", title=history_item.encode("utf8")
         )
         xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
     xbmcplugin.endOfDirectory(plugin.handle)
@@ -247,7 +249,7 @@ def clean_search_history():
 
 @plugin.routing.route("/seasons/<item_id>/")
 def seasons(item_id):
-    tvshow = plugin.items.instantiate(item_id=item_id)
+    tvshow = plugin.get_window_property(item_id) or plugin.items.instantiate(item_id=item_id)
     selectedSeason = False
     xbmcplugin.setContent(plugin.handle, "tvshows")
     for season in tvshow.seasons:
@@ -255,6 +257,7 @@ def seasons(item_id):
             selectedSeason = True
             season.list_item.select(selectedSeason)
         xbmcplugin.addDirectoryItem(plugin.handle, season.url, season.list_item, True)
+    plugin.set_window_property({tvshow.item_id: tvshow})
     xbmcplugin.endOfDirectory(plugin.handle, cacheToDisc=False)
 
 
@@ -264,13 +267,13 @@ def episodes(item_id):
     xbmcplugin.setContent(plugin.handle, "episodes")
     for video in collection.videos:
         xbmcplugin.addDirectoryItem(plugin.handle, video.url, video.list_item, False)
-    plugin.set_window_property({collection.item_id: collection.item})
+    plugin.set_window_property({collection.item_id: collection})
     xbmcplugin.endOfDirectory(plugin.handle, cacheToDisc=False)
 
 
 @plugin.routing.route("/season_episodes/<item_id>/<season_number>/")
 def season_episodes(item_id, season_number):
-    tvshow = plugin.items.instantiate(item_id=item_id)
+    tvshow = plugin.get_window_property(item_id) or plugin.items.instantiate(item_id=item_id)
     xbmcplugin.setContent(plugin.handle, "episodes")
     selectedEpisode = False
     for episode in tvshow.seasons[int(season_number) - 1].episodes:
@@ -280,19 +283,18 @@ def season_episodes(item_id, season_number):
             selectedEpisode = True
             episode.list_item.select(selectedEpisode)
         xbmcplugin.addDirectoryItem(plugin.handle, episode.url, episode.list_item, False)
-    plugin.set_window_property({tvshow.item_id: tvshow.item})
+    plugin.set_window_property({tvshow.item_id: tvshow})
     xbmcplugin.endOfDirectory(plugin.handle, cacheToDisc=False)
 
 
-@plugin.routing.route("/play/<item_id>/seasons/<season_index>/episodes/<index>/")
+@plugin.routing.route("/play/<item_id>/seasons/<season_index>/episodes/<index>")
 def play(item_id, season_index, index):
-    item = plugin.get_window_property(item_id)
-    video = plugin.items.instantiate_playable(
-        item=item, item_id=item_id, season_index=season_index, index=index
-    )
-    li = video.playable_list_item
-    player = Player(list_item=li)
-    xbmcplugin.setResolvedUrl(plugin.handle, True, li)
+    item = plugin.get_window_property(item_id) or plugin.items.instantiate(item_id=item_id)
+    playable_list_item = plugin.items.get_playable(
+        item=item, season_index=season_index, index=index
+    ).playable_list_item
+    player = Player(list_item=playable_list_item)
+    xbmcplugin.setResolvedUrl(plugin.handle, True, playable_list_item)
     while player.is_playing:
         player.set_marktime()
         xbmc.sleep(1000)
@@ -310,7 +312,7 @@ def trailer(item_id):
 def bookmarks():
     img = plugin.routing.build_icon_path("create_bookmarks_folder")
     li = plugin.list_item("Создать папку", iconImage=img, thumbnailImage=img)
-    url = plugin.routing.build_url("create_bookmarks_folder")
+    url = plugin.routing.build_url("create_bookmarks_folder/")
     xbmcplugin.addDirectoryItem(plugin.handle, url, li, False)
     response = plugin.client("bookmarks").get()
     for folder in response["items"]:
@@ -321,9 +323,9 @@ def bookmarks():
             thumbnailImage=img,
             properties={"folder-id": str(folder["id"]), "views": str(folder["views"])},
         )
-        url = plugin.routing.build_url("remove_bookmarks_folder", folder["id"])
+        url = plugin.routing.build_url("remove_bookmarks_folder", "{}/".format(folder["id"]))
         li.addContextMenuItems([("Удалить", "Container.Update({})".format(url))])
-        url = plugin.routing.build_url("bookmarks", folder["id"])
+        url = plugin.routing.build_url("bookmarks", "{}/".format(folder["id"]))
         xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
     xbmcplugin.endOfDirectory(plugin.handle)
 
@@ -350,7 +352,7 @@ def watching_movies():
     playback_data = {}
     for movie in plugin.items.watching_movies:
         if not movie.isdir:
-            playback_data.update({movie.item_id: movie.item})
+            playback_data[movie.item_id] = movie
         xbmcplugin.addDirectoryItem(plugin.handle, movie.url, movie.list_item, movie.isdir)
     plugin.set_window_property(playback_data)
     xbmcplugin.endOfDirectory(plugin.handle, cacheToDisc=False)
@@ -360,17 +362,17 @@ def watching_movies():
 def collections():
     img = plugin.routing.build_icon_path("fresh")
     li = plugin.list_item("Последние", iconImage=img, thumbnailImage=img)
-    url = plugin.routing.build_url("collections", "created")
+    url = plugin.routing.build_url("collections", "created/")
     xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
 
     img = plugin.routing.build_icon_path("hot")
     li = plugin.list_item("Просматриваемые", iconImage=img, thumbnailImage=img)
-    url = plugin.routing.build_url("collections", "watchers")
+    url = plugin.routing.build_url("collections", "watchers/")
     xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
 
     img = plugin.routing.build_icon_path("popular")
     li = plugin.list_item("Популярные", iconImage=img, thumbnailImage=img)
-    url = plugin.routing.build_url("collections", "views")
+    url = plugin.routing.build_url("collections", "views/")
     xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
 
     xbmcplugin.endOfDirectory(plugin.handle)
@@ -384,7 +386,7 @@ def sorted_collections(sorting):
     xbmcplugin.setContent(plugin.handle, "movies")
     for item in response["items"]:
         li = plugin.list_item(item["title"], thumbnailImage=item["posters"]["medium"])
-        url = plugin.routing.build_url("collection", item["id"])
+        url = plugin.routing.build_url("collection", "{}/".format(item["id"]))
         xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
     render_pagination(response["pagination"])
 
@@ -392,7 +394,7 @@ def sorted_collections(sorting):
 @plugin.routing.route("/collection/<item_id>/")
 def collection(item_id):
     response = plugin.items.get("collections/view", data={"id": item_id})
-    render_items(response.items, content_type="movie", add_indexes=True)
+    render_items(response.items, content_type="movie")
     xbmcplugin.endOfDirectory(plugin.handle)
 
 

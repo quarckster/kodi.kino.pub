@@ -40,23 +40,27 @@ class ItemsCollection(object):
     @property
     def watching_movies(self):
         movies = []
-        for i, item in enumerate(self.plugin.client("watching/movies").get()["items"]):
-            movies.append(self.instantiate(item_id=item["id"], index=i))
+        for i, small_item in enumerate(self.plugin.client("watching/movies").get()["items"]):
+            item = self.get_api_item(small_item["id"])
+            movies.append(self.instantiate(item=item))
         return movies
 
     @property
     def watching_tvshows(self):
         tvshows = []
-        for item in self.plugin.client("watching/serials").get(data={"subscribed": 1})["items"]:
-            tvshows.append(self.instantiate(item_id=item["id"], item=item))
+        small_items = self.plugin.client("watching/serials").get(data={"subscribed": 1})["items"]
+        for small_item in small_items:
+            unwatched_episodes = small_item["new"]
+            item = self.get_api_item(small_item["id"])
+            tvhsow = self.instantiate(item=item)
+            tvhsow.new = unwatched_episodes
+            tvshows.append(tvhsow)
         return tvshows
 
     def get_api_item(self, item_id):
         return self.plugin.client("items/{}".format(item_id)).get()["item"]
 
-    def _get_item_entity(self, item_id=None, item=None, index=None):
-        if item and item_id:
-            item.update(self.get_api_item(item_id))
+    def _get_item_entity(self, item_id=None, item=None):
         if item_id and not item:
             item = self.get_api_item(item_id)
         if item.get("subtype") == "multi":
@@ -65,17 +69,16 @@ class ItemsCollection(object):
             return item, self.content_type_map[item["type"]]
 
     def instantiate(self, item_id=None, item=None, index=None):
-        item, item_entity = self._get_item_entity(item_id, item, index)
+        item, item_entity = self._get_item_entity(item_id, item)
         return item_entity(self, item, index=index)
 
-    def instantiate_playable(self, item_id=None, item=None, season_index=None, index=None):
-        item, item_entity = self._get_item_entity(item_id, item, index)
-        if item_entity is TVShow:
-            return item_entity(self, item).seasons[int(season_index) - 1].episodes[int(index) - 1]
-        elif item_entity is Multi:
-            return item_entity(self, item).videos[int(index)]
+    def get_playable(self, item=None, season_index=None, index=None):
+        if isinstance(item, TVShow):
+            return item.seasons[int(season_index) - 1].episodes[int(index) - 1]
+        elif isinstance(item, Multi):
+            return item.videos[int(index) - 1]
         else:
-            return item_entity(self, item, index)
+            return item
 
 
 class ItemEntity(object):
@@ -86,16 +89,11 @@ class ItemEntity(object):
         self.item_id = self.item.get("id")
         self.title = self.item.get("title")
         self.poster = self.item.get("posters", {}).get("big")
+        self._plugin = None
 
     @property
     def plugin(self):
-        return self.parent.plugin
-
-    @property
-    def items_collection(self):
-        if isinstance(self.parent, ItemsCollection):
-            return self.parent
-        return self.parent.items_collection
+        return self._plugin or self.parent.plugin
 
     @property
     def plot(self):
@@ -163,8 +161,16 @@ class ItemEntity(object):
         li.markAdvert(self.item.get("advert"))
         return li
 
+    def __getstate__(self):
+        odict = self.__dict__.copy()
+        if "parent" in odict:
+            del odict["parent"]
+        if "_plugin" in odict:
+            del odict["_plugin"]
+        return odict
+
     def __repr__(self):
-        return "{!r}, item_id: {}, title: {}".format(
+        return "<{!r}; item_id: {}; title: {}>".format(
             type(self).__name__, self.item_id, self.title.encode("utf-8")
         )
 
@@ -258,7 +264,7 @@ class TVShow(ItemEntity):
     def __init__(self, *args, **kwargs):
         super(TVShow, self).__init__(*args, **kwargs)
         self.url = self.plugin.routing.build_url("seasons", self.item_id)
-        self.new = self.item.get("new", "")
+        self.new = None
 
     @property
     def video_info(self):
@@ -410,7 +416,7 @@ class Episode(PlayableItem):
 
     @property
     def playable_list_item(self):
-        li = super(SeasonEpisode, self).playable_list_item
+        li = super(Episode, self).playable_list_item
         li.setProperties(video_number=self.index)
         return li
 
@@ -428,7 +434,7 @@ class Movie(PlayableItem):
     def video_data(self):
         if "videos" in self.item:
             return self.item["videos"][0]
-        return self.items_collection.get_api_item(self.item_id)["videos"][0]
+        return self.plugin.items.get_api_item(self.item_id)["videos"][0]
 
     @property
     def video_info(self):

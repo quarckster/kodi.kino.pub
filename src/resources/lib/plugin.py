@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-import json
+import cPickle
 import sys
 from collections import namedtuple
 from urlparse import parse_qsl
@@ -79,126 +79,126 @@ class Plugin(object):
         return [
             MainMenuItem(
                 "Профиль",
-                self.routing.build_url("profile"),
+                self.routing.build_url("profile/"),
                 self.routing.build_icon_path("profile"),
                 False,
                 True,
             ),
             MainMenuItem(
                 "Поиск",
-                self.routing.build_url("search", "all"),
+                self.routing.build_url("search", "all/"),
                 self.routing.build_icon_path("search"),
                 True,
                 self.settings.show_search,
             ),
             MainMenuItem(
                 "Закладки",
-                self.routing.build_url("bookmarks"),
+                self.routing.build_url("bookmarks/"),
                 self.routing.build_icon_path("bookmarks"),
                 True,
                 True,
             ),
             MainMenuItem(
                 "Я смотрю",
-                self.routing.build_url("watching"),
+                self.routing.build_url("watching/"),
                 self.routing.build_icon_path("watching"),
                 True,
                 True,
             ),
             MainMenuItem(
                 "Недосмотренные",
-                self.routing.build_url("watching_movies"),
+                self.routing.build_url("watching_movies/"),
                 self.routing.build_icon_path("watching_movies"),
                 True,
                 True,
             ),
             MainMenuItem(
                 "Последние",
-                self.routing.build_url("items", "all", "fresh"),
+                self.routing.build_url("items", "all", "fresh/"),
                 self.routing.build_icon_path("fresh"),
                 True,
                 self.settings.show_last,
             ),
             MainMenuItem(
                 "Популярные",
-                self.routing.build_url("items", "all", "popular"),
+                self.routing.build_url("items", "all", "popular/"),
                 self.routing.build_icon_path("popular"),
                 True,
                 self.settings.show_popular,
             ),
             MainMenuItem(
                 "Горячие",
-                self.routing.build_url("items", "all", "hot"),
+                self.routing.build_url("items", "all", "hot/"),
                 self.routing.build_icon_path("hot"),
                 True,
                 self.settings.show_hot,
             ),
             MainMenuItem(
                 self.sorting_title,
-                self.routing.build_url("items", "all", "sort"),
+                self.routing.build_url("items", "all", "sort/"),
                 self.routing.build_icon_path("sort"),
                 True,
                 self.settings.show_sort,
             ),
             MainMenuItem(
                 "ТВ",
-                self.routing.build_url("tv"),
+                self.routing.build_url("tv/"),
                 self.routing.build_icon_path("tv"),
                 True,
                 self.settings.show_tv,
             ),
             MainMenuItem(
                 "Подборки",
-                self.routing.build_url("collections"),
+                self.routing.build_url("collections/"),
                 self.routing.build_icon_path("collections"),
                 True,
                 self.settings.show_collections,
             ),
             MainMenuItem(
                 "Фильмы",
-                self.routing.build_url("items", "movies"),
+                self.routing.build_url("items", "movies/"),
                 self.routing.build_icon_path("movies"),
                 True,
                 self.settings.show_movies,
             ),
             MainMenuItem(
                 "Сериалы",
-                self.routing.build_url("items", "serials"),
+                self.routing.build_url("items", "serials/"),
                 self.routing.build_icon_path("serials"),
                 True,
                 self.settings.show_serials,
             ),
             MainMenuItem(
                 "ТВ шоу",
-                self.routing.build_url("items", "tvshow"),
+                self.routing.build_url("items", "tvshow/"),
                 self.routing.build_icon_path("tvshows"),
                 True,
                 self.settings.show_tvshows,
             ),
             MainMenuItem(
                 "3D",
-                self.routing.build_url("items", "3d"),
+                self.routing.build_url("items", "3d/"),
                 self.routing.build_icon_path("3d"),
                 True,
                 self.settings.show_3d,
             ),
             MainMenuItem(
                 "Концерты",
-                self.routing.build_url("items", "concerts"),
+                self.routing.build_url("items", "concerts/"),
                 self.routing.build_icon_path("concerts"),
                 True,
                 self.settings.show_concerts,
             ),
             MainMenuItem(
                 "Документальные фильмы",
-                self.routing.build_url("items", "documovies"),
+                self.routing.build_url("items", "documovies/"),
                 self.routing.build_icon_path("documovies"),
                 True,
                 self.settings.show_documovies,
             ),
             MainMenuItem(
                 "Документальные сериалы",
-                self.routing.build_url("items", "docuserials"),
+                self.routing.build_url("items", "docuserials/"),
                 self.routing.build_icon_path("docuserials"),
                 True,
                 self.settings.show_docuserials,
@@ -232,12 +232,15 @@ class Plugin(object):
     def set_window_property(self, value):
         xbmcgui.Window(10000).clearProperty("video.kino.pub-playback_data")
         if not isinstance(value, basestring):
-            value = json.dumps(value)
+            value = cPickle.dumps(value)
         xbmcgui.Window(10000).setProperty("video.kino.pub-playback_data", value)
 
     def get_window_property(self, item_id):
         try:
-            items = json.loads(xbmcgui.Window(10000).getProperty("video.kino.pub-playback_data"))
-        except ValueError:
+            items = cPickle.loads(xbmcgui.Window(10000).getProperty("video.kino.pub-playback_data"))
+        except EOFError:
             items = {}
-        return items.get(item_id, {})
+        item = items.get(int(item_id), {})
+        if item:
+            item._plugin = self
+        return item
