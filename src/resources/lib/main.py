@@ -340,9 +340,12 @@ def show_bookmark_folder(folder_id):
 @plugin.routing.route("/watching/")
 def watching():
     xbmcplugin.setContent(plugin.handle, "tvshows")
+    playback_data = {}
     for tvshow in plugin.items.watching_tvshows:
         tvshow.li_title = u"{} : [COLOR FFFFF000]+{}[/COLOR]".format(tvshow.title, tvshow.new)
+        playback_data[tvshow.item_id] = tvshow
         xbmcplugin.addDirectoryItem(plugin.handle, tvshow.url, tvshow.list_item, True)
+    plugin.set_window_property(playback_data)
     xbmcplugin.endOfDirectory(plugin.handle, cacheToDisc=False)
 
 
