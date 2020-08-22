@@ -263,7 +263,7 @@ class TVShow(ItemEntity):
 
     def __init__(self, *args, **kwargs):
         super(TVShow, self).__init__(*args, **kwargs)
-        self.url = self.plugin.routing.build_url("seasons", self.item_id)
+        self.url = self.plugin.routing.build_url("seasons", "{}/".format(self.item_id))
         self.new = None
 
     @property
@@ -288,7 +288,9 @@ class Season(ItemEntity):
         self.tvshow = self.parent
         self.title = "Сезон {}".format(self.index)
         self.item_id = self.tvshow.item_id
-        self.url = self.plugin.routing.build_url("season_episodes", self.item_id, self.index)
+        self.url = self.plugin.routing.build_url(
+            "season_episodes", self.item_id, "{}/".format(self.index)
+        )
         self.watching_info = self.tvshow.watching_info["seasons"][int(self.index) - 1]
         self.watching_status = self.watching_info["status"]
 
@@ -359,7 +361,7 @@ class Multi(ItemEntity):
 
     def __init__(self, *args, **kwargs):
         super(Multi, self).__init__(*args, **kwargs)
-        self.url = self.plugin.routing.build_url("episodes", self.item_id)
+        self.url = self.plugin.routing.build_url("episodes", "{}/".format(self.item_id))
 
     @property
     def videos(self):
