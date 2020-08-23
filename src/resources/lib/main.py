@@ -18,7 +18,7 @@ from resources.lib.plugin import Plugin
 
 
 content_type_map = {
-    "all": "tvshow",
+    "all": "movie",
     "serial": "tvshow",
     "docuserial": "tvshow",
     "tvshow": "tvshow",
@@ -401,7 +401,7 @@ def collection(item_id):
     xbmcplugin.endOfDirectory(plugin.handle)
 
 
-@plugin.routing.route("/toggle_watched/<item_id>/")
+@plugin.routing.route("/toggle_watched/<item_id>")
 def toggle_watched(item_id):
     data = {"id": item_id}
     data.update(plugin.kwargs)
@@ -409,9 +409,11 @@ def toggle_watched(item_id):
     if "video" in data:
         data["time"] = 0
         plugin.client("watching/marktime").get(data=data)
+    plugin.clear_window_property()
+    xbmc.executebuiltin("Container.Refresh")
 
 
-@plugin.routing.route("/toggle_watchlist/<item_id>/")
+@plugin.routing.route("/toggle_watchlist/<item_id>")
 def toggle_watchlist(item_id):
     added = int(plugin.kwargs["added"])
     plugin.client("watching/togglewatchlist").get(data={"id": item_id})
@@ -419,9 +421,11 @@ def toggle_watchlist(item_id):
         notice('Сериал добавлен в список "Буду смотреть"')
     else:
         notice('Сериал удалён из списка "Буду смотреть"')
+    plugin.clear_window_property()
+    xbmc.executebuiltin("Container.Refresh")
 
 
-@plugin.routing.route("/edit_bookmarks/<item_id>/")
+@plugin.routing.route("/edit_bookmarks/<item_id>")
 def edit_bookmarks(item_id):
     item_folders_resp = plugin.client("bookmarks/get-item-folders").get(data={"item": item_id})
     all_folders_resp = plugin.client("bookmarks").get()
@@ -454,7 +458,7 @@ def edit_bookmarks(item_id):
     notice("Закладки для видео изменены")
 
 
-@plugin.routing.route("/remove_bookmarks_folder/<folder_id>/")
+@plugin.routing.route("/remove_bookmarks_folder/<folder_id>")
 def remove_bookmarks_folder(folder_id):
     plugin.client("bookmarks/remove-folder").post(data={"folder": folder_id})
 
@@ -482,7 +486,7 @@ def profile():
     )
 
 
-@plugin.routing.route("/comments/<item_id>/")
+@plugin.routing.route("/comments/<item_id>")
 def comments(item_id):
     response = plugin.client("items/comments").get(data={"id": item_id})
     comments = response["comments"]
@@ -502,7 +506,7 @@ def comments(item_id):
     dialog.textviewer(u'Комментарии "{}"'.format(title), message)
 
 
-@plugin.routing.route("/similar/<item_id>/")
+@plugin.routing.route("/similar/<item_id>")
 def similar(item_id):
     response = plugin.items.get("items/similar", data={"id": item_id})
     if not response.items:
