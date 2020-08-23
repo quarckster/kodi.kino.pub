@@ -13,6 +13,7 @@ import xbmc
 import xbmcgui
 
 from resources.lib.utils import notice
+from resources.lib.utils import cached_property
 
 
 class AuthException(Exception):
@@ -35,7 +36,12 @@ class AuthDialog(object):
     def __init__(self, plugin):
         self.total = 0
         self.plugin = plugin
-        self._dialog = xbmcgui.DialogProgress()
+
+    @cached_property
+    def _dialog(self):
+        # In order to prevent WARNING: has left several classes in memory that we couldn't clean up.
+        # The classes include: N9XBMCAddon7xbmcgui14DialogProgressE
+        return xbmcgui.DialogProgress()
 
     def close(self, cancel=False):
         if self._dialog:
