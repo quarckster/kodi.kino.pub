@@ -312,7 +312,7 @@ def trailer(item_id):
 def bookmarks():
     img = plugin.routing.build_icon_path("create_bookmarks_folder")
     li = plugin.list_item("Создать папку", iconImage=img, thumbnailImage=img)
-    url = plugin.routing.build_url("create_bookmarks_folder/")
+    url = plugin.routing.build_url("create_bookmarks_folder")
     xbmcplugin.addDirectoryItem(plugin.handle, url, li, False)
     response = plugin.client("bookmarks").get()
     for folder in response["items"]:
@@ -323,8 +323,8 @@ def bookmarks():
             thumbnailImage=img,
             properties={"folder-id": str(folder["id"]), "views": str(folder["views"])},
         )
-        url = plugin.routing.build_url("remove_bookmarks_folder", "{}/".format(folder["id"]))
-        li.addContextMenuItems([("Удалить", "Container.Update({})".format(url))])
+        url = plugin.routing.build_url("remove_bookmarks_folder", folder["id"])
+        li.addContextMenuItems([("Удалить", "XBMC.RunPlugin({})".format(url))])
         url = plugin.routing.build_url("bookmarks", "{}/".format(folder["id"]))
         xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
     xbmcplugin.endOfDirectory(plugin.handle)
@@ -461,9 +461,10 @@ def edit_bookmarks(item_id):
 @plugin.routing.route("/remove_bookmarks_folder/<folder_id>")
 def remove_bookmarks_folder(folder_id):
     plugin.client("bookmarks/remove-folder").post(data={"folder": folder_id})
+    xbmc.executebuiltin("Container.Refresh")
 
 
-@plugin.routing.route("/create_bookmarks_folder/")
+@plugin.routing.route("/create_bookmarks_folder")
 def create_bookmarks_folder():
     kbd = xbmc.Keyboard()
     kbd.setHeading("Имя папки закладок")
@@ -471,6 +472,7 @@ def create_bookmarks_folder():
     if kbd.isConfirmed():
         title = kbd.getText()
         plugin.client("bookmarks/create").post(data={"title": title})
+        xbmc.executebuiltin("Container.Refresh")
 
 
 @plugin.routing.route("/profile/")
