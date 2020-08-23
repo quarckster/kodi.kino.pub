@@ -49,7 +49,7 @@ class ExtendedListItem(ListItem):
         url = self.plugin.routing.build_url(
             "toggle_watchlist", self.getProperty("id"), added=int(not int(in_watchlist))
         )
-        menu_items.append((label, "Container.Update({})".format(url)))
+        menu_items.append((label, "XBMC.RunPlugin({})".format(url)))
 
     def _addWatchedContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
@@ -69,7 +69,7 @@ class ExtendedListItem(ListItem):
         else:
             kwargs = {"video": video_number}
         url = self.plugin.routing.build_url("toggle_watched", item_id, **kwargs)
-        menu_items.append((label, "Container.Update({})".format(url)))
+        menu_items.append((label, "XBMC.RunPlugin({})".format(url)))
 
     def _addBookmarksContextMenuItem(self, menu_items):
         if self.getVideoInfoTag().getMediaType() == "season":
@@ -77,13 +77,13 @@ class ExtendedListItem(ListItem):
         item_id = self.getProperty("id")
         label = "Изменить закладки"
         url = self.plugin.routing.build_url("edit_bookmarks", item_id)
-        menu_items.append((label, "Container.Update({})".format(url)))
+        menu_items.append((label, "XBMC.RunPlugin({})".format(url)))
 
     def _addCommentsContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
         label = "Комментарии KinoPub"
         url = self.plugin.routing.build_url("comments", item_id)
-        menu_items.append((label, "Container.Update({})".format(url)))
+        menu_items.append((label, "XBMC.RunPlugin({})".format(url)))
 
     def _addSimilarContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
