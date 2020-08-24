@@ -18,7 +18,7 @@ from resources.lib.plugin import Plugin
 
 
 content_type_map = {
-    "all": "movie",
+    "all": "tvshow",
     "serial": "tvshow",
     "docuserial": "tvshow",
     "tvshow": "tvshow",
