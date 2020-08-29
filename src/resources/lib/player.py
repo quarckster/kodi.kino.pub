@@ -59,6 +59,7 @@ class Player(xbmc.Player):
 
     def onPlayBackStarted(self):
         self.plugin.logger.notice("playback started")
+        self.plugin.clear_window_property()
         if self.should_refresh_token:
             self.plugin.logger.notice("access token should be refreshed")
             self.plugin.auth.get_token()
