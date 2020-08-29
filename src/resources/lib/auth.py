@@ -12,8 +12,8 @@ import urllib2
 import xbmc
 import xbmcgui
 
-from resources.lib.utils import notice
 from resources.lib.utils import cached_property
+from resources.lib.utils import notice
 
 
 class AuthException(Exception):

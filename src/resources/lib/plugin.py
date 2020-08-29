@@ -229,8 +229,11 @@ class Plugin(object):
             )
         }
 
-    def set_window_property(self, value):
+    def clear_window_property(self):
         xbmcgui.Window(10000).clearProperty("video.kino.pub-playback_data")
+
+    def set_window_property(self, value):
+        self.clear_window_property()
         if not isinstance(value, basestring):
             value = cPickle.dumps(value)
         xbmcgui.Window(10000).setProperty("video.kino.pub-playback_data", value)

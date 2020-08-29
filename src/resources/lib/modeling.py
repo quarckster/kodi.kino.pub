@@ -88,7 +88,6 @@ class ItemEntity(object):
         self.index = index
         self.item_id = self.item.get("id")
         self.title = self.item.get("title")
-        self.poster = self.item.get("posters", {}).get("big")
         self._plugin = None
 
     @property
@@ -149,7 +148,7 @@ class ItemEntity(object):
     def list_item(self):
         li = self.plugin.list_item(
             getattr(self, "li_title", self.title),
-            poster=self.poster,
+            poster=self.item.get("posters", {}).get("big"),
             fanart=self.item.get("posters", {}).get("wide"),
             thumbnailImage=self.item.get("thumbnail", ""),
             properties={"id": self.item_id},
@@ -170,7 +169,7 @@ class ItemEntity(object):
         return odict
 
     def __repr__(self):
-        return "<{!r}; item_id: {}; title: {}>".format(
+        return "{!r}(item_id: {}; title: {})".format(
             type(self).__name__, self.item_id, self.title.encode("utf-8")
         )
 
@@ -218,7 +217,14 @@ class PlayableItem(ItemEntity):
     def list_item(self):
         li = super(PlayableItem, self).list_item
         li.setProperty("isPlayable", "true")
+        li.setResumeTime(self.resume_time, self.watching_info["duration"])
         return li
+
+    @property
+    def resume_time(self):
+        if self.watching_info["time"] == self.watching_info["duration"]:
+            return 0
+        return self.watching_info["time"]
 
     @property
     def hls_properties(self):
@@ -243,7 +249,7 @@ class PlayableItem(ItemEntity):
         properties = {
             "item_id": self.item_id,
             "play_duration": self.video_info["duration"],
-            "play_resumetime": self.video_info["time"],
+            "play_resumetime": self.resume_time,
             "playcount": self.video_info["playcount"],
             "imdbnumber": self.video_info["imdbnumber"],
         }
@@ -252,7 +258,7 @@ class PlayableItem(ItemEntity):
             getattr(self, "li_title", self.title),
             path=self.media_url,
             properties=properties,
-            poster=self.poster,
+            poster=self.item.get("posters", {}).get("big"),
             subtitles=[subtitle["url"] for subtitle in self.video_data["subtitles"]],
         )
 
@@ -268,9 +274,9 @@ class TVShow(ItemEntity):
 
     @property
     def video_info(self):
-        base_video_info = super(TVShow, self).video_info
-        base_video_info.update({"trailer": self.trailer_url, "mediatype": self.mediatype})
-        return base_video_info
+        video_info = super(TVShow, self).video_info
+        video_info.update({"trailer": self.trailer_url, "mediatype": self.mediatype})
+        return video_info
 
     @property
     def seasons(self):
@@ -303,11 +309,11 @@ class Season(ItemEntity):
 
     @property
     def video_info(self):
-        base_video_info = self.tvshow.video_info
-        base_video_info.update(
+        video_info = self.tvshow.video_info.copy()
+        video_info.update(
             {"season": self.index, "playcount": self.watching_status, "mediatype": self.mediatype}
         )
-        return base_video_info
+        return video_info
 
 
 class SeasonEpisode(PlayableItem):
@@ -335,19 +341,19 @@ class SeasonEpisode(PlayableItem):
 
     @property
     def video_info(self):
-        base_video_info = self.tvshow.video_info
-        base_video_info.update(
+        video_info = self.tvshow.video_info.copy()
+        video_info.update(
             {
                 "season": self.season.index,
                 "episode": self.index,
                 "tvshowtitle": self.tvshow.title,
-                "time": self.watching_info["time"],
+                "time": self.resume_time,
                 "duration": self.watching_info["duration"],
                 "playcount": self.watching_info["status"],
                 "mediatype": self.mediatype,
             }
         )
-        return base_video_info
+        return video_info
 
     @property
     def playable_list_item(self):
@@ -378,9 +384,9 @@ class Multi(ItemEntity):
 
     @property
     def video_info(self):
-        base_video_info = super(Multi, self).video_info
-        base_video_info.update({"playcount": self.watching_info["status"]})
-        return base_video_info
+        video_info = super(Multi, self).video_info
+        video_info.update({"playcount": self.watching_info["status"]})
+        return video_info
 
 
 class Episode(PlayableItem):
@@ -396,21 +402,22 @@ class Episode(PlayableItem):
         self.li_title = "e{:02d}".format(self.index)
         if self.title:
             self.li_title = u"{} | {}".format(self.li_title, self.title)
+        self.watching_status = self.watching_info["status"]
 
     @property
     def video_info(self):
-        base_video_info = self.parent.video_info
-        base_video_info.update(
+        video_info = self.parent.video_info.copy()
+        video_info.update(
             {
                 "episode": self.index,
                 "tvshowtitle": self.title,
-                "time": self.watching_info["time"],
+                "time": self.resume_time,
                 "duration": self.watching_info["duration"],
                 "playcount": self.item["watched"],
                 "mediatype": self.mediatype,
             }
         )
-        return base_video_info
+        return video_info
 
     @property
     def watching_info(self):
@@ -432,7 +439,7 @@ class Movie(PlayableItem):
             "play", self.item_id, "seasons", 1, "episodes", self.index
         )
 
-    @property
+    @cached_property
     def video_data(self):
         if "videos" in self.item:
             return self.item["videos"][0]
@@ -440,23 +447,17 @@ class Movie(PlayableItem):
 
     @property
     def video_info(self):
-        base_video_info = super(Movie, self).video_info
-        base_video_info.update(
+        video_info = super(Movie, self).video_info
+        video_info.update(
             {
-                "time": self.watching_info["time"],
+                "time": self.resume_time,
                 "duration": self.watching_info["duration"],
                 "playcount": self.watching_info["status"],
                 "trailer": self.trailer_url,
                 "mediatype": self.mediatype,
             }
         )
-        return base_video_info
-
-    @property
-    def list_item(self):
-        li = super(Movie, self).list_item
-        li.setResumeTime(self.watching_info["time"], self.watching_info["duration"])
-        return li
+        return video_info
 
     @cached_property
     def watching_info(self):
