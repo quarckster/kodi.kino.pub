@@ -48,13 +48,11 @@ class ItemsCollection(object):
     @property
     def watching_tvshows(self):
         tvshows = []
-        small_items = self.plugin.client("watching/serials").get(data={"subscribed": 1})["items"]
-        for small_item in small_items:
-            unwatched_episodes = small_item["new"]
-            item = self.get_api_item(small_item["id"])
-            tvhsow = self.instantiate(item=item)
-            tvhsow.new = unwatched_episodes
-            tvshows.append(tvhsow)
+        for item in self.plugin.client("watching/serials").get(data={"subscribed": 1})["items"]:
+            tvshow = self.instantiate(item=item)
+            tvshow.new = item["new"]
+            tvshow._video_info = {"mediatype": tvshow.mediatype}
+            tvshows.append(tvshow)
         return tvshows
 
     def get_api_item(self, item_id):
@@ -271,9 +269,12 @@ class TVShow(ItemEntity):
         super(TVShow, self).__init__(*args, **kwargs)
         self.url = self.plugin.routing.build_url("seasons", "{}/".format(self.item_id))
         self.new = None
+        self._video_info = None
 
     @property
     def video_info(self):
+        if self._video_info:
+            return self._video_info
         video_info = super(TVShow, self).video_info
         video_info.update({"trailer": self.trailer_url, "mediatype": self.mediatype})
         return video_info

@@ -3,18 +3,14 @@ from __future__ import absolute_import
 
 from datetime import date
 
-try:
-    import inputstreamhelper
-except ImportError:
-    inputstreamhelper = None
 import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
 
-from resources.lib.utils import notice
 from resources.lib.player import Player
 from resources.lib.plugin import Plugin
+from resources.lib.utils import notice
 
 
 content_type_map = {
@@ -250,12 +246,8 @@ def clean_search_history():
 @plugin.routing.route("/seasons/<item_id>/")
 def seasons(item_id):
     tvshow = plugin.get_window_property(item_id) or plugin.items.instantiate(item_id=item_id)
-    selectedSeason = False
     xbmcplugin.setContent(plugin.handle, "tvshows")
     for season in tvshow.seasons:
-        if season.watching_status < 1 and not selectedSeason:
-            selectedSeason = True
-            season.list_item.select(selectedSeason)
         xbmcplugin.addDirectoryItem(plugin.handle, season.url, season.list_item, True)
     plugin.set_window_property({tvshow.item_id: tvshow})
     xbmcplugin.endOfDirectory(plugin.handle, cacheToDisc=False)
@@ -263,9 +255,10 @@ def seasons(item_id):
 
 @plugin.routing.route("/episodes/<item_id>/")
 def episodes(item_id):
-    collection = plugin.items.instantiate(item_id=item_id)
+    collection = plugin.get_window_property(item_id) or plugin.items.instantiate(item_id=item_id)
     xbmcplugin.setContent(plugin.handle, "episodes")
     for video in collection.videos:
+        plugin.logger.notice(video.video_info["time"])
         xbmcplugin.addDirectoryItem(plugin.handle, video.url, video.list_item, False)
     plugin.set_window_property({collection.item_id: collection})
     xbmcplugin.endOfDirectory(plugin.handle, cacheToDisc=False)
@@ -275,13 +268,7 @@ def episodes(item_id):
 def season_episodes(item_id, season_number):
     tvshow = plugin.get_window_property(item_id) or plugin.items.instantiate(item_id=item_id)
     xbmcplugin.setContent(plugin.handle, "episodes")
-    selectedEpisode = False
     for episode in tvshow.seasons[int(season_number) - 1].episodes:
-        if not episode.watching_info:
-            continue
-        if episode.watching_status < 1 and not selectedEpisode:
-            selectedEpisode = True
-            episode.list_item.select(selectedEpisode)
         xbmcplugin.addDirectoryItem(plugin.handle, episode.url, episode.list_item, False)
     plugin.set_window_property({tvshow.item_id: tvshow})
     xbmcplugin.endOfDirectory(plugin.handle, cacheToDisc=False)
@@ -340,12 +327,9 @@ def show_bookmark_folder(folder_id):
 @plugin.routing.route("/watching/")
 def watching():
     xbmcplugin.setContent(plugin.handle, "tvshows")
-    playback_data = {}
     for tvshow in plugin.items.watching_tvshows:
         tvshow.li_title = u"{} : [COLOR FFFFF000]+{}[/COLOR]".format(tvshow.title, tvshow.new)
-        playback_data[tvshow.item_id] = tvshow
         xbmcplugin.addDirectoryItem(plugin.handle, tvshow.url, tvshow.list_item, True)
-    plugin.set_window_property(playback_data)
     xbmcplugin.endOfDirectory(plugin.handle, cacheToDisc=False)
 
 
