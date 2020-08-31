@@ -273,14 +273,14 @@ def season_episodes(item_id, season_number):
     xbmcplugin.endOfDirectory(plugin.handle, cacheToDisc=False)
 
 
-@plugin.routing.route("/play/<item_id>/seasons/<season_index>/episodes/<index>")
-def play(item_id, season_index, index):
+@plugin.routing.route("/play/<item_id>")
+def play(item_id):
     item = plugin.get_window_property(item_id) or plugin.items.instantiate(item_id=item_id)
-    playable_list_item = plugin.items.get_playable(
-        item=item, season_index=season_index, index=index
-    ).playable_list_item
-    player = Player(list_item=playable_list_item)
-    xbmcplugin.setResolvedUrl(plugin.handle, True, playable_list_item)
+    si = plugin.kwargs.get("season_index")
+    i = plugin.kwargs.get("index")
+    playable_li = plugin.items.get_playable(item, season_index=si, index=i).playable_list_item
+    player = Player(list_item=playable_li)
+    xbmcplugin.setResolvedUrl(plugin.handle, True, playable_li)
     while player.is_playing:
         player.set_marktime()
         xbmc.sleep(1000)
