@@ -106,15 +106,6 @@ class ItemEntity(object):
         return "\n".join(final_plot)
 
     @property
-    def status(self):
-        if self.item["type"] == "serial" and self.item["finished"]:
-            return u"окончен"
-        elif self.item["type"] == "serial" and not self.item["finished"]:
-            return u"в эфире"
-        else:
-            return
-
-    @property
     def video_info(self):
         rating = self.item.get("imdb_rating") or self.item.get("kinopoisk_rating") or 0.0
         return {
@@ -127,7 +118,6 @@ class ItemEntity(object):
             "title": self.title,
             "duration": self.item.get("duration", {}).get("average"),
             "imdbnumber": self.item["imdb"],
-            "status": self.status,
             "votes": self.item["rating_votes"],
             "country": ", ".join([country["title"] for country in self.item["countries"]]),
         }
@@ -276,7 +266,13 @@ class TVShow(ItemEntity):
         if self._video_info:
             return self._video_info
         video_info = super(TVShow, self).video_info
-        video_info.update({"trailer": self.trailer_url, "mediatype": self.mediatype})
+        video_info.update(
+            {
+                "trailer": self.trailer_url,
+                "mediatype": self.mediatype,
+                "status": u"окончен" if self.item["finished"] else u"в эфире",
+            }
+        )
         return video_info
 
     @property
