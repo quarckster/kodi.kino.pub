@@ -40,8 +40,8 @@ class ItemsCollection(object):
     @property
     def watching_movies(self):
         movies = []
-        for i, small_item in enumerate(self.plugin.client("watching/movies").get()["items"]):
-            item = self.get_api_item(small_item["id"])
+        for item in self.plugin.client("watching/movies").get()["items"]:
+            item = self.get_api_item(item["id"])
             movies.append(self.instantiate(item=item))
         return movies
 
@@ -70,7 +70,7 @@ class ItemsCollection(object):
         item, item_entity = self._get_item_entity(item_id, item)
         return item_entity(self, item, index=index)
 
-    def get_playable(self, item=None, season_index=None, index=None):
+    def get_playable(self, item, season_index=None, index=None):
         if isinstance(item, TVShow):
             return item.seasons[int(season_index) - 1].episodes[int(index) - 1]
         elif isinstance(item, Multi):
@@ -327,7 +327,7 @@ class SeasonEpisode(PlayableItem):
         self.item_id = self.tvshow.item_id
         self.video_data = self.item
         self.url = self.plugin.routing.build_url(
-            "play", self.item_id, "seasons", self.season.index, "episodes", self.index
+            "play", self.item_id, season_index=self.season.index, index=self.index
         )
         self.li_title = "s{:02d}e{:02d}".format(self.season.index, self.index)
         if self.title:
@@ -397,9 +397,7 @@ class Episode(PlayableItem):
         super(Episode, self).__init__(*args, **kwargs)
         self.item_id = self.parent.item_id
         self.video_data = self.item
-        self.url = self.plugin.routing.build_url(
-            "play", self.item_id, "seasons", 1, "episodes", self.index
-        )
+        self.url = self.plugin.routing.build_url("play", self.item_id, index=self.index)
         self.li_title = "e{:02d}".format(self.index)
         if self.title:
             self.li_title = u"{} | {}".format(self.li_title, self.title)
@@ -436,9 +434,7 @@ class Movie(PlayableItem):
 
     def __init__(self, *args, **kwargs):
         super(Movie, self).__init__(*args, **kwargs)
-        self.url = self.plugin.routing.build_url(
-            "play", self.item_id, "seasons", 1, "episodes", self.index
-        )
+        self.url = self.plugin.routing.build_url("play", self.item_id)
 
     @cached_property
     def video_data(self):
