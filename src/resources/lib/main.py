@@ -31,10 +31,13 @@ plugin = Plugin()
 def render_pagination(pagination):
     """Add "next page" button"""
     if pagination and (int(pagination["current"]) + 1 <= int(pagination["total"])):
-        page = int(pagination["current"]) + 1
+        kwargs = {"page": int(pagination["current"]) + 1}
+        if plugin.settings.exclude_anime == "true":
+            if pagination.get("start_from") is not None:
+                kwargs["start_from"] = pagination["start_from"]
         img = plugin.routing.build_icon_path("next_page")
         li = plugin.list_item("[COLOR FFFFF000]Вперёд[/COLOR]", iconImage=img, thumbnailImage=img)
-        url = plugin.routing.add_kwargs_to_url(page=page)
+        url = plugin.routing.add_kwargs_to_url(**kwargs)
         xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
     xbmcplugin.endOfDirectory(plugin.handle)
 
@@ -126,9 +129,9 @@ def items(content_type, heading):
         data.update(plugin.kwargs)
         if heading == "sort":
             data.update(plugin.sorting_params)
-            response = plugin.items.get("items", data)
+            response = plugin.items.get("items", data=data, exclude_anime=True)
         else:
-            response = plugin.items.get("items/{}".format(heading), data)
+            response = plugin.items.get("items/{}".format(heading), data=data, exclude_anime=True)
         render_items(response.items, content_type)
         render_pagination(response.pagination)
 
