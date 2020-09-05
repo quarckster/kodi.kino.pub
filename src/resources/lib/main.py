@@ -286,7 +286,7 @@ def play(item_id):
         xbmc.sleep(1000)
 
 
-@plugin.routing.route("/trailer/<item_id>/")
+@plugin.routing.route("/trailer/<item_id>")
 def trailer(item_id):
     response = plugin.client("items/trailer").get(data={"id": item_id})
     url = response["trailer"][0]["url"]
