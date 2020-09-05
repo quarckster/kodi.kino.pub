@@ -84,15 +84,10 @@ class ItemsCollection(object):
 
     def _get_anime_exluded(self, endpoint, data=None, collection=None):
         # init items collection
-        if collection is None:
-            collection = {"items": []}
+        collection = collection or {"items": []}
 
         # exclude start_from from request data
-        if data.get("start_from") is None:
-            start_from = 0
-        else:
-            start_from = int(data["start_from"])
-            del data["start_from"]
+        start_from = int(data.pop("start_from", 0))
 
         resp = self.plugin.client(endpoint).get(data=data)
 
@@ -102,13 +97,13 @@ class ItemsCollection(object):
         collection["pagination"] = pagination
 
         # filter items list from anime items
-        none_anime_items = list(
+        non_anime_items = list(
             filter(lambda x: all(i["id"] != 25 for i in x["genres"]), new_items[start_from:])
         )
 
         # if not enough items continue with next API page
-        if len(none_anime_items) + len(collection["items"]) < page_size:
-            collection["items"].extend(none_anime_items)
+        if len(non_anime_items) + len(collection["items"]) < page_size:
+            collection["items"].extend(non_anime_items)
 
             if int(pagination["current"]) + 1 < int(pagination["total"]):
                 data.update({"page": pagination["current"] + 1, "start_from": 0})
@@ -116,7 +111,7 @@ class ItemsCollection(object):
         else:
             # exlude extra items from filtered items
             count_items_to_extend = page_size - len(collection["items"])
-            items = none_anime_items[:count_items_to_extend]
+            items = non_anime_items[:count_items_to_extend]
             last_item_id = items[-1]["id"]
             last_item_index = next(
                 (index for (index, d) in enumerate(new_items) if d["id"] == last_item_id), None
