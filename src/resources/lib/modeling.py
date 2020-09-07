@@ -31,10 +31,9 @@ class ItemsCollection(object):
 
     def __init__(self, plugin):
         self.plugin = plugin
-        self.exclude_anime = True if plugin.settings.exclude_anime == "true" else False
 
     def get(self, endpoint, data=None, exclude_anime=False):
-        if self.exclude_anime and exclude_anime:
+        if exclude_anime:
             resp = self._get_anime_exluded(endpoint, data=data)
         else:
             resp = self.plugin.client(endpoint).get(data=data)
