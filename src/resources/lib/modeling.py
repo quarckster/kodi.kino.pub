@@ -32,8 +32,11 @@ class ItemsCollection(object):
     def __init__(self, plugin):
         self.plugin = plugin
 
-    def get(self, endpoint, data=None):
-        resp = self.plugin.client(endpoint).get(data=data)
+    def get(self, endpoint, data=None, exclude_anime=False):
+        if exclude_anime:
+            resp = self._get_anime_exluded(endpoint, data=data)
+        else:
+            resp = self.plugin.client(endpoint).get(data=data)
         items = [self.instantiate(item=item, index=i) for i, item in enumerate(resp["items"], 1)]
         return Response(items, resp.get("pagination"))
 
@@ -77,6 +80,50 @@ class ItemsCollection(object):
             return item.videos[int(index) - 1]
         else:
             return item
+
+    def _get_anime_exluded(self, endpoint, data=None, collection=None):
+        # init items collection
+        collection = collection or {"items": []}
+
+        # exclude start_from from request data
+        start_from = int(data.pop("start_from", 0))
+
+        resp = self.plugin.client(endpoint).get(data=data)
+
+        new_items = resp["items"]
+        pagination = resp["pagination"]
+        page_size = int(pagination["perpage"])
+        collection["pagination"] = pagination
+
+        # filter items list from anime items
+        non_anime_items = list(
+            filter(lambda x: all(i["id"] != 25 for i in x["genres"]), new_items[start_from:])
+        )
+
+        # if not enough items continue with next API page
+        if len(non_anime_items) + len(collection["items"]) < page_size:
+            collection["items"].extend(non_anime_items)
+
+            if int(pagination["current"]) + 1 < int(pagination["total"]):
+                data.update({"page": pagination["current"] + 1, "start_from": 0})
+                collection = self._get_anime_exluded(endpoint, data, collection)
+        else:
+            # exlude extra items from filtered items
+            count_items_to_extend = page_size - len(collection["items"])
+            items = non_anime_items[:count_items_to_extend]
+            last_item_id = items[-1]["id"]
+            last_item_index = next(
+                (index for (index, d) in enumerate(new_items) if d["id"] == last_item_id), None
+            )
+            collection["items"].extend(items)
+            collection["pagination"]["current"] = (
+                pagination["current"] - 1
+            )  # start from current API page
+            collection["pagination"]["start_from"] = (
+                last_item_index + 1
+            )  # do not include last item to next page
+
+        return collection
 
 
 class ItemEntity(object):
