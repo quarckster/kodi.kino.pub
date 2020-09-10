@@ -29,7 +29,7 @@ plugin = Plugin()
 
 
 def render_pagination(pagination):
-    """Add "next page" button"""
+    """Add "next page" and "home" buttons"""
     if pagination and (int(pagination["current"]) + 1 <= int(pagination["total"])):
         kwargs = {"page": int(pagination["current"]) + 1}
         if plugin.settings.exclude_anime == "true" and "start_from" in pagination:
@@ -38,6 +38,10 @@ def render_pagination(pagination):
         li = plugin.list_item("[COLOR FFFFF000]Вперёд[/COLOR]", iconImage=img, thumbnailImage=img)
         url = plugin.routing.add_kwargs_to_url(**kwargs)
         xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
+        img = plugin.routing.build_icon_path("home")
+        plugin.routing.build_url("/")
+        li = plugin.list_item("[COLOR FFFFF000]Домой[/COLOR]", iconImage=img, thumbnailImage=img)
+        xbmcplugin.addDirectoryItem(plugin.handle, url, li, False)
     xbmcplugin.endOfDirectory(plugin.handle)
 
 
