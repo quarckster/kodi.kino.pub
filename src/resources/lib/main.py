@@ -39,9 +39,9 @@ def render_pagination(pagination):
         url = plugin.routing.add_kwargs_to_url(**kwargs)
         xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
         img = plugin.routing.build_icon_path("home")
-        plugin.routing.build_url("/")
+        home_url = plugin.routing.build_url("/")
         li = plugin.list_item("[COLOR FFFFF000]Домой[/COLOR]", iconImage=img, thumbnailImage=img)
-        xbmcplugin.addDirectoryItem(plugin.handle, url, li, False)
+        xbmcplugin.addDirectoryItem(plugin.handle, home_url, li, True)
     xbmcplugin.endOfDirectory(plugin.handle)
 
 
