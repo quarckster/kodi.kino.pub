@@ -185,7 +185,9 @@ class ItemEntity(object):
             getattr(self, "li_title", self.title),
             poster=self.item.get("posters", {}).get("big"),
             fanart=self.item.get("posters", {}).get("wide"),
-            thumbnailImage=self.item.get("thumbnail", ""),
+            thumbnailImage=self.item.get(
+                "thumbnail", self.item.get("posters", {}).get("small", "")
+            ),
             properties={"id": self.item_id},
             video_info=self.video_info,
             addContextMenuItems=True,
