@@ -16,10 +16,10 @@ class Settings(object):
 
     def __getattr__(self, name):
         if name == "advanced":
-            return self._get_adv_setting
-        if name.startswith("show_"):
-            return eval(xbmcaddon.Addon().getSetting(name).title())
-        return xbmcaddon.Addon().getSetting(name)
+            value = self._get_adv_setting
+        else:
+            value = xbmcaddon.Addon().getSetting(name)
+        return self._parse(value)
 
     def __setattr__(self, name, value):
         if value is not None:
@@ -33,3 +33,14 @@ class Settings(object):
             return self.defaults.get(args)
         elem = root.find("./{}".format("/".join(args)))
         return elem.text if elem else self.defaults.get(args)
+
+    def _parse(self, value):
+        if value in ["true", "True"]:
+            return True
+        elif value in ["false", "False"]:
+            return False
+        else:
+            try:
+                return int(value)
+            except (TypeError, ValueError):
+                return value

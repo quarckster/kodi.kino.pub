@@ -8,7 +8,6 @@ import xbmcvfs
 class SearchHistory(object):
     def __init__(self, plugin):
         self.plugin = plugin
-        self.history_max_qty = int(self.plugin.settings.history_max_qty)
         self.path = xbmc.translatePath(
             "special://userdata/addon_data/{}/history".format(self.plugin.PLUGIN_ID)
         )
@@ -17,7 +16,7 @@ class SearchHistory(object):
 
     @property
     def recent(self):
-        return self.items[: self.history_max_qty]
+        return self.items[: self.plugin.settings.history_max_qty]
 
     def save(self, title):
         if title in self.items:

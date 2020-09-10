@@ -5,6 +5,7 @@ from collections import namedtuple
 
 import xbmcgui
 
+from resources.lib.speedtest import SERVERS
 from resources.lib.utils import cached_property
 from resources.lib.utils import notice
 
@@ -218,7 +219,11 @@ class PlayableItem(ItemEntity):
     def media_url(self):
         quality = self.plugin.settings.video_quality
         stream_type = self.plugin.settings.stream_type
-        ask_quality = self.plugin.settings.ask_quality
+        location = self.plugin.settings.location
+        location_param = next(
+            ("?loc={}".format(key) for key, value in SERVERS.items() if value["name"] == location),
+            "",
+        )
 
         def natural_sort(line):
             def convert(text):
@@ -236,19 +241,20 @@ class PlayableItem(ItemEntity):
             for stream, url in urls.items()
         }
         urls_list = natural_sort(flatten_urls_dict.keys())
-        if ask_quality == "true":
+        if self.plugin.settings.ask_quality:
             dialog = xbmcgui.Dialog()
             result = dialog.select("Выберите качество видео", urls_list)
             if result == -1:
                 sys.exit()
             else:
-                return flatten_urls_dict[urls_list[result]]
+                url = flatten_urls_dict[urls_list[result]]
         else:
             try:
-                return files[quality][stream_type]
+                url = files[quality][stream_type]
             except KeyError:
                 # if there is no such quality then return a link with the highest available quality
-                return files[natural_sort(files.keys())[-1]][stream_type]
+                url = files[natural_sort(files.keys())[-1]][stream_type]
+        return re.sub(r"\?(.*)$", location_param, url)
 
     @property
     def list_item(self):
@@ -267,7 +273,7 @@ class PlayableItem(ItemEntity):
     def hls_properties(self):
         if (
             "hls" in self.plugin.settings.stream_type
-            and self.plugin.settings.inputstream_adaptive_enabled == "true"
+            and self.plugin.settings.inputstream_adaptive_enabled
             and inputstreamhelper
         ):
             helper = inputstreamhelper.Helper("hls")

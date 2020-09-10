@@ -95,7 +95,7 @@ class Auth(object):
             elif e.code == 429:
                 for _ in range(2):
                     time.sleep(3)
-                    return self.request(payload)
+                    return self._make_request(payload)
             else:
                 self.plugin.logger.fatal(
                     "oauth request error; status: {}; message: {}".format(e.code, e.message)
@@ -179,7 +179,7 @@ class Auth(object):
     def _update_settings(self, refresh_token, access_token, expires_in):
         self.plugin.settings.refresh_token = refresh_token
         self.plugin.settings.access_token = access_token
-        self.plugin.settings.access_token_expire = str(expires_in + int(time.time()))
+        self.plugin.settings.access_token_expire = expires_in + int(time.time())
         self.plugin.logger.notice(
             "refresh token - {}; access token - {}; expires in - {}".format(
                 refresh_token, access_token, expires_in
@@ -200,7 +200,7 @@ class Auth(object):
 
     @property
     def is_token_expired(self):
-        return int(self.plugin.settings.access_token_expire) < int(time.time())
+        return self.plugin.settings.access_token_expire < time.time()
 
     def get_token(self):
         if not self.plugin.settings.access_token:

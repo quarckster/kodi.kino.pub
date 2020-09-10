@@ -120,5 +120,5 @@ class ExtendedListItem(ListItem):
             self.setProperties(resumetime=resumetime, totaltime=totaltime)
 
     def markAdvert(self, has_advert):
-        if self.plugin.settings.mark_advert == "true" and has_advert:
+        if self.plugin.settings.mark_advert and has_advert:
             self.setLabel("{} (!)".format(self.getLabel()))

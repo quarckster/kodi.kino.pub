@@ -10,6 +10,7 @@ import xbmcplugin
 
 from resources.lib.player import Player
 from resources.lib.plugin import Plugin
+from resources.lib.speedtest import SpeedTest
 from resources.lib.utils import notice
 
 
@@ -32,7 +33,7 @@ def render_pagination(pagination):
     """Add "next page" and "home" buttons"""
     if pagination and (int(pagination["current"]) + 1 <= int(pagination["total"])):
         kwargs = {"page": int(pagination["current"]) + 1}
-        if plugin.settings.exclude_anime == "true" and "start_from" in pagination:
+        if plugin.settings.exclude_anime and "start_from" in pagination:
             kwargs["start_from"] = pagination["start_from"]
         img = plugin.routing.build_icon_path("next_page")
         li = plugin.list_item("[COLOR FFFFF000]Вперёд[/COLOR]", iconImage=img, thumbnailImage=img)
@@ -130,13 +131,14 @@ def items(content_type, heading):
     else:
         data = {"type": None if content_type == "all" else content_type.rstrip("s")}
         data.update(plugin.kwargs)
-        exclude_anime = plugin.settings.exclude_anime == "true"
         if heading == "sort":
             data.update(plugin.sorting_params)
-            response = plugin.items.get("items", data=data, exclude_anime=exclude_anime)
+            response = plugin.items.get(
+                "items", data=data, exclude_anime=plugin.settings.exclude_anime
+            )
         else:
             response = plugin.items.get(
-                "items/{}".format(heading), data=data, exclude_anime=exclude_anime
+                "items/{}".format(heading), data=data, exclude_anime=plugin.settings.exclude_anime
             )
         render_items(response.items, content_type)
         render_pagination(response.pagination)
@@ -518,3 +520,8 @@ def install_inputstream_helper():
         notice("inputstream helper установлен")
     except RuntimeError:
         xbmc.executebuiltin("InstallAddon(script.module.inputstreamhelper)")
+
+
+@plugin.routing.route("/test_speed/")
+def speed_test():
+    SpeedTest().run()
