@@ -100,7 +100,7 @@ class Auth(object):
                 self.plugin.logger.fatal(
                     "oauth request error; status: {}; message: {}".format(e.code, e.message)
                 )
-                notice("Код ответа сервера {}".format(response["status"]), "Неизвестная ошибка")
+                notice("Код ответа сервера {}".format(e.code), "Неизвестная ошибка")
                 raise
 
     def _get_device_code(self):
