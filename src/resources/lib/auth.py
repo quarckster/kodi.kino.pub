@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 import json
 import platform
+import sys
 import time
 import urllib
 import urllib2
@@ -97,11 +98,12 @@ class Auth(object):
                     time.sleep(3)
                     return self._make_request(payload)
             else:
+                self._auth_dialog.close(cancel=True)
                 self.plugin.logger.fatal(
                     "oauth request error; status: {}; message: {}".format(e.code, e.message)
                 )
-                notice("Код ответа сервера {}".format(e.code), "Неизвестная ошибка")
-                raise
+                notice("Server status code {}".format(e.code), "Activation error")
+                sys.exit()
 
     def _get_device_code(self):
         payload = {
