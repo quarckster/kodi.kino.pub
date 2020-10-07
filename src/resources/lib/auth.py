@@ -95,7 +95,7 @@ class Auth(object):
             elif e.code == 429:
                 for _ in range(2):
                     time.sleep(3)
-                    return self.request(payload)
+                    return self._make_request(payload)
             else:
                 self.plugin.logger.fatal(
                     "oauth request error; status: {}; message: {}".format(e.code, e.message)
