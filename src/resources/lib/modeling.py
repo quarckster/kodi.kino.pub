@@ -295,6 +295,8 @@ class PlayableItem(ItemEntity):
             getattr(self, "li_title", self.title),
             path=self.media_url,
             properties=properties,
+            iconImage=self.item.get("posters", {}).get("small", ""),
+            thumbnailImage=self.item.get("posters", {}).get("small", ""),
             poster=self.item.get("posters", {}).get("big"),
             subtitles=[subtitle["url"] for subtitle in self.video_data["subtitles"]],
         )
