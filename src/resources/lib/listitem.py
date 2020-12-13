@@ -3,10 +3,8 @@ from xbmcgui import ListItem
 
 
 class ExtendedListItem(ListItem):
-    def __new__(cls, name, label2="", iconImage="", thumbnailImage="", path="", **kwargs):
-        return super(ExtendedListItem, cls).__new__(
-            cls, name, label2, iconImage, thumbnailImage, path
-        )
+    def __new__(cls, name, label2="", path="", **kwargs):
+        return super(ExtendedListItem, cls).__new__(cls, name, label2, path)
 
     def __init__(
         self,
@@ -88,7 +86,7 @@ class ExtendedListItem(ListItem):
         title = self.getLabel()
         label = "Похожие фильмы"
         url = self.plugin.routing.build_url("similar", item_id, title=title)
-        menu_items.append((label, u"Container.Update({})".format(url)))
+        menu_items.append((label, "Container.Update({})".format(url)))
 
     def _addSeparatorContextMenuItem(self, menu_items):
         # 21 is the maximum number of characters when the horizontal scrolling doesn't appear.
@@ -106,7 +104,7 @@ class ExtendedListItem(ListItem):
             self.setProperty(prop, str(value))
 
     def setResumeTime(self, resumetime, totaltime=None):
-        totaltime = float(totaltime or self.getduration())
+        totaltime = float(totaltime or self.getVideoInfoTag().getDuration())
         if (
             resumetime is not None
             and totaltime > 0

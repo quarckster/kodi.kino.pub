@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import re
-from urllib import urlencode
+from urllib.parse import urlencode
+from urllib.parse import urlunsplit
 
 import xbmc
-from urlparse import urlunsplit
+import xbmcvfs
 
 
 class RoutingException(Exception):
@@ -19,7 +20,7 @@ class Routing(object):
         if path.startswith(self.plugin.PLUGIN_URL):
             path = path.split(self.plugin.PLUGIN_URL, 1)[1]
 
-        for view_fun, rules in self._rules.iteritems():
+        for view_fun, rules in self._rules.items():
             for rule in rules:
                 if rule.match(path) is not None:
                     return view_fun
@@ -27,7 +28,7 @@ class Routing(object):
 
     def build_url(self, func_name, *args, **kwargs):
         # path = u"/".join([func_name] + map(unicode, list(args)))
-        path = u"/".join([func_name] + list(args))
+        path = "/".join([func_name] + [str(arg) for arg in args])
         return urlunsplit(("plugin", self.plugin.PLUGIN_ID, path, urlencode(kwargs), ""))
 
     def add_kwargs_to_url(self, **kwargs):
@@ -52,7 +53,7 @@ class Routing(object):
         xbmc.executebuiltin("Container.Update({})".format(path))
 
     def dispatch(self, path):
-        for view_func, rules in self._rules.iteritems():
+        for view_func, rules in self._rules.items():
             for rule in rules:
                 kwargs = rule.match(path)
                 if kwargs is not None:
@@ -65,7 +66,7 @@ class Routing(object):
 
     def build_icon_path(self, name):
         """Build a path to an icon according to its name"""
-        return xbmc.translatePath(
+        return xbmcvfs.translatePath(
             "special://home/addons/{}/resources/media/{}.png".format(self.plugin.PLUGIN_ID, name)
         )
 
@@ -105,4 +106,4 @@ class UrlRule(object):
             return None
 
     def __str__(self):
-        return u"UrlRule(pattern={}, keywords={})".format(self._pattern, self._keywords)
+        return "UrlRule(pattern={}, keywords={})".format(self._pattern, self._keywords)

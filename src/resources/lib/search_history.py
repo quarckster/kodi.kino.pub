@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
 
-import xbmc
 import xbmcvfs
 
 
@@ -9,7 +8,7 @@ class SearchHistory(object):
     def __init__(self, plugin):
         self.plugin = plugin
         self.history_max_qty = int(self.plugin.settings.history_max_qty)
-        self.path = xbmc.translatePath(
+        self.path = xbmcvfs.translatePath(
             "special://userdata/addon_data/{}/history".format(self.plugin.PLUGIN_ID)
         )
         self.items = []

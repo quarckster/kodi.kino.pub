@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
+import codecs
+import pickle
 import sys
 from collections import namedtuple
+from urllib.parse import parse_qsl
+from urllib.parse import urlsplit
 
-import cPickle
 import xbmcaddon
 import xbmcgui
-from urlparse import parse_qsl
-from urlparse import urlsplit
 
 from resources.lib.auth import Auth
 from resources.lib.client import KinoPubClient
@@ -232,13 +233,13 @@ class Plugin(object):
 
     def set_window_property(self, value):
         self.clear_window_property()
-        if not isinstance(value, str):
-            value = cPickle.dumps(value)
-        xbmcgui.Window(10000).setProperty("video.kino.pub-playback_data", value)
+        pickled = codecs.encode(pickle.dumps(value), "base64").decode("utf-8")
+        xbmcgui.Window(10000).setProperty("video.kino.pub-playback_data", pickled)
 
     def get_window_property(self, item_id):
         try:
-            items = cPickle.loads(xbmcgui.Window(10000).getProperty("video.kino.pub-playback_data"))
+            data = xbmcgui.Window(10000).getProperty("video.kino.pub-playback_data").encode("utf-8")
+            items = pickle.loads(codecs.decode(data, "base64"))
         except EOFError:
             items = {}
         item = items.get(int(item_id), {})

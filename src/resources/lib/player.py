@@ -56,17 +56,17 @@ class Player(xbmc.Player):
         return data
 
     def onPlayBackStarted(self):
-        self.plugin.logger.notice("playback started")
+        self.plugin.logger.info("playback started")
         self.plugin.clear_window_property()
         if self.should_refresh_token:
-            self.plugin.logger.notice("access token should be refreshed")
+            self.plugin.logger.info("access token should be refreshed")
             self.plugin.auth.get_token()
         # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
         # imdb id should be 7 digits with leading zeroes with tt prepended
         try:
             imdb_id = "tt{:07d}".format(int(self.list_item.getProperty("imdbnumber")))
         except ValueError:
-            self.plugin.logger.notice("imdb number is missing, skip scrobbling")
+            self.plugin.logger.info("imdb number is missing, skip scrobbling")
             return
         ids = json.dumps({"imdb": imdb_id})
         xbmcgui.Window(10000).setProperty("script.trakt.ids", ids)
@@ -74,29 +74,29 @@ class Player(xbmc.Player):
     def onPlayBackStopped(self):
         self.is_playing = False
         data = self._base_data
-        self.plugin.logger.notice("playback stopped")
+        self.plugin.logger.info("playback stopped")
         if self.should_make_resume_point:
             data["time"] = self.marktime
-            self.plugin.logger.notice("sending resume point")
+            self.plugin.logger.info("sending resume point")
             self.plugin.client("watching/marktime").get(data=data)
         elif self.should_mark_as_watched and int(self.list_item.getProperty("playcount")) < 1:
             data["status"] = 1
-            self.plugin.logger.notice("marking as watched")
+            self.plugin.logger.info("marking as watched")
             self.plugin.client("watching/toggle").get(data=data)
         elif self.should_reset_resume_point:
             data["time"] = 0
-            self.plugin.logger.notice("resetting resume point")
+            self.plugin.logger.info("resetting resume point")
             self.plugin.client("watching/marktime").get(data=data)
         else:
             return
 
     def onPlayBackEnded(self):
         self.is_playing = False
-        self.plugin.logger.notice("playback ended")
+        self.plugin.logger.info("playback ended")
         if int(self.list_item.getProperty("playcount")) < 1:
             data = self._base_data
             data["status"] = 1
-            self.plugin.logger.notice("marking as watched")
+            self.plugin.logger.info("marking as watched")
             self.plugin.client("watching/toggle").get(data=data)
 
     def onPlaybackError(self):

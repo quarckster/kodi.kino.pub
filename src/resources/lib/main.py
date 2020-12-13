@@ -172,16 +172,16 @@ def genre_items(content_type, genre):
 def alphabet(content_type):
     # fmt: off
     letters = [
-        u"А", u"Б", u"В", u"Г", u"Д", u"Е", u"Ё", u"Ж", u"З", u"И", u"Й", u"К", u"Л", u"М", u"Н",
-        u"О", u"П", u"Р", u"С", u"Т", u"У", u"Ф", u"Х", u"Ц", u"Ч", u"Ш", u"Щ", u"Ы", u"Э", u"Ю",
-        u"Я", u"A", u"B", u"C", u"D", u"E", u"F", u"G", u"H", u"I", u"J", u"K", u"L", u"M", u"N",
-        u"O", u"P", u"Q", u"R", u"S", u"T", u"U", u"V", u"W", u"X", u"Y", u"Z",
+        "А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Л", "М", "Н",
+        "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ы", "Э", "Ю",
+        "Я", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
+        "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
     ]
     # fmt: on
     for letter in letters:
         li = plugin.list_item(letter)
         url = plugin.routing.build_url(
-            "items", content_type, "alphabet", u"{}/".format(letter), sort="title"
+            "items", content_type, "alphabet", "{}/".format(letter), sort="title"
         )
         xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
     xbmcplugin.endOfDirectory(plugin.handle)
@@ -205,7 +205,7 @@ def new_search(content_type):
     kbd.doModal()
     if kbd.isConfirmed():
         title = kbd.getText()
-        plugin.logger.notice(title)
+        plugin.logger.info(title)
         url = plugin.routing.build_url("search", content_type, "results/", title=title)
         plugin.routing.redirect(url)
 
@@ -334,7 +334,7 @@ def show_bookmark_folder(folder_id):
 def watching():
     xbmcplugin.setContent(plugin.handle, "tvshows")
     for tvshow in plugin.items.watching_tvshows:
-        tvshow.li_title = u"{} : [COLOR FFFFF000]+{}[/COLOR]".format(tvshow.title, tvshow.new)
+        tvshow.li_title = "{} : [COLOR FFFFF000]+{}[/COLOR]".format(tvshow.title, tvshow.new)
         xbmcplugin.addDirectoryItem(plugin.handle, tvshow.url, tvshow.list_item, True)
     xbmcplugin.endOfDirectory(plugin.handle)
 
@@ -470,12 +470,12 @@ def profile():
     user_data = plugin.client("user").get()["user"]
     reg_date = date.fromtimestamp(user_data["reg_date"])
     dialog = xbmcgui.Dialog()
-    dialog.ok(
-        "Информация о профиле",
-        "Имя пользователя: [B]{}[/B]".format(user_data["username"]),
-        "Дата регистрации: [B]{0:%d}.{0:%m}.{0:%Y}[/B]".format(reg_date),
-        "Остаток дней подписки: [B]{}[/B]".format(int(user_data["subscription"]["days"])),
+    message = (
+        f"Имя пользователя: [B]{user_data['username']}[/B]\n"
+        f"Дата регистрации: [B]{reg_date:%d.%m.%Y}[/B]\n"
+        f"Остаток дней подписки: [B]{int(user_data['subscription']['days'])}[/B]"
     )
+    dialog.ok("Информация о профиле", message)
 
 
 @plugin.routing.route("/comments/<item_id>")
@@ -491,11 +491,11 @@ def comments(item_id):
             rating = " [COLOR FFD11141]({})[/COLOR]".format(i["rating"])
         else:
             rating = ""
-        message = u"{}[COLOR FFFFF000]{}[/COLOR]{}: {}\n\n".format(
+        message = "{}[COLOR FFFFF000]{}[/COLOR]{}: {}\n\n".format(
             message, i["user"]["name"], rating, i["message"].replace("\n", " ")
         )
     dialog = xbmcgui.Dialog()
-    dialog.textviewer(u'Комментарии "{}"'.format(title), message)
+    dialog.textviewer('Комментарии "{}"'.format(title), message)
 
 
 @plugin.routing.route("/similar/<item_id>")

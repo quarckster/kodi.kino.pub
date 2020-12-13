@@ -97,7 +97,7 @@ class ItemsCollection(object):
 
         # filter items list from anime items
         non_anime_items = list(
-            filter(lambda x: all(i["id"] != 25 for i in x["genres"]), new_items[start_from:])
+            [x for x in new_items[start_from:] if all(i["id"] != 25 for i in x["genres"])]
         )
 
         # if not enough items continue with next API page
@@ -145,7 +145,7 @@ class ItemEntity(object):
         if self.item["imdb_rating"]:
             final_plot.append("IMDB: {}".format(str(round(self.item["imdb_rating"], 1))))
         if self.item["kinopoisk_rating"]:
-            final_plot.append(u"Кинопоиск: {}".format(str(round(self.item["kinopoisk_rating"], 1))))
+            final_plot.append("Кинопоиск: {}".format(str(round(self.item["kinopoisk_rating"], 1))))
         # a new line between the ratings and the plot
         if self.item["imdb_rating"] or self.item["kinopoisk_rating"]:
             final_plot.append("")
@@ -235,7 +235,7 @@ class PlayableItem(ItemEntity):
             for quality, urls in files.items()
             for stream, url in urls.items()
         }
-        urls_list = natural_sort(flatten_urls_dict.keys())
+        urls_list = natural_sort(list(flatten_urls_dict.keys()))
         if ask_quality == "true":
             dialog = xbmcgui.Dialog()
             result = dialog.select("Выберите качество видео", urls_list)
@@ -248,7 +248,7 @@ class PlayableItem(ItemEntity):
                 return files[quality][stream_type]
             except KeyError:
                 # if there is no such quality then return a link with the highest available quality
-                return files[natural_sort(files.keys())[-1]][stream_type]
+                return files[natural_sort(list(files.keys()))[-1]][stream_type]
 
     @property
     def list_item(self):
@@ -321,7 +321,7 @@ class TVShow(ItemEntity):
             {
                 "trailer": self.trailer_url,
                 "mediatype": self.mediatype,
-                "status": u"окончен" if self.item["finished"] else u"в эфире",
+                "status": "окончен" if self.item["finished"] else "в эфире",
             }
         )
         return video_info
@@ -378,7 +378,7 @@ class SeasonEpisode(PlayableItem):
         )
         self.li_title = "s{:02d}e{:02d}".format(self.season.index, self.index)
         if self.title:
-            self.li_title = u"{} | {}".format(self.li_title, self.title)
+            self.li_title = "{} | {}".format(self.li_title, self.title)
         try:
             # In a tvshow season could be a case when some episodes are not available, but episode
             # numbers in response payload are set correctly.
@@ -447,7 +447,7 @@ class Episode(PlayableItem):
         self.url = self.plugin.routing.build_url("play", self.item_id, index=self.index)
         self.li_title = "e{:02d}".format(self.index)
         if self.title:
-            self.li_title = u"{} | {}".format(self.li_title, self.title)
+            self.li_title = "{} | {}".format(self.li_title, self.title)
         self.watching_status = self.watching_info["status"]
 
     @property

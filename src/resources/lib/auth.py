@@ -3,13 +3,14 @@ import json
 import platform
 import sys
 import time
-import urllib
+import urllib.error
+import urllib.parse
+import urllib.request
+from functools import cached_property
 
-import urllib2
 import xbmc
 import xbmcgui
 
-from resources.lib.utils import cached_property
 from resources.lib.utils import notice
 
 
@@ -70,13 +71,14 @@ class Auth(object):
         self.plugin = plugin
 
     def _make_request(self, payload):
-        self.plugin.logger.notice("sending payload {} to oauth api".format(payload))
+        self.plugin.logger.info("sending payload {} to oauth api".format(payload))
         try:
-            response = urllib2.urlopen(
-                urllib2.Request(self.OAUTH_API_URL), urllib.urlencode(payload)
+            response = urllib.request.urlopen(
+                urllib.request.Request(self.OAUTH_API_URL),
+                urllib.parse.urlencode(payload).encode("utf-8"),
             ).read()
             return json.loads(response)
-        except urllib2.HTTPError as e:
+        except urllib.error.HTTPError as e:
             if e.code == 400:
                 response = json.loads(e.read())
                 error = response.get("error")
@@ -116,7 +118,7 @@ class Auth(object):
         }
 
     def _get_device_token(self, device_code):
-        self.plugin.logger.notice("getting a new device token")
+        self.plugin.logger.info("getting a new device token")
         payload = {
             "grant_type": "device_token",
             "client_id": self.CLIENT_ID,
@@ -127,7 +129,7 @@ class Auth(object):
         self._update_settings(resp["refresh_token"], resp["access_token"], resp["expires_in"])
 
     def _refresh_token(self):
-        self.plugin.logger.notice("refreshing token")
+        self.plugin.logger.info("refreshing token")
         payload = {
             "grant_type": "refresh_token",
             "refresh_token": self.plugin.settings.refresh_token,
@@ -143,7 +145,7 @@ class Auth(object):
 
     def _update_device_info(self):
         result = {"build_version": "Busy", "friendly_name": "Busy"}
-        while "Busy" in result.values():
+        while "Busy" in list(result.values()):
             result = {
                 "build_version": xbmc.getInfoLabel("System.BuildVersion"),
                 "friendly_name": xbmc.getInfoLabel("System.FriendlyName"),
@@ -178,7 +180,7 @@ class Auth(object):
         self.plugin.settings.refresh_token = refresh_token
         self.plugin.settings.access_token = access_token
         self.plugin.settings.access_token_expire = str(expires_in + int(time.time()))
-        self.plugin.logger.notice(
+        self.plugin.logger.info(
             "refresh token - {}; access token - {}; expires in - {}".format(
                 refresh_token, access_token, expires_in
             )

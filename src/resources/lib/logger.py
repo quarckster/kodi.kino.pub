@@ -15,9 +15,6 @@ class Logger(object):
     def info(self, message):
         self._log(message, xbmc.LOGINFO)
 
-    def notice(self, message):
-        self._log(message, xbmc.LOGNOTICE)
-
     def warning(self, message):
         self._log(message, xbmc.LOGWARNING)
 
