@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
 import re
 from urllib import urlencode
-from urlparse import urlunsplit
 
 import xbmc
+from urlparse import urlunsplit
 
 
 class RoutingException(Exception):
@@ -28,7 +26,8 @@ class Routing(object):
         return None
 
     def build_url(self, func_name, *args, **kwargs):
-        path = u"/".join([func_name] + map(unicode, list(args)))
+        # path = u"/".join([func_name] + map(unicode, list(args)))
+        path = u"/".join([func_name] + list(args))
         return urlunsplit(("plugin", self.plugin.PLUGIN_ID, path, urlencode(kwargs), ""))
 
     def add_kwargs_to_url(self, **kwargs):

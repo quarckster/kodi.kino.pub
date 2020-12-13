@@ -2,10 +2,10 @@
 import re
 import sys
 from collections import namedtuple
+from functools import cached_property
 
 import xbmcgui
 
-from resources.lib.utils import cached_property
 from resources.lib.utils import notice
 
 try:

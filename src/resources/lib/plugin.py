@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
-import cPickle
 import sys
 from collections import namedtuple
-from urlparse import parse_qsl
-from urlparse import urlsplit
 
+import cPickle
 import xbmcaddon
 import xbmcgui
+from urlparse import parse_qsl
+from urlparse import urlsplit
 
 from resources.lib.auth import Auth
 from resources.lib.client import KinoPubClient
@@ -234,7 +232,7 @@ class Plugin(object):
 
     def set_window_property(self, value):
         self.clear_window_property()
-        if not isinstance(value, basestring):
+        if not isinstance(value, str):
             value = cPickle.dumps(value)
         xbmcgui.Window(10000).setProperty("video.kino.pub-playback_data", value)
 

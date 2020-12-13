@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import unicode_literals
-
 import json
 import platform
 import sys
 import time
 import urllib
-import urllib2
 
+import urllib2
 import xbmc
 import xbmcgui
 

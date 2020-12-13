@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
 import json
 import sys
 import urllib
+
 import urllib2
 
 from resources.lib.utils import notice
