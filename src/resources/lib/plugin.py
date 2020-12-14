@@ -24,7 +24,7 @@ MainMenuItem = namedtuple("MainMenuItem", ["title", "url", "icon", "is_dir", "is
 
 class Plugin(object):
     PLUGIN_ID = xbmcaddon.Addon().getAddonInfo("id")
-    PLUGIN_URL = "plugin://{}".format(PLUGIN_ID)
+    PLUGIN_URL = f"plugin://{PLUGIN_ID}"
     settings = Settings()
 
     def __init__(self):
@@ -206,7 +206,7 @@ class Plugin(object):
 
     @property
     def sorting_title(self):
-        return "По {} {}".format(self.settings.sort_by, self.settings.sort_direction)
+        return f"По {self.settings.sort_by} {self.settings.sort_direction}"
 
     @property
     def sorting_params(self):
@@ -223,9 +223,7 @@ class Plugin(object):
         }
         direction = {"по убыванию": "-", "по возрастанию": ""}
         return {
-            "sort": "{}{}".format(
-                sorting[self.settings.sort_by], direction[self.settings.sort_direction]
-            )
+            "sort": f"{sorting[self.settings.sort_by]}{direction[self.settings.sort_direction]}"
         }
 
     def clear_window_property(self):

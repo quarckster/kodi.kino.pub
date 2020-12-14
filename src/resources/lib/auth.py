@@ -71,7 +71,7 @@ class Auth(object):
         self.plugin = plugin
 
     def _make_request(self, payload):
-        self.plugin.logger.info("sending payload {} to oauth api".format(payload))
+        self.plugin.logger.info(f"sending payload {payload} to oauth api")
         try:
             response = urllib.request.urlopen(
                 urllib.request.Request(self.OAUTH_API_URL),
@@ -98,9 +98,9 @@ class Auth(object):
             else:
                 self._auth_dialog.close(cancel=True)
                 self.plugin.logger.fatal(
-                    "oauth request error; status: {}; message: {}".format(e.code, e.message)
+                    f"oauth request error; status: {e.code}; message: {e.message}"
                 )
-                notice("Server status code {}".format(e.code), "Activation error")
+                notice(f"Server status code {e.code}", "Activation error")
                 sys.exit()
 
     def _get_device_code(self):
@@ -150,7 +150,7 @@ class Auth(object):
                 "build_version": xbmc.getInfoLabel("System.BuildVersion"),
                 "friendly_name": xbmc.getInfoLabel("System.FriendlyName"),
             }
-        software = "Kodi {}".format(result["build_version"].split()[0])
+        software = f"Kodi {result['build_version'].split()[0]}"
         title = result["friendly_name"] if result["friendly_name"] != "unknown" else platform.node()
         self.plugin.client("device/notify").post(
             data={"title": title, "hardware": platform.machine(), "software": software}
@@ -181,20 +181,15 @@ class Auth(object):
         self.plugin.settings.access_token = access_token
         self.plugin.settings.access_token_expire = str(expires_in + int(time.time()))
         self.plugin.logger.info(
-            "refresh token - {}; access token - {}; expires in - {}".format(
-                refresh_token, access_token, expires_in
-            )
+            f"refresh token - {refresh_token}; access token - {access_token}; "
+            f"expires in - {expires_in}"
         )
 
     def _activate(self):
         resp = self._get_device_code()
         self._auth_dialog.show(
-            "\n".join(
-                [
-                    "Откройте [B]{}[/B]".format(resp["verification_uri"]),
-                    "и введите следующий код: [B]{}[/B]".format(resp["user_code"]),
-                ]
-            )
+            f"Откройте [B]{resp['verification_uri']}[/B]\n"
+            f"и введите следующий код: [B]{resp['user_code']}[/B]",
         )
         self._verify_device_code(resp["refresh_interval"], resp["device_code"])
 

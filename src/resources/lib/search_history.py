@@ -9,7 +9,7 @@ class SearchHistory(object):
         self.plugin = plugin
         self.history_max_qty = int(self.plugin.settings.history_max_qty)
         self.path = xbmcvfs.translatePath(
-            "special://userdata/addon_data/{}/history".format(self.plugin.PLUGIN_ID)
+            f"special://userdata/addon_data/{self.plugin.PLUGIN_ID}/history"
         )
         self.items = []
         self._load_history()

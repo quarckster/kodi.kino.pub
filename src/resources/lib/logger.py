@@ -6,7 +6,7 @@ class Logger(object):
         self.plugin = plugin
 
     def _log(self, message, level):
-        fmt_message = "[{}]: {}".format(self.plugin.PLUGIN_ID, str(message))
+        fmt_message = f"[{self.plugin.PLUGIN_ID}]: {str(message)}"
         xbmc.log(fmt_message, level=level)
 
     def debug(self, message):

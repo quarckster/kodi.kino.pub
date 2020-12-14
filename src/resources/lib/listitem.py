@@ -21,7 +21,7 @@ class ExtendedListItem(ListItem):
         subtitles=None,
         plugin=None,
     ):
-        super(ExtendedListItem, self).__init__(name, label2, iconImage, thumbnailImage, path)
+        super(ExtendedListItem, self).__init__(name, label2, path)
         self.plugin = plugin
         if properties:
             self.setProperties(**properties)
@@ -32,6 +32,10 @@ class ExtendedListItem(ListItem):
             self.setArt({"poster": poster})
         if fanart:
             self.setArt({"fanart": fanart})
+        if thumbnailImage:
+            self.setArt({"thumb": thumbnailImage})
+        if iconImage:
+            self.setArt({"icon": iconImage})
         if subtitles:
             self.setSubtitles(subtitles)
         if addContextMenuItems:
@@ -45,7 +49,7 @@ class ExtendedListItem(ListItem):
         url = self.plugin.routing.build_url(
             "toggle_watchlist", self.getProperty("id"), added=int(not int(in_watchlist))
         )
-        menu_items.append((label, "XBMC.RunPlugin({})".format(url)))
+        menu_items.append((label, f"XBMC.RunPlugin({url})"))
 
     def _addWatchedContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
@@ -65,7 +69,7 @@ class ExtendedListItem(ListItem):
         else:
             kwargs = {"video": video_number}
         url = self.plugin.routing.build_url("toggle_watched", item_id, **kwargs)
-        menu_items.append((label, "XBMC.RunPlugin({})".format(url)))
+        menu_items.append((label, f"XBMC.RunPlugin({url})"))
 
     def _addBookmarksContextMenuItem(self, menu_items):
         if self.getVideoInfoTag().getMediaType() == "season":
@@ -73,20 +77,20 @@ class ExtendedListItem(ListItem):
         item_id = self.getProperty("id")
         label = "Изменить закладки"
         url = self.plugin.routing.build_url("edit_bookmarks", item_id)
-        menu_items.append((label, "XBMC.RunPlugin({})".format(url)))
+        menu_items.append((label, f"XBMC.RunPlugin({url})"))
 
     def _addCommentsContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
         label = "Комментарии KinoPub"
         url = self.plugin.routing.build_url("comments", item_id)
-        menu_items.append((label, "XBMC.RunPlugin({})".format(url)))
+        menu_items.append((label, f"XBMC.RunPlugin({url})"))
 
     def _addSimilarContextMenuItem(self, menu_items):
         item_id = self.getProperty("id")
         title = self.getLabel()
         label = "Похожие фильмы"
         url = self.plugin.routing.build_url("similar", item_id, title=title)
-        menu_items.append((label, "Container.Update({})".format(url)))
+        menu_items.append((label, f"Container.Update({url})"))
 
     def _addSeparatorContextMenuItem(self, menu_items):
         # 21 is the maximum number of characters when the horizontal scrolling doesn't appear.
@@ -96,7 +100,7 @@ class ExtendedListItem(ListItem):
         items = items or ["watched", "watchlist", "bookmarks", "comments", "similar", "separator"]
         menu_items = []
         for item in items:
-            getattr(self, "_add{}ContextMenuItem".format(item.capitalize()))(menu_items)
+            getattr(self, f"_add{item.capitalize()}ContextMenuItem")(menu_items)
         self.addContextMenuItems(menu_items)
 
     def setProperties(self, **properties):
@@ -117,4 +121,4 @@ class ExtendedListItem(ListItem):
 
     def markAdvert(self, has_advert):
         if self.plugin.settings.mark_advert == "true" and has_advert:
-            self.setLabel("{} (!)".format(self.getLabel()))
+            self.setLabel(f"{self.getLabel()} (!)")

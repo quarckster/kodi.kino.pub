@@ -64,7 +64,7 @@ class Player(xbmc.Player):
         # https://github.com/trakt/script.trakt/wiki/Providing-id's-to-facilitate-scrobbling
         # imdb id should be 7 digits with leading zeroes with tt prepended
         try:
-            imdb_id = "tt{:07d}".format(int(self.list_item.getProperty("imdbnumber")))
+            imdb_id = f"tt{int(self.list_item.getProperty('imdbnumber')):07d}"
         except ValueError:
             self.plugin.logger.info("imdb number is missing, skip scrobbling")
             return

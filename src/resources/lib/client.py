@@ -17,38 +17,38 @@ class KinoPubClient(object):
 
     def _make_request(self, request, timeout=600):
         self.plugin.logger.info(
-            "sending {} request to {}".format(request.get_method(), request.get_full_url())
+            f"sending {request.get_method()} request to {request.get_full_url()}"
         )
-        request.add_header("Authorization", "Bearer {}".format(self.plugin.settings.access_token))
+        request.add_header("Authorization", f"Bearer {self.plugin.settings.access_token}")
         try:
             response = urllib.request.urlopen(request, timeout=timeout)
         except urllib.error.HTTPError as e:
-            self.plugin.logger.error("HTTPError. Code: {}.".format(e.code))
+            self.plugin.logger.error(f"HTTPError. Code: {e.code}")
             if e.code == 401:
                 self.plugin.auth.get_token()
                 if self.plugin.settings.access_token:
                     return self._make_request(request)
                 sys.exit()
             else:
-                notice("Код ответа сервера {}".format(e.code), "Ошибка")
+                notice(f"Код ответа сервера {e.code}", "Ошибка")
                 sys.exit()
         except Exception as e:
-            self.plugin.logger.error("{}. Message: {}".format(type(e).__name__, e.message))
+            self.plugin.logger.error(f"{type(e).__name__}. Message: {e.message}")
             notice(e.message, "Ошибка")
         else:
             response = json.loads(response.read())
             if response["status"] == 200:
                 return response
             else:
-                self.plugin.logger.error("Unknown error. Code: {}".format(response["status"]))
-                notice("Код ответа сервера {}".format(response["status"]), "Неизвестная ошибка")
+                self.plugin.logger.error(f"Unknown error. Code: {response['status']}")
+                notice(f"Код ответа сервера {response['status']}", "Неизвестная ошибка")
 
     def get(self, data=""):
-        data = "?{}".format(urllib.parse.urlencode(data)) if data else ""
-        request = urllib.request.Request("{}/{}{}".format(self.url, self.action, data))
+        data = f"?{urllib.parse.urlencode(data)}" if data else ""
+        request = urllib.request.Request(f"{self.url}/{self.action}{data}")
         return self._make_request(request)
 
     def post(self, data=""):
         data = urllib.parse.urlencode(data).encode("utf-8")
-        request = urllib.request.Request("{}/{}".format(self.url, self.action), data=data)
+        request = urllib.request.Request(f"{self.url}/{self.action}", data=data)
         return self._make_request(request)

@@ -59,7 +59,7 @@ class ItemsCollection(object):
         return tvshows
 
     def get_api_item(self, item_id):
-        return self.plugin.client("items/{}".format(item_id)).get()["item"]
+        return self.plugin.client(f"items/{item_id}").get()["item"]
 
     def _get_item_entity(self, item_id=None, item=None):
         if item_id and not item:
@@ -143,9 +143,9 @@ class ItemEntity(object):
     def plot(self):
         final_plot = []
         if self.item["imdb_rating"]:
-            final_plot.append("IMDB: {}".format(str(round(self.item["imdb_rating"], 1))))
+            final_plot.append(f"IMDB: {str(round(self.item['imdb_rating'], 1))}")
         if self.item["kinopoisk_rating"]:
-            final_plot.append("Кинопоиск: {}".format(str(round(self.item["kinopoisk_rating"], 1))))
+            final_plot.append(f"Кинопоиск: {str(round(self.item['kinopoisk_rating'], 1))}")
         # a new line between the ratings and the plot
         if self.item["imdb_rating"] or self.item["kinopoisk_rating"]:
             final_plot.append("")
@@ -206,8 +206,8 @@ class ItemEntity(object):
         return odict
 
     def __repr__(self):
-        return "{!r}(item_id: {}; title: {})".format(
-            type(self).__name__, self.item_id, self.title.encode("utf-8")
+        return (
+            f"{type(self).__name__}(item_id: {self.item_id}; title: {self.title.encode('utf-8')})"
         )
 
 
@@ -231,7 +231,7 @@ class PlayableItem(ItemEntity):
 
         files = {f["quality"]: f["url"] for f in self.video_data["files"]}
         flatten_urls_dict = {
-            "{}@{}".format(quality, stream): url
+            f"{quality}@{stream}": url
             for quality, urls in files.items()
             for stream, url in urls.items()
         }
@@ -289,8 +289,8 @@ class PlayableItem(ItemEntity):
             "play_resumetime": self.resume_time,
             "playcount": self.video_info["playcount"],
             "imdbnumber": self.video_info["imdbnumber"],
+            **self.hls_properties,
         }
-        properties.update(self.hls_properties)
         return self.plugin.list_item(
             getattr(self, "li_title", self.title),
             path=self.media_url,
@@ -308,7 +308,7 @@ class TVShow(ItemEntity):
 
     def __init__(self, *args, **kwargs):
         super(TVShow, self).__init__(*args, **kwargs)
-        self.url = self.plugin.routing.build_url("seasons", "{}/".format(self.item_id))
+        self.url = self.plugin.routing.build_url("seasons", f"{self.item_id}/")
         self.new = None
         self._video_info = None
 
@@ -316,15 +316,12 @@ class TVShow(ItemEntity):
     def video_info(self):
         if self._video_info:
             return self._video_info
-        video_info = super(TVShow, self).video_info
-        video_info.update(
-            {
-                "trailer": self.trailer_url,
-                "mediatype": self.mediatype,
-                "status": "окончен" if self.item["finished"] else "в эфире",
-            }
-        )
-        return video_info
+        return {
+            **super(TVShow, self).video_info,
+            "trailer": self.trailer_url,
+            "mediatype": self.mediatype,
+            "status": "окончен" if self.item["finished"] else "в эфире",
+        }
 
     @property
     def seasons(self):
@@ -340,11 +337,9 @@ class Season(ItemEntity):
     def __init__(self, *args, **kwargs):
         super(Season, self).__init__(*args, **kwargs)
         self.tvshow = self.parent
-        self.title = "Сезон {}".format(self.index)
+        self.title = f"Сезон {self.index}"
         self.item_id = self.tvshow.item_id
-        self.url = self.plugin.routing.build_url(
-            "season_episodes", self.item_id, "{}/".format(self.index)
-        )
+        self.url = self.plugin.routing.build_url("season_episodes", self.item_id, f"{self.index}/")
         self.watching_info = self.tvshow.watching_info["seasons"][int(self.index) - 1]
         self.watching_status = self.watching_info["status"]
 
@@ -357,11 +352,12 @@ class Season(ItemEntity):
 
     @property
     def video_info(self):
-        video_info = self.tvshow.video_info.copy()
-        video_info.update(
-            {"season": self.index, "playcount": self.watching_status, "mediatype": self.mediatype}
-        )
-        return video_info
+        return {
+            **self.tvshow.video_info.copy(),
+            "season": self.index,
+            "playcount": self.watching_status,
+            "mediatype": self.mediatype,
+        }
 
 
 class SeasonEpisode(PlayableItem):
@@ -376,9 +372,9 @@ class SeasonEpisode(PlayableItem):
         self.url = self.plugin.routing.build_url(
             "play", self.item_id, season_index=self.season.index, index=self.index
         )
-        self.li_title = "s{:02d}e{:02d}".format(self.season.index, self.index)
+        self.li_title = f"s{self.season.index:02d}e{self.index:02d}"
         if self.title:
-            self.li_title = "{} | {}".format(self.li_title, self.title)
+            self.li_title = f"{self.li_title} | {self.title}"
         try:
             # In a tvshow season could be a case when some episodes are not available, but episode
             # numbers in response payload are set correctly.
@@ -389,19 +385,16 @@ class SeasonEpisode(PlayableItem):
 
     @property
     def video_info(self):
-        video_info = self.tvshow.video_info.copy()
-        video_info.update(
-            {
-                "season": self.season.index,
-                "episode": self.index,
-                "tvshowtitle": self.tvshow.title,
-                "time": self.resume_time,
-                "duration": self.watching_info["duration"],
-                "playcount": self.watching_info["status"],
-                "mediatype": self.mediatype,
-            }
-        )
-        return video_info
+        return {
+            **self.tvshow.video_info.copy(),
+            "season": self.season.index,
+            "episode": self.index,
+            "tvshowtitle": self.tvshow.title,
+            "time": self.resume_time,
+            "duration": self.watching_info["duration"],
+            "playcount": self.watching_info["status"],
+            "mediatype": self.mediatype,
+        }
 
     @property
     def playable_list_item(self):
@@ -415,7 +408,7 @@ class Multi(ItemEntity):
 
     def __init__(self, *args, **kwargs):
         super(Multi, self).__init__(*args, **kwargs)
-        self.url = self.plugin.routing.build_url("episodes", "{}/".format(self.item_id))
+        self.url = self.plugin.routing.build_url("episodes", f"{self.item_id}/")
 
     @property
     def videos(self):
@@ -432,9 +425,7 @@ class Multi(ItemEntity):
 
     @property
     def video_info(self):
-        video_info = super(Multi, self).video_info
-        video_info.update({"playcount": self.watching_info["status"]})
-        return video_info
+        return {**super(Multi, self).video_info, "playcount": self.watching_info["status"]}
 
 
 class Episode(PlayableItem):
@@ -445,25 +436,22 @@ class Episode(PlayableItem):
         self.item_id = self.parent.item_id
         self.video_data = self.item
         self.url = self.plugin.routing.build_url("play", self.item_id, index=self.index)
-        self.li_title = "e{:02d}".format(self.index)
+        self.li_title = f"e{self.index:02d}"
         if self.title:
-            self.li_title = "{} | {}".format(self.li_title, self.title)
+            self.li_title = f"{self.li_title} | {self.title}"
         self.watching_status = self.watching_info["status"]
 
     @property
     def video_info(self):
-        video_info = self.parent.video_info.copy()
-        video_info.update(
-            {
-                "episode": self.index,
-                "tvshowtitle": self.title,
-                "time": self.resume_time,
-                "duration": self.watching_info["duration"],
-                "playcount": self.item["watched"],
-                "mediatype": self.mediatype,
-            }
-        )
-        return video_info
+        return {
+            **self.parent.video_info.copy(),
+            "episode": self.index,
+            "tvshowtitle": self.title,
+            "time": self.resume_time,
+            "duration": self.watching_info["duration"],
+            "playcount": self.item["watched"],
+            "mediatype": self.mediatype,
+        }
 
     @property
     def watching_info(self):
@@ -491,17 +479,14 @@ class Movie(PlayableItem):
 
     @property
     def video_info(self):
-        video_info = super(Movie, self).video_info
-        video_info.update(
-            {
-                "time": self.resume_time,
-                "duration": self.watching_info["duration"],
-                "playcount": self.watching_info["status"],
-                "trailer": self.trailer_url,
-                "mediatype": self.mediatype,
-            }
-        )
-        return video_info
+        return {
+            **super(Movie, self).video_info,
+            "time": self.resume_time,
+            "duration": self.watching_info["duration"],
+            "playcount": self.watching_info["status"],
+            "trailer": self.trailer_url,
+            "mediatype": self.mediatype,
+        }
 
     @cached_property
     def watching_info(self):
