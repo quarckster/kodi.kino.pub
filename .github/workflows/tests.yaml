@@ -1,4 +1,4 @@
-name: kodi.kino.pub tests
+name: tests
 
 on:
   push:
