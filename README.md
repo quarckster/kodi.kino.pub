@@ -1,9 +1,9 @@
+# Kodi add-on for kino.pub
+
 [![Build Status](https://github.com/quarckster/kodi.kino.pub/workflows/tests/badge.svg)](https://github.com/quarckster/kodi.kino.pub/actions?query=workflow%3Atests)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/28217532-a2a0-408c-a780-e6270c7568ee/deploy-status)](https://app.netlify.com/sites/kodi-kino-pub/deploys)
 
-# Kodi add-on for kino.pub
-
-Kodi 17 is a minimal supported version.
+Versions 3.x.x. work only with Kodi 19. For Kodi 17 and 18 use 2.12.4 versions.
 
 The most notable features:
 
@@ -35,8 +35,3 @@ add-on from it:
 * download the latest version here <https://github.com/quarckster/kodi.kino.pub/releases/latest>
 * go to Add-on manager <https://kodi.wiki/view/Add-on_manager>
 * choose "Install from ZIP file"
-
-## Legacy plugin
-
-If you need the latest version of the original plugin you can download it here
-<https://plugins.service-kp.com/kodi/video.kino.pub/video.kino.pub-1.2.1.zip>

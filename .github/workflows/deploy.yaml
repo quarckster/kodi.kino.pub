@@ -13,6 +13,8 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     steps:
       - uses: actions/checkout@v2
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - uses: actions/setup-node@v2
       - name: Build an addon
         run: bash make.sh build_video_addon
@@ -32,8 +34,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./video.kino.pub-${{ github.ref }}.zip
-          asset_name: video.kino.pub-${{ github.ref }}.zip
+          asset_path: ./video.kino.pub-${{ env.RELEASE_VERSION }}.zip
+          asset_name: video.kino.pub-${{ env.RELEASE_VERSION }}.zip
           asset_content_type: application/zip
       - name: Deploy to Netlify
         env:
