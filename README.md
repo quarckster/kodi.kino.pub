@@ -1,4 +1,4 @@
-![Build Status](https://github.com/quarckster/kodi.kino.pub/workflows/kodi.kino.pub%20tests/badge.svg)
+[![Build Status](https://github.com/quarckster/kodi.kino.pub/workflows/tests/badge.svg)](https://github.com/quarckster/kodi.kino.pub/actions?query=workflow%3Atests)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/28217532-a2a0-408c-a780-e6270c7568ee/deploy-status)](https://app.netlify.com/sites/kodi-kino-pub/deploys)
 
 # Kodi add-on for kino.pub
