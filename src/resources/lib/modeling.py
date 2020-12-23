@@ -206,9 +206,7 @@ class ItemEntity(object):
         return odict
 
     def __repr__(self):
-        return (
-            f"{type(self).__name__}(item_id: {self.item_id}; title: {self.title.encode('utf-8')})"
-        )
+        return f"{type(self).__name__}(item_id: {self.item_id}; title: {self.title})"
 
 
 class PlayableItem(ItemEntity):
