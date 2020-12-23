@@ -217,17 +217,15 @@ def search(content_type):
 
     for history_item in plugin.search_history.recent:
         img = plugin.routing.build_icon_path("search_history")
-        li = plugin.list_item(history_item.encode("utf8"), iconImage=img, thumbnailImage=img)
-        url = plugin.routing.build_url(
-            "search", content_type, "results/", title=history_item.encode("utf8")
-        )
+        li = plugin.list_item(history_item, iconImage=img, thumbnailImage=img)
+        url = plugin.routing.build_url("search", content_type, "results/", title=history_item)
         xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
     xbmcplugin.endOfDirectory(plugin.handle)
 
 
 @plugin.routing.route("/search/<content_type>/results/")
 def search_results(content_type):
-    plugin.search_history.save(plugin.kwargs["title"].decode("utf8"))
+    plugin.search_history.save(plugin.kwargs["title"])
 
     data = {
         "type": None if content_type == "all" else content_type.rstrip("s"),
