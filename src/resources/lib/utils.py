@@ -1,5 +1,5 @@
-import xbmc
+import xbmcgui
 
 
 def notice(message, heading="", time=4000):
-    xbmc.executebuiltin(f'XBMC.Notification("{heading}", "{message}", "{time}")')
+    xbmcgui.Dialog().notification(heading, message, time=time)
