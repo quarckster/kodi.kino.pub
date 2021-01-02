@@ -27,7 +27,6 @@ class Routing(object):
         return None
 
     def build_url(self, func_name, *args, **kwargs):
-        # path = u"/".join([func_name] + map(unicode, list(args)))
         path = "/".join([func_name] + [str(arg) for arg in args])
         return urlunsplit(("plugin", self.plugin.PLUGIN_ID, path, urlencode(kwargs), ""))
 

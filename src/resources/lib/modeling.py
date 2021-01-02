@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import re
 import sys
+import urllib
 from collections import namedtuple
 from functools import cached_property
 
 import xbmcgui
 
+from resources.lib.utils import fix_m3u8
 from resources.lib.utils import notice
 
 try:
@@ -212,8 +214,7 @@ class ItemEntity(object):
 class PlayableItem(ItemEntity):
     isdir = False
 
-    @property
-    def media_url(self):
+    def get_media_url(self):
         quality = self.plugin.settings.video_quality
         stream_type = self.plugin.settings.stream_type
         ask_quality = self.plugin.settings.ask_quality
@@ -249,6 +250,13 @@ class PlayableItem(ItemEntity):
                 return files[natural_sort(list(files.keys()))[-1]][stream_type]
 
     @property
+    def media_url(self):
+        url = self.get_media_url()
+        if urllib.parse.urlsplit(url).path.endswith("m3u8"):
+            return fix_m3u8(url, self.plugin.logger)
+        return url
+
+    @property
     def list_item(self):
         li = super(PlayableItem, self).list_item
         li.setProperty("isPlayable", "true")
@@ -274,7 +282,7 @@ class PlayableItem(ItemEntity):
                 return {}
             else:
                 return {
-                    "inputstreamaddon": helper.inputstream_addon,
+                    "inputstream": helper.inputstream_addon,
                     "inputstream.adaptive.manifest_type": "hls",
                 }
         return {}
