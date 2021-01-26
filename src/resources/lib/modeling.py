@@ -54,6 +54,8 @@ class ItemsCollection(object):
     def watching_tvshows(self):
         tvshows = []
         for item in self.plugin.client("watching/serials").get(data={"subscribed": 1})["items"]:
+            # This needs in order to add context menu items in "Я смотрю"
+            item["in_watchlist"] = 1
             tvshow = self.instantiate(item=item)
             tvshow.new = item["new"]
             tvshow._video_info = {"mediatype": tvshow.mediatype}
@@ -183,6 +185,11 @@ class ItemEntity(object):
 
     @property
     def list_item(self):
+        def is_in_watchlist():
+            if self.item.get("in_watchlist") is not None:
+                return str(int(self.item["in_watchlist"]))
+            return ""
+
         li = self.plugin.list_item(
             getattr(self, "li_title", self.title),
             poster=self.item.get("posters", {}).get("big"),
@@ -190,12 +197,10 @@ class ItemEntity(object):
             thumbnailImage=self.item.get(
                 "thumbnail", self.item.get("posters", {}).get("small", "")
             ),
-            properties={"id": self.item_id},
+            properties={"id": self.item_id, "in_watchlist": is_in_watchlist()},
             video_info=self.video_info,
             addContextMenuItems=True,
         )
-        if self.item.get("in_watchlist") is not None:
-            li.setProperty("in_watchlist", str(int(self.item["in_watchlist"])))
         li.markAdvert(self.item.get("advert"))
         return li
 
