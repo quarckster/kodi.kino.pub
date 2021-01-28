@@ -15,7 +15,7 @@
             <platform>all</platform>
         </extension>
     </addon>
-    
+
     <addon id="video.kino.pub" name="kino.pub" version="${VERSION}" provider-name="quarckster">
         <requires>
             <import addon="xbmc.python" version="3.0.0"/>
