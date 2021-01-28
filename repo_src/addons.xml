@@ -15,11 +15,12 @@
             <platform>all</platform>
         </extension>
     </addon>
-
+    
     <addon id="video.kino.pub" name="kino.pub" version="${VERSION}" provider-name="quarckster">
         <requires>
             <import addon="xbmc.python" version="3.0.0"/>
             <import addon="script.module.inputstreamhelper" version="0.3.4" optional="true"/>
+            <import addon="script.module.m3u8" version="0.5.4" optional="false"/>
         </requires>
         <extension point="xbmc.python.pluginsource" library="addon.py">
             <provides>video</provides>
