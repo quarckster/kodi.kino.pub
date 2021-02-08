@@ -32,5 +32,10 @@ jobs:
           architecture: "x64"
       - name: Install deps
         run: pip install pytest wait_for kodi-json
+      - name: Set permissions
+        run: sudo chmod -R a+rwx tests/data/
       - name: Integration tests
         run: pytest -s -v
+      - name: Analysis
+        if: failure()
+        run: podman logs kodi

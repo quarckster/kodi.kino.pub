@@ -10,7 +10,7 @@ from kodijson import Kodi
 from wait_for import wait_for
 
 
-JSON_RPC_URL = "http://localhost:8080/jsonrpc"
+JSON_RPC_URL = "http://127.0.0.1:8080/jsonrpc"
 HOST_DIR = f"{Path('.').absolute()}/tests/data"
 CON_DIR = "/home/kodi/.kodi"
 
@@ -55,13 +55,14 @@ def run_conkodi(build_plugin):
         .stdout.decode("utf-8")
         .strip()
     )
-    yield
-    subprocess.run(["podman", "rm", "-f", container_id], stdout=subprocess.DEVNULL)
+    return
+    # yield
+    # subprocess.run(["podman", "rm", "-f", container_id], stdout=subprocess.DEVNULL)
 
 
 @pytest.fixture(scope="session")
 def kodi(run_conkodi):
-    wait_for(lambda: urlopen(JSON_RPC_URL), timeout=10, handle_exception=True)
+    wait_for(lambda: urlopen(JSON_RPC_URL), timeout=60, handle_exception=True)
     return Kodi(JSON_RPC_URL)
 
 
