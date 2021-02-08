@@ -1,11 +1,12 @@
-import pytest
-from kodijson import Kodi
-from expected_results import ACTIVATED_HOME, NONACTIVATED_HOME
-from urllib.request import urlopen
-import subprocess
-import time
 import shutil
+import subprocess
 from pathlib import Path
+from urllib.request import urlopen
+
+import pytest
+from expected_results import ACTIVATED_HOME
+from expected_results import NONACTIVATED_HOME
+from kodijson import Kodi
 from wait_for import wait_for
 
 
