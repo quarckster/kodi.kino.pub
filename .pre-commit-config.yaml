@@ -1,7 +1,7 @@
-exclude: tests/responses.py
+exclude: tests/responses.py|tests/data
 repos:
   - repo: https://github.com/asottile/reorder_python_imports
-    rev: v2.3.6
+    rev: v2.4.0
     hooks:
       - id: reorder-python-imports
         language_version: python3
@@ -31,7 +31,7 @@ repos:
           - --max-line-length=100
           - --ignore=W503,E203
   - repo: https://github.com/asottile/pyupgrade
-    rev: v2.7.4
+    rev: v2.10.0
     hooks:
       - id: pyupgrade
         language_version: python3

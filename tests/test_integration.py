@@ -29,35 +29,32 @@ def build_plugin():
 
 @pytest.fixture(scope="session")
 def run_conkodi(build_plugin):
-    container_id = (
-        subprocess.run(
-            [
-                "podman",
-                "run",
-                "--name",
-                "kodi",
-                "-d",
-                "--rm",
-                "-v",
-                f"{HOST_DIR}/addons/:{CON_DIR}/addons",
-                "-v",
-                f"{HOST_DIR}/Database/:{CON_DIR}/userdata/Database",
-                "-v",
-                f"{HOST_DIR}/addon_data/:{CON_DIR}/userdata/addon_data/video.kino.pub/",
-                "-p",
-                "5999:5999",
-                "-p",
-                "8080:8080",
-                "quay.io/quarck/conkodi:19",
-            ],
-            stdout=subprocess.PIPE,
-        )
-        .stdout.decode("utf-8")
-        .strip()
+    subprocess.run(["podman", "rm", "-f", "kodi"], stdout=subprocess.DEVNULL)
+    subprocess.run(
+        [
+            "podman",
+            "run",
+            "--name",
+            "kodi",
+            "-d",
+            "--rm",
+            "-v",
+            f"{HOST_DIR}/addons/:{CON_DIR}/addons",
+            "-v",
+            f"{HOST_DIR}/Database/:{CON_DIR}/userdata/Database",
+            "-v",
+            f"{HOST_DIR}/addon_data/:{CON_DIR}/userdata/addon_data/video.kino.pub/",
+            "-p",
+            "5999:5999",
+            "-p",
+            "8080:8080",
+            "--userns=keep-id",
+            "quay.io/quarck/conkodi:19",
+        ],
+        stdout=subprocess.PIPE,
     )
-    return
-    # yield
-    # subprocess.run(["podman", "rm", "-f", container_id], stdout=subprocess.DEVNULL)
+    yield
+    subprocess.run(["podman", "stop", "kodi"], stdout=subprocess.DEVNULL)
 
 
 @pytest.fixture(scope="session")

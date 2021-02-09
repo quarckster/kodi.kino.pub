@@ -33,9 +33,9 @@ jobs:
       - name: Install deps
         run: pip install pytest wait_for kodi-json
       - name: Set permissions
-        run: sudo chmod -R a+rwx tests/data/
+        run: sudo chown -R 1000:1000 tests/data/
       - name: Integration tests
-        run: pytest -s -v
+        run: pytest -v
       - name: Analysis
         if: failure()
         run: podman logs kodi
