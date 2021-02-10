@@ -1,3 +1,4 @@
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -49,6 +50,7 @@ def run_conkodi(build_plugin):
             "-p",
             "8080:8080",
             "--userns=keep-id",
+            f"--user={os.getuid()}:{os.getgid()}",
             "quay.io/quarck/conkodi:19",
         ],
         stdout=subprocess.PIPE,
