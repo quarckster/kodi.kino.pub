@@ -1,4 +1,3 @@
-import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -42,7 +41,6 @@ def run_conkodi(build_plugin):
             f"--volume={HOST_DIR}/addon_data/:{CON_DIR}/userdata/addon_data/video.kino.pub/",
             "--publish=5999:5999",
             "--publish=8080:8080",
-            "--userns=keep-id",
             "quay.io/quarck/conkodi:19",
         ],
         stdout=subprocess.DEVNULL,
@@ -53,7 +51,7 @@ def run_conkodi(build_plugin):
 
 @pytest.fixture(scope="session")
 def kodi(run_conkodi):
-    wait_for(lambda: urlopen(JSON_RPC_URL), timeout=60, handle_exception=True)
+    wait_for(urlopen, func_args=[JSON_RPC_URL], timeout=60, handle_exception=True)
     return Kodi(JSON_RPC_URL)
 
 

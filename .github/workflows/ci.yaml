@@ -1,4 +1,4 @@
-name: tests
+name: ci
 
 on:
   push:
@@ -32,8 +32,10 @@ jobs:
           architecture: "x64"
       - name: Install deps
         run: pip install pytest wait_for kodi-json
+      - name: Pull conkodi container image
+        run: podman pull quay.io/quarck/conkodi:19
       - name: Set permissions
-        run: sudo chmod 0777 -R tests/data
+        run: sudo chmod -R a+rwx tests/data
       - name: Integration tests
         run: pytest -v
       - name: Analysis
