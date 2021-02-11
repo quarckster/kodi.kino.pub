@@ -1,0 +1,29 @@
+<settings version="2">
+    <setting id="access_token" default="true">some_token</setting>
+    <setting id="video_quality" default="true">1080p</setting>
+    <setting id="stream_type" default="true">hls</setting>
+    <setting id="ask_quality" default="true">false</setting>
+    <setting id="mark_advert" default="true">false</setting>
+    <setting id="exclude_anime" default="true">false</setting>
+    <setting id="inputstream_adaptive_enabled" default="true">false</setting>
+    <setting id="inputstream_helper_install" default="true" />
+    <setting id="sort_by" default="true">рейтингу</setting>
+    <setting id="sort_direction" default="true">по убыванию</setting>
+    <setting id="history_max_qty" default="true">10</setting>
+    <setting id="reset_search_history" default="true" />
+    <setting id="reset_auth" default="true" />
+    <setting id="show_search">true</setting>
+    <setting id="show_last">true</setting>
+    <setting id="show_popular">true</setting>
+    <setting id="show_hot">true</setting>
+    <setting id="show_sort">true</setting>
+    <setting id="show_tv">true</setting>
+    <setting id="show_collections">true</setting>
+    <setting id="show_movies">true</setting>
+    <setting id="show_serials">true</setting>
+    <setting id="show_tvshows">true</setting>
+    <setting id="show_3d">true</setting>
+    <setting id="show_concerts">true</setting>
+    <setting id="show_documovies">true</setting>
+    <setting id="show_docuserials">true</setting>
+</settings>
