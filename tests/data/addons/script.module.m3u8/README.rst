@@ -27,7 +27,7 @@ directly from a string:
     print m3u8_obj.target_duration
 
     # if you already have the content as string, use
-
+    
     m3u8_obj = m3u8.loads('#EXTM3U8 ... etc ... ')
 
 Supported tags
