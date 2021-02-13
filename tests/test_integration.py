@@ -36,6 +36,7 @@ def run_conkodi(build_plugin):
             "run",
             "-d",
             "--name=kodi",
+            "--umask=0002",
             f"--volume={HOST_DIR}/addons/:{CON_DIR}/addons",
             f"--volume={HOST_DIR}/Database/:{CON_DIR}/userdata/Database",
             f"--volume={HOST_DIR}/addon_data/:{CON_DIR}/userdata/addon_data/video.kino.pub/",
