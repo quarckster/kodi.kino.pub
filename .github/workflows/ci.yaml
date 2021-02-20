@@ -10,7 +10,7 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -23,7 +23,7 @@ jobs:
         if: failure()
         run: git diff
   tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -34,10 +34,15 @@ jobs:
         run: pip install pytest wait_for kodi-json
       - name: Pull conkodi container image
         run: podman pull quay.io/quarck/conkodi:19
+      - name: Pull mockserver container image
+        run: podman pull docker.io/mockserver/mockserver:mockserver-5.11.2
       - name: Set permissions
         run: sudo chmod -R a+rwx tests/data
       - name: Integration tests
-        run: pytest -v
-      - name: Analysis
+        run: pytest -vv
+      - name: Kodi logs analysis
         if: failure()
         run: podman logs kodi
+      - name: Mockserver logs analysis
+        if: failure()
+        run: podman logs mockserver

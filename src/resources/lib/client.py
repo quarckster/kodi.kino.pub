@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import os
 import sys
 import urllib.error
 import urllib.parse
@@ -9,7 +10,7 @@ from resources.lib.utils import notice
 
 
 class KinoPubClient(object):
-    url = "https://api.service-kp.com/v1"
+    url = os.getenv("KINO_PUB_API_URL", "https://api.service-kp.com/v1")
 
     def __init__(self, plugin, action):
         self.action = action
