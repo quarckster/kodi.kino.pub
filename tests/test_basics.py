@@ -1,12 +1,11 @@
+import expected_results
 import pytest
-from expected_results import ACTIVATED_HOME
-from expected_results import NONACTIVATED_HOME
 from paths import HOST_DIR
 
 
 def test_home_activated(kodi):
     resp = kodi.Files.GetDirectory(directory="plugin://video.kino.pub")
-    assert ACTIVATED_HOME == resp["result"]["files"]
+    assert expected_results.ACTIVATED_HOME == resp["result"]["files"]
 
 
 @pytest.fixture
@@ -25,4 +24,9 @@ def remove_access_token():
 
 def test_home_nonactivated(kodi, remove_access_token):
     resp = kodi.Files.GetDirectory(directory="plugin://video.kino.pub")
-    assert NONACTIVATED_HOME == resp["result"]["files"]
+    assert expected_results.NONACTIVATED_HOME == resp["result"]["files"]
+
+
+def test_fresh_all(kodi):
+    resp = kodi.Files.GetDirectory(directory="plugin://video.kino.pub/items/all/fresh/")
+    assert expected_results.FRESH_ALL == resp["result"]["files"]
