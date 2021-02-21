@@ -58,3 +58,23 @@ def test_watching(kodi):
         directory="plugin://video.kino.pub/watching/", properties=["thumbnail"]
     )
     assert expected_results.WATCHING == resp["result"]["files"]
+
+
+def test_watching_movies(kodi):
+    resp = kodi.Files.GetDirectory(
+        directory="plugin://video.kino.pub/watching_movies/",
+        properties=[
+            "country",
+            "year",
+            "rating",
+            "duration",
+            "director",
+            "trailer",
+            "plot",
+            "cast",
+            "imdbnumber",
+            "votes",
+            "fanart",
+        ],
+    )
+    assert expected_results.WATCHING_MOVIES == resp["result"]["files"]

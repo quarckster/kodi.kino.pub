@@ -6398,5 +6398,1145 @@
         ]
       }
     }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching/movies"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "items": [
+          {
+            "id": 18422,
+            "type": "documovie",
+            "subtype": "",
+            "title": "BBC. Невидимый Рим / Rome's Invisible City",
+            "posters": {
+              "small": "https://example.com/poster/item/small/18422.jpg",
+              "medium": "https://example.com/poster/item/medium/18422.jpg",
+              "big": "https://example.com/poster/item/big/18422.jpg"
+            }
+          },
+          {
+            "id": 9722,
+            "type": "documovie",
+            "subtype": "",
+            "title": "Кон-Тики / Kon-Tiki",
+            "posters": {
+              "small": "https://example.com/poster/item/small/9722.jpg",
+              "medium": "https://example.com/poster/item/medium/9722.jpg",
+              "big": "https://example.com/poster/item/big/9722.jpg"
+            }
+          },
+          {
+            "id": 49027,
+            "type": "documovie",
+            "subtype": "",
+            "title": "На волне",
+            "posters": {
+              "small": "https://example.com/poster/item/small/49027.jpg",
+              "medium": "https://example.com/poster/item/medium/49027.jpg",
+              "big": "https://example.com/poster/item/big/49027.jpg"
+            }
+          },
+          {
+            "id": 19870,
+            "type": "documovie",
+            "subtype": "",
+            "title": "Неверующие / The Unbelievers",
+            "posters": {
+              "small": "https://example.com/poster/item/small/19870.jpg",
+              "medium": "https://example.com/poster/item/medium/19870.jpg",
+              "big": "https://example.com/poster/item/big/19870.jpg"
+            }
+          },
+          {
+            "id": 67521,
+            "type": "documovie",
+            "subtype": "",
+            "title": "Земля людей. Курилы.",
+            "posters": {
+              "small": "https://example.com/poster/item/small/67521.jpg",
+              "medium": "https://example.com/poster/item/medium/67521.jpg",
+              "big": "https://example.com/poster/item/big/67521.jpg"
+            }
+          },
+          {
+            "id": 15115,
+            "type": "documovie",
+            "subtype": "",
+            "title": "Счастливые люди: Год в тайге / Happy People: A Year in the Taiga",
+            "posters": {
+              "small": "https://example.com/poster/item/small/15115.jpg",
+              "medium": "https://example.com/poster/item/medium/15115.jpg",
+              "big": "https://example.com/poster/item/big/15115.jpg"
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/items/18422"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 18422,
+          "type": "documovie",
+          "subtype": "",
+          "title": "BBC. Невидимый Рим / Rome's Invisible City",
+          "year": 2015,
+          "cast": "",
+          "director": "",
+          "genres": [
+            {
+              "id": 51,
+              "title": "История"
+            },
+            {
+              "id": 54,
+              "title": "Путешествия"
+            },
+            {
+              "id": 68,
+              "title": "Искусство"
+            }
+          ],
+          "countries": [
+            {
+              "id": 5,
+              "title": "Великобритания"
+            }
+          ],
+          "voice": null,
+          "duration": {
+            "average": 3119,
+            "total": 3119
+          },
+          "ac3": 0,
+          "langs": 1,
+          "quality": 1080,
+          "plot": "Рим... Тысячи лет он был центром древнего Средиземноморья и столицей могущественной империи. Но его типичный вид с Колизеем, полуразрушенными храмами и акведуками - лишь половина истории... Современные города широко используют подземное пространство и первыми туда проникли римляне еще две тысячи лет назад. Под величественными памятниками античной архитектуры пролегает колоссальный подземный лабиринт. Это - чрево Рима, полное тайн и загадок...",
+          "tracklist": [],
+          "imdb": 5304248,
+          "imdb_rating": 7.5,
+          "imdb_votes": 71,
+          "kinopoisk": null,
+          "kinopoisk_rating": null,
+          "kinopoisk_votes": null,
+          "rating": 5,
+          "rating_votes": 5,
+          "rating_percentage": 100,
+          "views": 388,
+          "comments": 0,
+          "posters": {
+            "small": "https://example.com/poster/item/small/18422.jpg",
+            "medium": "https://example.com/poster/item/medium/18422.jpg",
+            "big": "https://example.com/poster/item/big/18422.jpg",
+            "wide": "https://example.com/poster/item/wide/18422.jpg"
+          },
+          "trailer": null,
+          "finished": false,
+          "advert": false,
+          "poor_quality": false,
+          "created_at": 1487027375,
+          "updated_at": 1487029825,
+          "bookmarks": [],
+          "videos": [
+            {
+              "id": 48967,
+              "number": 1,
+              "snumber": 0,
+              "thumbnail": "https://example.com/thumb/b/df/ZWQrmL8QTSLz9hhLZ/1560000/480x270.jpg",
+              "title": "",
+              "tracks": 1,
+              "duration": 3119,
+              "ac3": 0,
+              "audios": [
+                {
+                  "id": 136465,
+                  "index": 1,
+                  "codec": "aac",
+                  "channels": 1,
+                  "lang": "unk",
+                  "type": null,
+                  "author": null
+                }
+              ],
+              "subtitles": [],
+              "files": [
+                {
+                  "codec": "h264",
+                  "w": 1920,
+                  "h": 1080,
+                  "quality": "1080p",
+                  "quality_id": 3,
+                  "file": "/9/bf/UbkFav155ek1jeLfA.mp4",
+                  "url": {
+                    "http": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTQmaD1FZkNNQllQN3pFR0xFTllLY1k5U21RJmU9MTYxNDAwNzAxNA/9/bf/UbkFav155ek1jeLfA.mp4?loc=de",
+                    "hls": "https://cdn.example.com/hls/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTQmaD1FZkNNQllQN3pFR0xFTllLY1k5U21RJmU9MTYxNDAwNzAxNA/9/bf/UbkFav155ek1jeLfA.mp4/master-v1a1.m3u8?loc=de",
+                    "hls4": "https://cdn.example.com/hls4/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTQmaD1FZkNNQllQN3pFR0xFTllLY1k5U21RJmU9MTYxNDAwNzAxNA/48967.m3u8?loc=de",
+                    "hls2": "https://cdn.example.com/hls2/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTQmaD1FZkNNQllQN3pFR0xFTllLY1k5U21RJmU9MTYxNDAwNzAxNA/48967.m3u8?loc=de"
+                  }
+                },
+                {
+                  "codec": "h264",
+                  "w": 1280,
+                  "h": 720,
+                  "quality": "720p",
+                  "quality_id": 2,
+                  "file": "/9/d1/LWmZXlVOMiAT9uMU4.mp4",
+                  "url": {
+                    "http": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTQmaD1FZkNNQllQN3pFR0xFTllLY1k5U21RJmU9MTYxNDAwNzAxNA/9/d1/LWmZXlVOMiAT9uMU4.mp4?loc=de",
+                    "hls": "https://cdn.example.com/hls/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTQmaD1FZkNNQllQN3pFR0xFTllLY1k5U21RJmU9MTYxNDAwNzAxNA/9/d1/LWmZXlVOMiAT9uMU4.mp4/master-v1a1.m3u8?loc=de",
+                    "hls4": "https://cdn.example.com/hls4/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTQmaD1FZkNNQllQN3pFR0xFTllLY1k5U21RJmU9MTYxNDAwNzAxNA/48967.m3u8?loc=de",
+                    "hls2": "https://cdn.example.com/hls2/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTQmaD1FZkNNQllQN3pFR0xFTllLY1k5U21RJmU9MTYxNDAwNzAxNA/48967.m3u8?loc=de"
+                  }
+                },
+                {
+                  "codec": "h264",
+                  "w": 720,
+                  "h": 404,
+                  "quality": "480p",
+                  "quality_id": 1,
+                  "file": "/b/df/ZWQrmL8QTSLz9hhLZ.mp4",
+                  "url": {
+                    "http": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTQmaD1FZkNNQllQN3pFR0xFTllLY1k5U21RJmU9MTYxNDAwNzAxNA/b/df/ZWQrmL8QTSLz9hhLZ.mp4?loc=de",
+                    "hls": "https://cdn.example.com/hls/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTQmaD1FZkNNQllQN3pFR0xFTllLY1k5U21RJmU9MTYxNDAwNzAxNA/b/df/ZWQrmL8QTSLz9hhLZ.mp4/master-v1a1.m3u8?loc=de",
+                    "hls4": "https://cdn.example.com/hls4/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTQmaD1FZkNNQllQN3pFR0xFTllLY1k5U21RJmU9MTYxNDAwNzAxNA/48967.m3u8?loc=de",
+                    "hls2": "https://cdn.example.com/hls2/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTQmaD1FZkNNQllQN3pFR0xFTllLY1k5U21RJmU9MTYxNDAwNzAxNA/48967.m3u8?loc=de"
+                  }
+                }
+              ],
+              "watched": 0,
+              "watching": {
+                "status": 0,
+                "time": 884
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/items/9722"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 9722,
+          "type": "documovie",
+          "subtype": "",
+          "title": "Кон-Тики / Kon-Tiki",
+          "year": 1950,
+          "cast": "Тур Хейердал, Херман Ватзингер, Эрик Хессельберг, Кнут Хаугланд, Торстейн Рааби, Бенгт Даниэльссон, Бен Грауэр, Герте Вальд",
+          "director": "Тур Хейердал",
+          "genres": [
+            {
+              "id": 54,
+              "title": "Путешествия"
+            }
+          ],
+          "countries": [
+            {
+              "id": 12,
+              "title": "Норвегия"
+            },
+            {
+              "id": 22,
+              "title": "Швеция"
+            }
+          ],
+          "voice": "",
+          "duration": {
+            "average": 3492,
+            "total": 3492
+          },
+          "ac3": 0,
+          "langs": 1,
+          "quality": 480,
+          "plot": "Документальный фильм об экспедиции «Кон-Тики», организованной норвежским исследователем Туром Хейердалом.\n\nНаграда - Оскар 1952 года:\n- Лучший документальный фильм",
+          "tracklist": [],
+          "imdb": 42650,
+          "imdb_rating": 8,
+          "imdb_votes": 2368,
+          "kinopoisk": 90902,
+          "kinopoisk_rating": 8.265,
+          "kinopoisk_votes": 2071,
+          "rating": 10,
+          "rating_votes": 10,
+          "rating_percentage": 100,
+          "views": 525,
+          "comments": 0,
+          "posters": {
+            "small": "https://example.com/poster/item/small/9722.jpg",
+            "medium": "https://example.com/poster/item/medium/9722.jpg",
+            "big": "https://example.com/poster/item/big/9722.jpg",
+            "wide": "https://example.com/poster/item/wide/9722.jpg"
+          },
+          "trailer": null,
+          "finished": true,
+          "advert": false,
+          "poor_quality": false,
+          "created_at": 1363044917,
+          "updated_at": 0,
+          "bookmarks": [],
+          "videos": [
+            {
+              "id": 25741,
+              "number": 1,
+              "snumber": 0,
+              "thumbnail": "https://example.com/thumb/6/3e/FnpyL5UeNghrmfNuG/1746000/480x270.jpg",
+              "title": "Кон-Тики",
+              "tracks": 1,
+              "duration": 3492,
+              "ac3": 0,
+              "audios": [
+                {
+                  "id": 87580,
+                  "index": 1,
+                  "codec": "aac",
+                  "channels": 1,
+                  "lang": "unk",
+                  "type": null,
+                  "author": null
+                }
+              ],
+              "subtitles": [],
+              "files": [
+                {
+                  "codec": "h264",
+                  "w": 640,
+                  "h": 464,
+                  "quality": "480p",
+                  "quality_id": 1,
+                  "file": "/6/3e/FnpyL5UeNghrmfNuG.mp4",
+                  "url": {
+                    "http": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/6/3e/FnpyL5UeNghrmfNuG.mp4?loc=de",
+                    "hls": "https://cdn.example.com/hls/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/6/3e/FnpyL5UeNghrmfNuG.mp4/master-v1a1.m3u8?loc=de",
+                    "hls4": "https://cdn.example.com/hls4/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/25741.m3u8?loc=de",
+                    "hls2": "https://cdn.example.com/hls2/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/25741.m3u8?loc=de"
+                  }
+                }
+              ],
+              "watched": 0,
+              "watching": {
+                "status": 0,
+                "time": 1286
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/items/49027"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 49027,
+          "type": "documovie",
+          "subtype": "",
+          "title": "На волне",
+          "year": 2019,
+          "cast": "Келли Слэйтер, Мэтт Джордж",
+          "director": "Инна Блохина",
+          "genres": [
+            {
+              "id": 71,
+              "title": "Спорт"
+            },
+            {
+              "id": 133,
+              "title": "Эксклюзив"
+            }
+          ],
+          "countries": [
+            {
+              "id": 2,
+              "title": "Россия"
+            }
+          ],
+          "voice": null,
+          "duration": {
+            "average": 4805,
+            "total": 4805
+          },
+          "ac3": 1,
+          "langs": 2,
+          "quality": 1080,
+          "plot": "Фильм рассказывает о красоте океана и сёрфинга, раскрывая как спортивную его сторону, так и философскую. В картине сплетены две истории: истории Маши, русской девушки, которая мечтает поймать свою первую волну, и 11-ти кратного чемпиона мира по сёрфингу Келли Слэйтера. Маша, уже зная всё о сёрфинге в теории, приезжает на Бали, что бы научиться сёрфингу, но сталкивается со своей главной проблемой - страхом глубокой воды. Второй герой фильма - Келли Слэйтер. Он рассказывает свою историю карьеры в сёрфинге и как ему удается 11 лет выигрывать первые титулы и держать лидерство в одном из самых сложных видов спорта. Впервые в жизни он попадает в непривычную для него ситуацию, когда свой титул он будет вынужден подтвердить повторно из-за сбоя в системе и ошибки в подсчете очков. Эти двое в фильме не встречаются, но важное место в их жизни занимает Океан.",
+          "tracklist": [],
+          "imdb": null,
+          "imdb_rating": 0,
+          "imdb_votes": null,
+          "kinopoisk": 1228484,
+          "kinopoisk_rating": 7.373,
+          "kinopoisk_votes": 580,
+          "rating": 2,
+          "rating_votes": 2,
+          "rating_percentage": 100,
+          "views": 559,
+          "comments": 0,
+          "posters": {
+            "small": "https://example.com/poster/item/small/49027.jpg",
+            "medium": "https://example.com/poster/item/medium/49027.jpg",
+            "big": "https://example.com/poster/item/big/49027.jpg",
+            "wide": null
+          },
+          "trailer": {
+            "id": 49027,
+            "file": "/trailers/a/a0/49027.mp4",
+            "url": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/trailers/a/a0/49027.mp4?loc=de"
+          },
+          "finished": false,
+          "advert": false,
+          "poor_quality": false,
+          "created_at": 1555922393,
+          "updated_at": 1584694439,
+          "bookmarks": [],
+          "videos": [
+            {
+              "id": 630031,
+              "number": 1,
+              "snumber": 0,
+              "thumbnail": "https://example.com/thumb/0/ad/hpkhJ21A1QoW266Gv/2403000/480x270.jpg",
+              "title": "",
+              "tracks": 2,
+              "duration": 4805,
+              "ac3": 1,
+              "audios": [
+                {
+                  "id": 1769896,
+                  "index": 1,
+                  "codec": "aac",
+                  "channels": 6,
+                  "lang": "rus",
+                  "type": null,
+                  "author": null
+                },
+                {
+                  "id": 1769899,
+                  "index": 2,
+                  "codec": "ac3",
+                  "channels": 6,
+                  "lang": "rus",
+                  "type": null,
+                  "author": null
+                }
+              ],
+              "subtitles": [],
+              "files": [
+                {
+                  "codec": "h264",
+                  "w": 1920,
+                  "h": 1072,
+                  "quality": "1080p",
+                  "quality_id": 3,
+                  "file": "/3/13/em3Qo4AAJqjSlyYHf.mp4",
+                  "url": {
+                    "http": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/3/13/em3Qo4AAJqjSlyYHf.mp4?loc=de",
+                    "hls": "https://cdn.example.com/hls/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/3/13/em3Qo4AAJqjSlyYHf.mp4/master-v1a1.m3u8?loc=de",
+                    "hls4": "https://cdn.example.com/hls4/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/630031.m3u8?loc=de",
+                    "hls2": "https://cdn.example.com/hls2/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/630031.m3u8?loc=de"
+                  }
+                },
+                {
+                  "codec": "h264",
+                  "w": 1280,
+                  "h": 714,
+                  "quality": "720p",
+                  "quality_id": 2,
+                  "file": "/9/6c/g5fZfXS4Bx8er22LQ.mp4",
+                  "url": {
+                    "http": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/9/6c/g5fZfXS4Bx8er22LQ.mp4?loc=de",
+                    "hls": "https://cdn.example.com/hls/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/9/6c/g5fZfXS4Bx8er22LQ.mp4/master-v1a1.m3u8?loc=de",
+                    "hls4": "https://cdn.example.com/hls4/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/630031.m3u8?loc=de",
+                    "hls2": "https://cdn.example.com/hls2/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/630031.m3u8?loc=de"
+                  }
+                },
+                {
+                  "codec": "h264",
+                  "w": 720,
+                  "h": 402,
+                  "quality": "480p",
+                  "quality_id": 1,
+                  "file": "/0/ad/hpkhJ21A1QoW266Gv.mp4",
+                  "url": {
+                    "http": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/0/ad/hpkhJ21A1QoW266Gv.mp4?loc=de",
+                    "hls": "https://cdn.example.com/hls/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/0/ad/hpkhJ21A1QoW266Gv.mp4/master-v1a1.m3u8?loc=de",
+                    "hls4": "https://cdn.example.com/hls4/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/630031.m3u8?loc=de",
+                    "hls2": "https://cdn.example.com/hls2/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/630031.m3u8?loc=de"
+                  }
+                }
+              ],
+              "watched": 0,
+              "watching": {
+                "status": 0,
+                "time": 826
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/items/19870"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 19870,
+          "type": "documovie",
+          "subtype": "",
+          "title": "Неверующие / The Unbelievers",
+          "year": 2013,
+          "cast": "Ричард Докинз, Лоуренс Краусс, Вуди Аллен, Вернер Херцог, Рики Джервэйс, Билл Пуллман, Кэмерон Диаз, Стивен Хокинг, Сара Силверман, Кормак МакКарти, Айаан Хирси Али, Дэниэл С. Деннетт, Сэм Харрис, Эдди Иззард, Пенн Джиллетт",
+          "director": "Гас Холверда",
+          "genres": [
+            {
+              "id": 55,
+              "title": "Наука"
+            }
+          ],
+          "countries": [
+            {
+              "id": 1,
+              "title": "США"
+            }
+          ],
+          "voice": null,
+          "duration": {
+            "average": 4577,
+            "total": 4577
+          },
+          "ac3": 0,
+          "langs": 2,
+          "quality": 720,
+          "plot": "Ричард Докинз и Лоуренс Краусс путешествуют по миру и открыто заявляют о важности науки и разума в современном мире. Они призывают избавиться от устаревших религиозных и политически мотивированных взглядов при рассмотрении важных вопросов современности. Работу выдающихся просветителей поддерживают известные личности, которые также приняли участие в этом фильме.",
+          "tracklist": [],
+          "imdb": 2636522,
+          "imdb_rating": 6.9,
+          "imdb_votes": 6455,
+          "kinopoisk": 741906,
+          "kinopoisk_rating": 7.318,
+          "kinopoisk_votes": 1754,
+          "rating": 17,
+          "rating_votes": 19,
+          "rating_percentage": 94,
+          "views": 314,
+          "comments": 2,
+          "posters": {
+            "small": "https://example.com/poster/item/small/19870.jpg",
+            "medium": "https://example.com/poster/item/medium/19870.jpg",
+            "big": "https://example.com/poster/item/big/19870.jpg",
+            "wide": "https://example.com/poster/item/wide/19870.jpg"
+          },
+          "trailer": {
+            "id": 19870,
+            "file": "/trailers/4/71/19870.mp4",
+            "url": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/trailers/4/71/19870.mp4?loc=de"
+          },
+          "finished": false,
+          "advert": false,
+          "poor_quality": false,
+          "created_at": 1493045535,
+          "updated_at": 1493191514,
+          "bookmarks": [],
+          "videos": [
+            {
+              "id": 53134,
+              "number": 1,
+              "snumber": 0,
+              "thumbnail": "https://example.com/thumb/e/84/dhVg5ekxMusQ7VK5I/2289000/480x270.jpg",
+              "title": "",
+              "tracks": 2,
+              "duration": 4577,
+              "ac3": 0,
+              "audios": [
+                {
+                  "id": 146833,
+                  "index": 1,
+                  "codec": "aac",
+                  "channels": 1,
+                  "lang": "unk",
+                  "type": null,
+                  "author": null
+                },
+                {
+                  "id": 146836,
+                  "index": 2,
+                  "codec": "aac",
+                  "channels": 1,
+                  "lang": "unk",
+                  "type": null,
+                  "author": null
+                }
+              ],
+              "subtitles": [
+                {
+                  "lang": "rus",
+                  "shift": 0,
+                  "embed": true,
+                  "file": "/3/66/20565.srt",
+                  "url": "https://cdn.example.com/pd/subtitle/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/3/66/20565.srt"
+                },
+                {
+                  "lang": "eng",
+                  "shift": 0,
+                  "embed": true,
+                  "file": "/c/db/20566.srt",
+                  "url": "https://cdn.example.com/pd/subtitle/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/c/db/20566.srt"
+                }
+              ],
+              "files": [
+                {
+                  "codec": "h264",
+                  "w": 1280,
+                  "h": 676,
+                  "quality": "720p",
+                  "quality_id": 2,
+                  "file": "/e/f7/Qo7z1kQWAUbVsYpUO.mp4",
+                  "url": {
+                    "http": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/e/f7/Qo7z1kQWAUbVsYpUO.mp4?loc=de",
+                    "hls": "https://cdn.example.com/hls/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/e/f7/Qo7z1kQWAUbVsYpUO.mp4/master-v1a1.m3u8?loc=de",
+                    "hls4": "https://cdn.example.com/hls4/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/53134.m3u8?loc=de",
+                    "hls2": "https://cdn.example.com/hls2/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/53134.m3u8?loc=de"
+                  }
+                },
+                {
+                  "codec": "h264",
+                  "w": 720,
+                  "h": 380,
+                  "quality": "480p",
+                  "quality_id": 1,
+                  "file": "/e/84/dhVg5ekxMusQ7VK5I.mp4",
+                  "url": {
+                    "http": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/e/84/dhVg5ekxMusQ7VK5I.mp4?loc=de",
+                    "hls": "https://cdn.example.com/hls/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/e/84/dhVg5ekxMusQ7VK5I.mp4/master-v1a1.m3u8?loc=de",
+                    "hls4": "https://cdn.example.com/hls4/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/53134.m3u8?loc=de",
+                    "hls2": "https://cdn.example.com/hls2/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTUmaD1Kc1lsX1lCU1J5dmNvbEpiNUpVQUt3JmU9MTYxNDAwNzAxNQ/53134.m3u8?loc=de"
+                  }
+                }
+              ],
+              "watched": 0,
+              "watching": {
+                "status": 0,
+                "time": 2279
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/items/67521"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 67521,
+          "type": "documovie",
+          "subtype": "",
+          "title": "Земля людей. Курилы.",
+          "year": 2020,
+          "cast": "",
+          "director": "Дмитрий Семибратов",
+          "genres": [
+            {
+              "id": 54,
+              "title": "Путешествия"
+            }
+          ],
+          "countries": [
+            {
+              "id": 2,
+              "title": "Россия"
+            }
+          ],
+          "voice": null,
+          "duration": {
+            "average": 6000,
+            "total": 6000
+          },
+          "ac3": 0,
+          "langs": 1,
+          "quality": 1080,
+          "plot": "Документальный фильм о Курильских островах глазами его жителей – людей разных профессий и разного возраста, для которых тонкая полоска земли посреди океана стала домом. Герои проекта – смотритель маяка, молодой священник, рыбак, геоботаник и другие обитатели Курил, – делятся своими историями о переезде на острова, повседневной жизни и работе в условиях довольно сурового климата и первозданной природы, от красоты и величия которой захватывает дух. Более пятидесяти остров, протянувшихся от полуострова Камчатки до японского острова Хоккайдо, – одна из самых труднодоступных и уникальных территорий России. Быт немногочисленного местного населения совсем непохож на наш. Съемочная группа фильма преодолела путь с юга на север через все Курилы, заново открывая их богатство и нетуристическую сторону.",
+          "tracklist": [],
+          "imdb": null,
+          "imdb_rating": null,
+          "imdb_votes": null,
+          "kinopoisk": 1290980,
+          "kinopoisk_rating": 0,
+          "kinopoisk_votes": 26,
+          "rating": 13,
+          "rating_votes": 13,
+          "rating_percentage": 100,
+          "views": 1325,
+          "comments": 2,
+          "posters": {
+            "small": "https://example.com/poster/item/small/67521.jpg",
+            "medium": "https://example.com/poster/item/medium/67521.jpg",
+            "big": "https://example.com/poster/item/big/67521.jpg",
+            "wide": "https://example.com/poster/item/wide/67521.jpg"
+          },
+          "trailer": {
+            "id": 67521,
+            "file": "/trailers/9/a7/67521.mp4",
+            "url": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/trailers/9/a7/67521.mp4?loc=de"
+          },
+          "finished": false,
+          "advert": false,
+          "poor_quality": false,
+          "created_at": 1604736220,
+          "updated_at": 1604738144,
+          "bookmarks": [],
+          "videos": [
+            {
+              "id": 774611,
+              "number": 1,
+              "snumber": 0,
+              "thumbnail": "https://example.com/thumb/a/b9/yzETkKw5vjfAdT13Y/3000000/480x270.jpg",
+              "title": "",
+              "tracks": 1,
+              "duration": 6000,
+              "ac3": 0,
+              "audios": [
+                {
+                  "id": 1988643,
+                  "index": 1,
+                  "codec": "aac",
+                  "channels": 2,
+                  "lang": "rus",
+                  "type": {
+                    "id": 6,
+                    "title": "Оригинал",
+                    "short_title": "Orig"
+                  },
+                  "author": null
+                }
+              ],
+              "subtitles": [],
+              "files": [
+                {
+                  "codec": "h264",
+                  "w": 1920,
+                  "h": 1008,
+                  "quality": "1080p",
+                  "quality_id": 3,
+                  "file": "/9/39/ImXcr0ZOIvrGCSQBA.mp4",
+                  "url": {
+                    "http": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/9/39/ImXcr0ZOIvrGCSQBA.mp4?loc=de",
+                    "hls": "https://cdn.example.com/hls/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/9/39/ImXcr0ZOIvrGCSQBA.mp4/master-v1a1.m3u8?loc=de",
+                    "hls4": "https://cdn.example.com/hls4/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/774611.m3u8?loc=de",
+                    "hls2": "https://cdn.example.com/hls2/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/774611.m3u8?loc=de"
+                  }
+                },
+                {
+                  "codec": "h264",
+                  "w": 1280,
+                  "h": 672,
+                  "quality": "720p",
+                  "quality_id": 2,
+                  "file": "/b/01/RPQzobX2ZvJaZamMb.mp4",
+                  "url": {
+                    "http": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/b/01/RPQzobX2ZvJaZamMb.mp4?loc=de",
+                    "hls": "https://cdn.example.com/hls/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/b/01/RPQzobX2ZvJaZamMb.mp4/master-v1a1.m3u8?loc=de",
+                    "hls4": "https://cdn.example.com/hls4/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/774611.m3u8?loc=de",
+                    "hls2": "https://cdn.example.com/hls2/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/774611.m3u8?loc=de"
+                  }
+                },
+                {
+                  "codec": "h264",
+                  "w": 720,
+                  "h": 378,
+                  "quality": "480p",
+                  "quality_id": 1,
+                  "file": "/a/b9/yzETkKw5vjfAdT13Y.mp4",
+                  "url": {
+                    "http": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/a/b9/yzETkKw5vjfAdT13Y.mp4?loc=de",
+                    "hls": "https://cdn.example.com/hls/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/a/b9/yzETkKw5vjfAdT13Y.mp4/master-v1a1.m3u8?loc=de",
+                    "hls4": "https://cdn.example.com/hls4/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/774611.m3u8?loc=de",
+                    "hls2": "https://cdn.example.com/hls2/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/774611.m3u8?loc=de"
+                  }
+                }
+              ],
+              "watched": 0,
+              "watching": {
+                "status": 0,
+                "time": 1080
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/items/15115"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 15115,
+          "type": "documovie",
+          "subtype": "",
+          "title": "Счастливые люди: Год в тайге / Happy People: A Year in the Taiga",
+          "year": 2010,
+          "cast": "Вернер Херцог, Николай Никифорович Синяев, Геннадий Соловьев, Анатолий Тарковский",
+          "director": "Вернер Херцог, Дмитрий Васюков",
+          "genres": [
+            {
+              "id": 54,
+              "title": "Путешествия"
+            },
+            {
+              "id": 83,
+              "title": "Люди"
+            }
+          ],
+          "countries": [
+            {
+              "id": 4,
+              "title": "Германия"
+            }
+          ],
+          "voice": "Профессиональный одноголосый",
+          "duration": {
+            "average": 5276,
+            "total": 5276
+          },
+          "ac3": 0,
+          "langs": 1,
+          "quality": 480,
+          "plot": "Международная версия фильма «Счастливые люди» о быте и нравах охотников, рыболовов и обычных сельчан из села Бахта Туруханского района.",
+          "tracklist": [],
+          "imdb": 1683876,
+          "imdb_rating": 7.8,
+          "imdb_votes": 7818,
+          "kinopoisk": 535284,
+          "kinopoisk_rating": 8.412,
+          "kinopoisk_votes": 4460,
+          "rating": 15,
+          "rating_votes": 15,
+          "rating_percentage": 100,
+          "views": 445,
+          "comments": 6,
+          "posters": {
+            "small": "https://example.com/poster/item/small/15115.jpg",
+            "medium": "https://example.com/poster/item/medium/15115.jpg",
+            "big": "https://example.com/poster/item/big/15115.jpg",
+            "wide": "https://example.com/poster/item/wide/15115.jpg"
+          },
+          "trailer": {
+            "id": 15115,
+            "file": "/trailers/3/6d/15115.mp4",
+            "url": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/trailers/3/6d/15115.mp4?loc=de"
+          },
+          "finished": false,
+          "advert": false,
+          "poor_quality": false,
+          "created_at": 1466583151,
+          "updated_at": 1466584337,
+          "bookmarks": [],
+          "videos": [
+            {
+              "id": 40291,
+              "number": 1,
+              "snumber": 0,
+              "thumbnail": "https://example.com/thumb/c/05/T5kkfcNkOzenpkx73/2638000/480x270.jpg",
+              "title": "",
+              "tracks": 1,
+              "duration": 5276,
+              "ac3": 0,
+              "audios": [
+                {
+                  "id": 116674,
+                  "index": 1,
+                  "codec": "aac",
+                  "channels": 1,
+                  "lang": "unk",
+                  "type": null,
+                  "author": null
+                }
+              ],
+              "subtitles": [],
+              "files": [
+                {
+                  "codec": "h264",
+                  "w": 704,
+                  "h": 384,
+                  "quality": "480p",
+                  "quality_id": 1,
+                  "file": "/c/05/T5kkfcNkOzenpkx73.mp4",
+                  "url": {
+                    "http": "https://cdn.example.com/pd/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/c/05/T5kkfcNkOzenpkx73.mp4?loc=de",
+                    "hls": "https://cdn.example.com/hls/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/c/05/T5kkfcNkOzenpkx73.mp4/master-v1a1.m3u8?loc=de",
+                    "hls4": "https://cdn.example.com/hls4/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/40291.m3u8?loc=de",
+                    "hls2": "https://cdn.example.com/hls2/kinopub/aWQ9NjcyMjY7MjIwNTUzNzcyODs5NjE0MjMwOzE2MTM5MjA2MTYmaD1UdFRUbVJxcjhLZUFvcHJVWnNORk93JmU9MTYxNDAwNzAxNg/40291.m3u8?loc=de"
+                  }
+                }
+              ],
+              "watched": 0,
+              "watching": {
+                "status": 0,
+                "time": 743
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "18422"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 18422,
+          "title": "BBC. Невидимый Рим / Rome's Invisible City",
+          "type": "documovie",
+          "status": 0,
+          "videos": [
+            {
+              "id": 48967,
+              "number": 1,
+              "title": "",
+              "duration": 3119,
+              "time": 884,
+              "status": 0,
+              "updated": 1613771050
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "9722"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 9722,
+          "title": "Кон-Тики / Kon-Tiki",
+          "type": "documovie",
+          "status": 0,
+          "videos": [
+            {
+              "id": 25741,
+              "number": 1,
+              "title": "Кон-Тики",
+              "duration": 3492,
+              "time": 1286,
+              "status": 0,
+              "updated": 1613770075
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "49027"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 49027,
+          "title": "На волне",
+          "type": "documovie",
+          "status": 0,
+          "videos": [
+            {
+              "id": 630031,
+              "number": 1,
+              "title": "",
+              "duration": 4805,
+              "time": 826,
+              "status": 0,
+              "updated": 1613769650
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "19870"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 19870,
+          "title": "Неверующие / The Unbelievers",
+          "type": "documovie",
+          "status": 0,
+          "videos": [
+            {
+              "id": 53134,
+              "number": 1,
+              "title": "",
+              "duration": 4577,
+              "time": 2279,
+              "status": 0,
+              "updated": 1613514649
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "67521"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 67521,
+          "title": "Земля людей. Курилы.",
+          "type": "documovie",
+          "status": 0,
+          "videos": [
+            {
+              "id": 774611,
+              "number": 1,
+              "title": "",
+              "duration": 6000,
+              "time": 1080,
+              "status": 0,
+              "updated": 1613338692
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "15115"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 15115,
+          "title": "Счастливые люди: Год в тайге / Happy People: A Year in the Taiga",
+          "type": "documovie",
+          "status": 0,
+          "videos": [
+            {
+              "id": 40291,
+              "number": 1,
+              "title": "",
+              "duration": 5276,
+              "time": 743,
+              "status": 0,
+              "updated": 1613337681
+            }
+          ]
+        }
+      }
+    }
   }
 ]
