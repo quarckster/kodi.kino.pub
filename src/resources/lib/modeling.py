@@ -167,7 +167,6 @@ class ItemEntity(object):
             "director": self.item["director"],
             "plot": self.plot,
             "title": self.title,
-            "duration": self.item.get("duration", {}).get("average"),
             "imdbnumber": self.item["imdb"],
             "votes": self.item["rating_votes"],
             "country": ", ".join([country["title"] for country in self.item["countries"]]),
