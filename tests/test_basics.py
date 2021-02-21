@@ -51,3 +51,10 @@ def test_all(kodi, sorting):
     next_page = ITEMS_ALL[-2]["file"].format(sorting=sorting)
     ITEMS_ALL[-2]["file"] = next_page
     assert ITEMS_ALL == resp["result"]["files"]
+
+
+def test_watching(kodi):
+    resp = kodi.Files.GetDirectory(
+        directory="plugin://video.kino.pub/watching/", properties=["thumbnail"]
+    )
+    assert expected_results.WATCHING == resp["result"]["files"]
