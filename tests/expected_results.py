@@ -667,18 +667,21 @@ WATCHING = [
         "file": "plugin://video.kino.pub/seasons/8743/",
         "filetype": "directory",
         "label": "Бесстыжие / Shameless : [COLOR FFFFF000]+6[/COLOR]",
+        "thumbnail": "image://https%3a%2f%2fexample.com%2fposter%2fitem%2fsmall%2f8743.jpg/",
         "type": "tvshow",
     },
     {
         "file": "plugin://video.kino.pub/seasons/21792/",
         "filetype": "directory",
         "label": "Двойка / The Deuce : [COLOR FFFFF000]+17[/COLOR]",
+        "thumbnail": "image://https%3a%2f%2fexample.com%2fposter%2fitem%2fsmall%2f21792.jpg/",
         "type": "tvshow",
     },
     {
         "file": "plugin://video.kino.pub/seasons/8928/",
         "filetype": "directory",
         "label": "Сорвиголова / Daredevil : [COLOR FFFFF000]+10[/COLOR]",
+        "thumbnail": "image://https%3a%2f%2fexample.com%2fposter%2fitem%2fsmall%2f8928.jpg/",
         "type": "tvshow",
     },
 ]
