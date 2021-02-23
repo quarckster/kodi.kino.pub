@@ -1,4 +1,5 @@
 import pytest
+
 from expected_results import ACTIVATED_HOME
 from paths import HOST_DIR
 

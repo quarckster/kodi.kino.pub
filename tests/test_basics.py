@@ -1,7 +1,8 @@
 from copy import deepcopy
 
-import expected_results
 import pytest
+
+import expected_results
 from paths import HOST_DIR
 
 

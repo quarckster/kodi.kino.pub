@@ -6,7 +6,7 @@ repos:
       - id: reorder-python-imports
         language_version: python3
         args:
-          - --application-directories=.:src
+          - --application-directories=.:src:tests
   - repo: https://github.com/psf/black
     rev: 20.8b1
     hooks:

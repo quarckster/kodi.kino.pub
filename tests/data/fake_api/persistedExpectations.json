@@ -7538,5 +7538,1026 @@
         }
       }
     }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/items",
+      "queryStringParameters": {
+        "sort": [
+          "rating-"
+        ],
+        "type": [
+          "None"
+        ],
+        "title": [
+          "Matrix"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "items": [
+          {
+            "id": 113,
+            "type": "movie",
+            "subtype": "",
+            "title": "Матрица / The Matrix",
+            "year": 1999,
+            "cast": "Киану Ривз, Лоренс Фишбёрн, Кэрри-Энн Мосс, Хьюго Уивинг, Джо Пантольяно, Глория Фостер, Маркус Чонг, Джулиан Араханга, Мэтт Доран, Белинда МакКлори, Энтони Рэй Паркер, Пол Годдард, Роберт Тейлор, Дэвид Эстон, Марк Грэй",
+            "director": "Лана Вачовски, Лилли Вачовски",
+            "genres": [
+              {
+                "id": 2,
+                "title": "Боевик"
+              },
+              {
+                "id": 4,
+                "title": "Фантастика"
+              }
+            ],
+            "countries": [
+              {
+                "id": 1,
+                "title": "США"
+              }
+            ],
+            "voice": "Дубляж, Профессиональный многоголосый, Профессиональный двухголосый, Любительский одноголосый, Авторский одноголосый, Оригинал",
+            "duration": {
+              "average": 8225,
+              "total": 8225
+            },
+            "ac3": 0,
+            "langs": 23,
+            "quality": 2160,
+            "plot": "Жизнь Томаса Андерсона разделена на две части: днём он самый обычный офисный работник, получающий нагоняи от начальства, а ночью превращается в хакера по имени Нео, и нет места в сети, куда он не смог бы дотянуться. Но однажды всё меняется  герой, сам того не желая, узнаёт страшную правду: всё, что его окружает  не более, чем иллюзия, Матрица, а люди  всего лишь источник питания для искусственного интеллекта, поработившего человечество. И только Нео под силу изменить расстановку сил в этом ставшем вдруг чужим и страшным мире.",
+            "tracklist": [
+              {
+                "artists": "",
+                "title": "Дубляж, Blu-ray CEE",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Профессиональный многоголосый",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Профессиональный многоголосый, НТВ / РТР",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Профессиональный двухголосый, TV1000",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Профессиональный двухголосый, П.Гланц и И.Королёва",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Авторский, Диктор CDV",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Авторский, С. Визгунов",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Авторский, А. Дольский new",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Авторский, А. Дольский old",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Авторский, Кашкин",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Авторский, Дмитрий «Гоблин» Пучков",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Авторский, Дмитрий «Гоблин» Пучков",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Авторский, Ю. Живов",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Авторский, А. Гаврилов",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Оригинал, Английский",
+                "url": ""
+              }
+            ],
+            "imdb": 133093,
+            "imdb_rating": 8.7,
+            "imdb_votes": 1683901,
+            "kinopoisk": 301,
+            "kinopoisk_rating": 8.489,
+            "kinopoisk_votes": 496975,
+            "rating": 762,
+            "rating_votes": 780,
+            "rating_percentage": 98,
+            "views": 65688,
+            "comments": 40,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/113.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/113.jpg",
+              "big": "https://cdn.example.com/poster/item/big/113.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/113.jpg"
+            },
+            "trailer": {
+              "id": 113,
+              "file": "/trailers/3/74/113.mp4"
+            },
+            "finished": false,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1276552527,
+            "updated_at": 1610017990,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 114,
+            "type": "movie",
+            "subtype": "",
+            "title": "Матрица: Перезагрузка / The Matrix Reloaded",
+            "year": 2003,
+            "cast": "Киану Ривз, Лоренс Фишбёрн, Хьюго Уивинг, Кэрри-Энн Мосс, Джада Пинкетт Смит, Глория Фостер, Хэролд Перрино, Моника Беллуччи, Ламбер Вильсон, Рэндолл Дак Ким",
+            "director": "Лана Вачовски",
+            "genres": [
+              {
+                "id": 2,
+                "title": "Боевик"
+              },
+              {
+                "id": 4,
+                "title": "Фантастика"
+              }
+            ],
+            "countries": [
+              {
+                "id": 1,
+                "title": "США"
+              },
+              {
+                "id": 10,
+                "title": "Австралия"
+              }
+            ],
+            "voice": "Дубляж, Профессиональный многоголосый, Профессиональный двухголосый, Авторский одноголосый, Оригинал",
+            "duration": {
+              "average": 8297,
+              "total": 8297
+            },
+            "ac3": 0,
+            "langs": 11,
+            "quality": 2160,
+            "plot": "Борцы за свободу Нео, Тринити и Морфеус продолжают руководить восстанием людей против Армии Машин. Для уничтожения системы репрессий и эксплуатации они вынуждены прибегнуть не только к арсеналу превосходного оружия, но и к своим выдающимся навыкам.\n\nУчастие в миссии по спасению человеческой расы от ее полного истребления приносит им более глубокое понимание конструкции Матрицы и осознание центральной роли Нео в судьбе человечества.",
+            "tracklist": [
+              {
+                "artists": "",
+                "title": "Дубляж, Blu-ray CEE",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Профессиональный многоголосый,",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Профессиональный двухголосый, TV1000",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Профессиональный двухголосый, П.Гланц и И.Королёва 2008 г",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Профессиональный двухголосый, П.Гланц и И.Королёва 2003 г",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Авторский, Рудой",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Авторский, Ю. Живов",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Авторский, А. Гаврилов",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Оригинал, Английский",
+                "url": ""
+              }
+            ],
+            "imdb": 234215,
+            "imdb_rating": 7.2,
+            "imdb_votes": 517630,
+            "kinopoisk": 299,
+            "kinopoisk_rating": 7.721,
+            "kinopoisk_votes": 197726,
+            "rating": 291,
+            "rating_votes": 303,
+            "rating_percentage": 98,
+            "views": 31813,
+            "comments": 10,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/114.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/114.jpg",
+              "big": "https://cdn.example.com/poster/item/big/114.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/114.jpg"
+            },
+            "trailer": {
+              "id": 114,
+              "file": "/trailers/e/6c/114.mp4"
+            },
+            "finished": false,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1276552684,
+            "updated_at": 1552689187,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 115,
+            "type": "movie",
+            "subtype": "",
+            "title": "Матрица: Революция / The Matrix Revolutions",
+            "year": 2003,
+            "cast": "Киану Ривз, Хьюго Уивинг, Кэрри-Энн Мосс, Лоренс Фишбёрн, Хэролд Перрино, Джина Торрес, Джада Пинкетт Смит, Моника Беллуччи, Гарри Дж. Ленникс, Мэри Элис, Брюс Спенс, Нэтаниэл Лис, Колин Чоу, Ламбер Вильсон, Хельмут Бакайтис",
+            "director": "Лана Вачовски, Лилли Вачовски",
+            "genres": [
+              {
+                "id": 2,
+                "title": "Боевик"
+              },
+              {
+                "id": 4,
+                "title": "Фантастика"
+              }
+            ],
+            "countries": [
+              {
+                "id": 1,
+                "title": "США"
+              },
+              {
+                "id": 10,
+                "title": "Австралия"
+              }
+            ],
+            "voice": "Дубляж, Профессиональный многоголосый, Профессиональный двухголосый, Авторский одноголосый, Оригинал",
+            "duration": {
+              "average": 7756,
+              "total": 7756
+            },
+            "ac3": 0,
+            "langs": 7,
+            "quality": 2160,
+            "plot": "Пока армия Машин пытается уничтожить Зион, его жители из последних сил держат оборону. Но удастся ли им предотвратить полное вторжение в город кишащей орды беспощадных машин до того, как Нео соберет все свои силы и положит конец войне?",
+            "tracklist": [
+              {
+                "artists": "",
+                "title": "Дубляж, Blu-ray CEE",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Профессиональный многоголосый,",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Профессиональный двухголосый, П.Гланц и И.Королёва",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Авторский, Ю. Живов",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Авторский, А. Гаврилов",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Оригинал, Английский",
+                "url": ""
+              }
+            ],
+            "imdb": 242653,
+            "imdb_rating": 6.8,
+            "imdb_votes": 449651,
+            "kinopoisk": 316,
+            "kinopoisk_rating": 7.599,
+            "kinopoisk_votes": 170049,
+            "rating": 258,
+            "rating_votes": 268,
+            "rating_percentage": 98,
+            "views": 22080,
+            "comments": 8,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/115.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/115.jpg",
+              "big": "https://cdn.example.com/poster/item/big/115.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/115.jpg"
+            },
+            "trailer": {
+              "id": 115,
+              "file": "/trailers/3/1d/115.mp4"
+            },
+            "finished": false,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1276552823,
+            "updated_at": 1551573181,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 17297,
+            "type": "movie",
+            "subtype": "",
+            "title": "Аниматрица / The Animatrix",
+            "year": 2003,
+            "cast": "Киану Ривз, Кэрри-Энн Мосс, Минди Кларк, Джон Ди Маджио, Акио Ютсука, Клэйтон Уотсон, Памела Сигал, Терренс «Ти Си» Карсон, Мелинда Кларк, Оливия Д`Або, Дэйн А. Дэвис, Джон ДеМита, Деби Дерриберри",
+            "director": "Питер Чунг, Энди Джонс, Ёсиаки Кавадзири",
+            "genres": [
+              {
+                "id": 2,
+                "title": "Боевик"
+              },
+              {
+                "id": 4,
+                "title": "Фантастика"
+              },
+              {
+                "id": 9,
+                "title": "Драма"
+              },
+              {
+                "id": 23,
+                "title": "Мультфильм"
+              },
+              {
+                "id": 25,
+                "title": "Аниме"
+              }
+            ],
+            "countries": [
+              {
+                "id": 1,
+                "title": "США"
+              }
+            ],
+            "voice": "Дубляж, Профессиональный многоголосый, Оригинал",
+            "duration": {
+              "average": 6050,
+              "total": 6050
+            },
+            "ac3": 0,
+            "langs": 6,
+            "quality": 1080,
+            "plot": "Добро пожаловать в «Аниматрицу» — визуальную феерию изумительной компьютерной графики и японского «аниме»! Вам предстоит увидеть девять поразительных картин от всемирно известных мастеров «аниме». Вас ждет приквел «Матрицы», где Вы узнаете предысторию возникновения нового иллюзорного мира, побываете в последних городах рода человеческого, а также станете свидетелями глобальной войны людей с машинами, войны, которая закончилась гибелью цивилизации.",
+            "tracklist": [],
+            "imdb": 328832,
+            "imdb_rating": 7.4,
+            "imdb_votes": 71416,
+            "kinopoisk": 325797,
+            "kinopoisk_rating": 7.661,
+            "kinopoisk_votes": 18673,
+            "rating": 63,
+            "rating_votes": 65,
+            "rating_percentage": 98,
+            "views": 2398,
+            "comments": 2,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/17297.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/17297.jpg",
+              "big": "https://cdn.example.com/poster/item/big/17297.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/17297.jpg"
+            },
+            "trailer": {
+              "id": 17297,
+              "file": "/trailers/1/4b/17297.mp4"
+            },
+            "finished": false,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1481701324,
+            "updated_at": 1481712210,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 10142,
+            "type": "documovie",
+            "subtype": "",
+            "title": "Возвращаясь к матрице / The Matrix Revisited",
+            "year": 2001,
+            "cast": "Лоренцо Ди Бонавентура, Джоэл Силвер, Билл Поуп, Оуэн Патерсон, Ким Барретт, Стив Скрос, Киану Ривз, Джеффри Дарроу, Кэрри-Энн Мосс, Хьюго Уивинг, Джон Гаета, Лоренс Фишбёрн, Лана Вачовски, Лилли Вачовски, Юэнь Воо-пин",
+            "director": "Джошуа Орек",
+            "genres": [
+              {
+                "id": 82,
+                "title": "Кино"
+              }
+            ],
+            "countries": [
+              {
+                "id": 1,
+                "title": "США"
+              }
+            ],
+            "voice": "",
+            "duration": {
+              "average": 7378,
+              "total": 7378
+            },
+            "ac3": 0,
+            "langs": 1,
+            "quality": 480,
+            "plot": "Фильм, рассказывает о том, как создавалась «Матрица», о ее героях, музыкальном оформлении, визуальных эффектах, созданных под руководством Джона Гаеты (John Gaeta), а также о том, как были поставлены сцены единоборств, хореографом которых стал мастер кунг-фу Ву-пинг Юен (Woo-ping Yuen).",
+            "tracklist": [],
+            "imdb": 295432,
+            "imdb_rating": 7.3,
+            "imdb_votes": 3297,
+            "kinopoisk": 295535,
+            "kinopoisk_rating": 7.758,
+            "kinopoisk_votes": 1459,
+            "rating": 6,
+            "rating_votes": 6,
+            "rating_percentage": 100,
+            "views": 336,
+            "comments": 1,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/10142.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/10142.jpg",
+              "big": "https://cdn.example.com/poster/item/big/10142.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/10142.jpg"
+            },
+            "trailer": {
+              "id": 10142,
+              "file": "/trailers/3/35/10142.mp4"
+            },
+            "finished": true,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1418485039,
+            "updated_at": 0,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 34570,
+            "type": "concert",
+            "subtype": "",
+            "title": "The Matrixx / Нашествие",
+            "year": 2018,
+            "cast": "Глеб Самойлов, Дмитрий Хакимов, Валерий Аркадин, Станислава Матвеева",
+            "director": "",
+            "genres": [
+              {
+                "id": 47,
+                "title": "Rock"
+              }
+            ],
+            "countries": [
+              {
+                "id": 2,
+                "title": "Россия"
+              }
+            ],
+            "voice": null,
+            "duration": {
+              "average": 4104,
+              "total": 4104
+            },
+            "ac3": 0,
+            "langs": 1,
+            "quality": 1080,
+            "plot": "Глеб Самойлоff & The MATRIXX на ежегодном музыкальном фестивале Нашествие, 3 августа 2018 г.",
+            "tracklist": [
+              {
+                "artists": "",
+                "title": "Звезда",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Романтика",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Сердце и печень",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Танцуй",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Любовтю",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Последнее желание",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Под огнем",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "С.С.",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Здравствуй",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Никто не выжил",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Ковер-вертолет",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Опиум для нткого",
+                "url": ""
+              }
+            ],
+            "imdb": null,
+            "imdb_rating": null,
+            "imdb_votes": null,
+            "kinopoisk": null,
+            "kinopoisk_rating": null,
+            "kinopoisk_votes": null,
+            "rating": 0,
+            "rating_votes": 0,
+            "rating_percentage": 0,
+            "views": 189,
+            "comments": 0,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/34570.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/34570.jpg",
+              "big": "https://cdn.example.com/poster/item/big/34570.jpg",
+              "wide": null
+            },
+            "trailer": null,
+            "finished": false,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1533575965,
+            "updated_at": 1533595802,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 57421,
+            "type": "concert",
+            "subtype": "",
+            "title": "Глеб Самойлов и The Matrixx с симфоническим оркестром \"Глобалис\" / Нашествие",
+            "year": 2019,
+            "cast": "Глеб Самойлов, Дмитрий Хакимов, Валерий Аркадин, Станислава Матвеева",
+            "director": "",
+            "genres": [
+              {
+                "id": 30,
+                "title": "Alternative"
+              },
+              {
+                "id": 36,
+                "title": "Electronic"
+              },
+              {
+                "id": 38,
+                "title": "Industrial"
+              },
+              {
+                "id": 39,
+                "title": "Instrumental"
+              },
+              {
+                "id": 47,
+                "title": "Rock"
+              }
+            ],
+            "countries": [
+              {
+                "id": 2,
+                "title": "Россия"
+              }
+            ],
+            "voice": null,
+            "duration": {
+              "average": 3641,
+              "total": 3641
+            },
+            "ac3": 0,
+            "langs": 1,
+            "quality": 1080,
+            "plot": "Выступление на ежегодном музыкальном фестивале.",
+            "tracklist": [
+              {
+                "artists": "",
+                "title": "(01:40) Увертюра",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "(06:45) Два корабля",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "(11:42) Москва-река",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "(15:42) Ураган",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "(19:51) Жить всегда",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "(24:15) Пуля",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "(27:32) Секрет",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "(30:29) В такси",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "(33:45) Снайпер",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "(37:16) Никто не выжил",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "(42:10) Ковёр-вертолёт",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "(45:40) Опиум для никого",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "(50:09) Как на войне",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "(54:42) Дворник",
+                "url": ""
+              }
+            ],
+            "imdb": null,
+            "imdb_rating": null,
+            "imdb_votes": null,
+            "kinopoisk": null,
+            "kinopoisk_rating": null,
+            "kinopoisk_votes": null,
+            "rating": -2,
+            "rating_votes": 2,
+            "rating_percentage": 0,
+            "views": 466,
+            "comments": 0,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/57421.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/57421.jpg",
+              "big": "https://cdn.example.com/poster/item/big/57421.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/57421.jpg"
+            },
+            "trailer": null,
+            "finished": false,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1573979763,
+            "updated_at": 1573981297,
+            "subscribed": false,
+            "in_watchlist": false
+          }
+        ],
+        "pagination": {
+          "total": 1,
+          "current": 1,
+          "perpage": 20,
+          "total_items": 7
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "113"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 113,
+          "title": "Матрица / The Matrix",
+          "type": "movie",
+          "status": -1,
+          "videos": [
+            {
+              "id": 334,
+              "number": 1,
+              "title": "",
+              "duration": 8225,
+              "time": 0,
+              "status": -1,
+              "updated": null
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "114"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 114,
+          "title": "Матрица: Перезагрузка / The Matrix Reloaded",
+          "type": "movie",
+          "status": 1,
+          "videos": [
+            {
+              "id": 337,
+              "number": 1,
+              "title": "",
+              "duration": 8297,
+              "time": 8295,
+              "status": 1,
+              "updated": 1526413371
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "115"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 115,
+          "title": "Матрица: Революция / The Matrix Revolutions",
+          "type": "movie",
+          "status": -1,
+          "videos": [
+            {
+              "id": 340,
+              "number": 1,
+              "title": "",
+              "duration": 7756,
+              "time": 0,
+              "status": -1,
+              "updated": null
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "17297"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 17297,
+          "title": "Аниматрица / The Animatrix",
+          "type": "movie",
+          "status": -1,
+          "videos": [
+            {
+              "id": 46027,
+              "number": 1,
+              "title": "",
+              "duration": 6050,
+              "time": 0,
+              "status": -1,
+              "updated": 1542054660
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "10142"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 10142,
+          "title": "Возвращаясь к матрице / The Matrix Revisited",
+          "type": "documovie",
+          "status": -1,
+          "videos": [
+            {
+              "id": 26296,
+              "number": 1,
+              "title": "matrix",
+              "duration": 7378,
+              "time": 0,
+              "status": -1,
+              "updated": null
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "34570"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 34570,
+          "title": "The Matrixx / Нашествие",
+          "type": "concert",
+          "status": -1,
+          "videos": [
+            {
+              "id": 513340,
+              "number": 1,
+              "title": "Фестиваль / Festival",
+              "duration": 4104,
+              "time": 0,
+              "status": -1,
+              "updated": null
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "57421"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 57421,
+          "title": "Глеб Самойлов и The Matrixx с симфоническим оркестром \"Глобалис\" / Нашествие",
+          "type": "concert",
+          "status": -1,
+          "videos": [
+            {
+              "id": 704605,
+              "number": 1,
+              "title": "Фестиваль / Festival",
+              "duration": 3641,
+              "time": 0,
+              "status": -1,
+              "updated": null
+            }
+          ]
+        }
+      }
+    }
   }
 ]
