@@ -4,9 +4,10 @@ from urllib.request import urlopen
 
 import pytest
 from kodijson import Kodi
+from wait_for import wait_for
+
 from paths import CON_DIR
 from paths import HOST_DIR
-from wait_for import wait_for
 
 
 JSON_RPC_URL = "http://127.0.0.1:8080/jsonrpc"
@@ -32,7 +33,14 @@ def build_plugin():
 @pytest.fixture(scope="session")
 def run_kodi_pod(build_plugin):
     podman("pod", "rm", "-f", "kodipod")
-    podman("pod", "create", "--publish=8080:8080", "--publish=1080:1080", "--name=kodipod")
+    podman(
+        "pod",
+        "create",
+        "--publish=8080:8080",
+        "--publish=1080:1080",
+        "--publish=5999:5999",
+        "--name=kodipod",
+    )
     podman(
         "run",
         "--detach",
