@@ -1016,3 +1016,45 @@ SEARCH_RESULT = [
         "year": 2019,
     },
 ]
+
+HISTORY = [
+    {
+        "file": "plugin://video.kino.pub/new_search/all/",
+        "filetype": "file",
+        "label": "Новый поиск",
+        "type": "unknown",
+    },
+    {
+        "file": "plugin://video.kino.pub/search/all/results/?title=Matrix",
+        "filetype": "directory",
+        "label": "Matrix",
+        "type": "unknown",
+    },
+    {
+        "file": "plugin://video.kino.pub/search/all/results/?title=%D0%A2%D0%B5%D1%81%D1%82",
+        "filetype": "directory",
+        "label": "Тест",
+        "type": "unknown",
+    },
+    {
+        "file": "plugin://video.kino.pub/search/all/results/?title=123",
+        "filetype": "directory",
+        "label": "123",
+        "type": "unknown",
+    },
+    {
+        "file": "plugin://video.kino.pub/search/all/results/?title=Some+video",
+        "filetype": "directory",
+        "label": "Some video",
+        "type": "unknown",
+    },
+]
+
+EMPTY_HISTORY = [
+    {
+        "file": "plugin://video.kino.pub/new_search/all/",
+        "filetype": "file",
+        "label": "Новый поиск",
+        "type": "unknown",
+    }
+]
