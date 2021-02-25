@@ -1058,3 +1058,69 @@ EMPTY_HISTORY = [
         "type": "unknown",
     }
 ]
+
+BASIC_HEADINGS = [
+    {
+        "file": "plugin://video.kino.pub/items/{item}/search/",
+        "filetype": "directory",
+        "label": "Поиск",
+        "type": "unknown",
+    },
+    {
+        "file": "plugin://video.kino.pub/items/{item}/fresh/",
+        "filetype": "directory",
+        "label": "Последние",
+        "type": "unknown",
+    },
+    {
+        "file": "plugin://video.kino.pub/items/{item}/hot/",
+        "filetype": "directory",
+        "label": "Горячие",
+        "type": "unknown",
+    },
+    {
+        "file": "plugin://video.kino.pub/items/{item}/popular/",
+        "filetype": "directory",
+        "label": "Популярные",
+        "type": "unknown",
+    },
+    {
+        "file": "plugin://video.kino.pub/items/{item}/alphabet/",
+        "filetype": "directory",
+        "label": "По алфавиту",
+        "type": "unknown",
+    },
+    {
+        "file": "plugin://video.kino.pub/items/{item}/genres/",
+        "filetype": "directory",
+        "label": "Жанры",
+        "type": "unknown",
+    },
+    {
+        "file": "plugin://video.kino.pub/items/{item}/sort/",
+        "filetype": "directory",
+        "label": "По рейтингу по убыванию",
+        "type": "unknown",
+    },
+]
+
+COLLECTIONS_HEADINGS = [
+    {
+        "file": "plugin://video.kino.pub/collections/created/",
+        "filetype": "directory",
+        "label": "Последние",
+        "type": "unknown",
+    },
+    {
+        "file": "plugin://video.kino.pub/collections/watchers/",
+        "filetype": "directory",
+        "label": "Просматриваемые",
+        "type": "unknown",
+    },
+    {
+        "file": "plugin://video.kino.pub/collections/views/",
+        "filetype": "directory",
+        "label": "Популярные",
+        "type": "unknown",
+    },
+]

@@ -79,3 +79,19 @@ def test_watching_movies(kodi):
         ],
     )
     assert expected_results.WATCHING_MOVIES == resp["result"]["files"]
+
+
+@pytest.mark.parametrize(
+    "item", ["movies", "serials", "tvshow", "3d", "concerts", "documovies", "docuserials"]
+)
+def test_items_headings(kodi, item):
+    expected_headings = deepcopy(expected_results.BASIC_HEADINGS)
+    for directory in expected_headings:
+        directory["file"] = directory["file"].format(item=item)
+    resp = kodi.Files.GetDirectory(directory=f"plugin://video.kino.pub/items/{item}/")
+    assert expected_headings == resp["result"]["files"]
+
+
+def test_collections_headings(kodi):
+    resp = kodi.Files.GetDirectory(directory="plugin://video.kino.pub/collections/")
+    assert expected_results.COLLECTIONS_HEADINGS == resp["result"]["files"]
