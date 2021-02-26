@@ -18,7 +18,12 @@ def test_new_search(request, kodi):
         if history_path.exists():
             history_path.unlink()
         time.sleep(3)
-        kodi.Input.Back()
+        while (
+            kodi.GUI.GetProperties(properties=["currentwindow"])["result"]["currentwindow"]["label"]
+            == "Virtual keyboard"
+        ):
+            kodi.Input.Back()
+            time.sleep(3)
 
     resp = kodi.Addons.ExecuteAddon(addonid="video.kino.pub", params="/new_search/all/")
     assert resp["result"] == "OK"

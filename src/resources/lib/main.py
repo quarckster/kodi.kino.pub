@@ -312,7 +312,7 @@ def bookmarks():
             properties={"folder-id": str(folder["id"]), "views": str(folder["views"])},
         )
         url = plugin.routing.build_url("remove_bookmarks_folder", folder["id"])
-        li.addContextMenuItems([("Удалить", f"XBMC.RunPlugin({url})")])
+        li.addContextMenuItems([("Удалить", f"RunPlugin({url})")])
         url = plugin.routing.build_url("bookmarks", f"{folder['id']}/")
         xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
     xbmcplugin.endOfDirectory(plugin.handle)

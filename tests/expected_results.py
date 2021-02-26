@@ -1124,3 +1124,40 @@ COLLECTIONS_HEADINGS = [
         "type": "unknown",
     },
 ]
+
+BOOKMARKS = [
+    {
+        "file": "plugin://video.kino.pub/create_bookmarks_folder",
+        "filetype": "file",
+        "label": "Создать папку",
+        "type": "unknown",
+    },
+    {
+        "file": "plugin://video.kino.pub/bookmarks/161701/",
+        "filetype": "directory",
+        "label": "General",
+        "type": "unknown",
+    },
+]
+
+
+TEST_CREATE_BOOKMARK = [
+    {
+        "file": "plugin://video.kino.pub/create_bookmarks_folder",
+        "filetype": "file",
+        "label": "Создать папку",
+        "type": "unknown",
+    },
+    {
+        "file": "plugin://video.kino.pub/bookmarks/161701/",
+        "filetype": "directory",
+        "label": "General",
+        "type": "unknown",
+    },
+    {
+        "file": "plugin://video.kino.pub/bookmarks/814132/",
+        "filetype": "directory",
+        "label": "Test",
+        "type": "unknown",
+    },
+]
