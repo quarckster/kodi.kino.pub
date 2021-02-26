@@ -8649,5 +8649,1500 @@
         ]
       }
     }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/bookmarks/161701"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "folder": {
+          "id": 161701,
+          "title": "General",
+          "views": 6,
+          "created": 1539502313,
+          "updated": 1574615952
+        },
+        "items": [
+          {
+            "id": 42913,
+            "type": "serial",
+            "subtype": "",
+            "title": "Трое с небес: Истории Аркадии / 3Below: Tales of Arcadia",
+            "year": 2018,
+            "cast": "Татьяна Маслани, Диего Луна, Ник Офферман, Фрэнк Уэлкер, Стив Альтерман, Митч Картер, Гленн Клоуз, Коул Сэнд, Джули Фоллс, Алон Абутбул, Ник Фрост, Фред Таташиор, Стивен Ян, Лорейн Ньюмен, Чарли Сэкстон",
+            "director": "Йохана Матте, Илэйн Боган, Эндрю Л. Шмидт, Родриго Блаас, Франциско Руис Веласко",
+            "genres": [
+              {
+                "id": 4,
+                "title": "Фантастика"
+              },
+              {
+                "id": 23,
+                "title": "Мультфильм"
+              }
+            ],
+            "countries": [
+              {
+                "id": 1,
+                "title": "США"
+              }
+            ],
+            "voice": "Дубляж",
+            "duration": {
+              "average": 1423.6923076923076,
+              "total": 37016
+            },
+            "ac3": 0,
+            "langs": 91,
+            "quality": 1080,
+            "plot": "Инопланетные подростки, члены королевской семьи, спасаясь от захватившего их родную планету диктатора, терпят крушение в Аркадии. Вместе с верным телохранителем они вынуждены скрываться от межгалактических охотников за головами и выживать под видом простых школьников.",
+            "tracklist": [],
+            "imdb": 7736544,
+            "imdb_rating": 7.8,
+            "imdb_votes": 4392,
+            "kinopoisk": 1113117,
+            "kinopoisk_rating": 7.076,
+            "kinopoisk_votes": 760,
+            "rating": 12,
+            "rating_votes": 16,
+            "rating_percentage": 87,
+            "views": 15782,
+            "comments": 2,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/42913.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/42913.jpg",
+              "big": "https://cdn.example.com/poster/item/big/42913.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/42913.jpg"
+            },
+            "trailer": {
+              "id": 42913,
+              "file": "/trailers/f/a6/42913.mp4"
+            },
+            "finished": true,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1545563629,
+            "updated_at": 1563380666,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 66007,
+            "type": "serial",
+            "subtype": "",
+            "title": "Волшебники: Истории Аркадии / Wizards: Tales of Arcadia",
+            "year": 2020,
+            "cast": "Колин О’Донохью, Стефани Беатриз, Дэвид Брэдли, Клэнси Браун, Джеймс Фолкнер, Келси Грэммер, Марк Хэмилл, Лина Хиди, Эмиль Хирш, Диего Луна",
+            "director": "Гильермо дель Торо",
+            "genres": [
+              {
+                "id": 5,
+                "title": "Фэнтези"
+              },
+              {
+                "id": 6,
+                "title": "Семейный"
+              },
+              {
+                "id": 8,
+                "title": "Приключения"
+              },
+              {
+                "id": 23,
+                "title": "Мультфильм"
+              }
+            ],
+            "countries": [
+              {
+                "id": 1,
+                "title": "США"
+              }
+            ],
+            "voice": null,
+            "duration": {
+              "average": 1434.6,
+              "total": 14346
+            },
+            "ac3": 0,
+            "langs": 30,
+            "quality": 1080,
+            "plot": "Ученики Мерлина — молодые и талантливые волшебники — отправляются в захватывающее путешествие во времени. Они оказываются в Камелоте, замке короля Артура, где им предстоит уладить конфликт между людьми, троллями и магическими существами.\n\n«Волшебники» — это заключительная часть трилогии Гильермо дель Торо «Истории Аркадии», в которой встречаются миры людей, троллей, волшебников и пришельцев. Их судьба решится в финальной апокалиптической битве за власть над магией.",
+            "tracklist": [],
+            "imdb": 7736558,
+            "imdb_rating": 8.2,
+            "imdb_votes": 2099,
+            "kinopoisk": 1113118,
+            "kinopoisk_rating": 7.685,
+            "kinopoisk_votes": 366,
+            "rating": 20,
+            "rating_votes": 22,
+            "rating_percentage": 95,
+            "views": 12374,
+            "comments": 7,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/66007.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/66007.jpg",
+              "big": "https://cdn.example.com/poster/item/big/66007.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/66007.jpg"
+            },
+            "trailer": {
+              "id": 66007,
+              "file": "/trailers/9/88/66007.mp4"
+            },
+            "finished": true,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1596786184,
+            "updated_at": 1596788738,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 45403,
+            "type": "documovie",
+            "subtype": "",
+            "title": "Апокалипсис: Бесконечная война 1918-1926 / Apocalypse La Paix Impossible 1918-1926",
+            "year": 2018,
+            "cast": "Матьё Кассовиц, Франсуа Арно",
+            "director": "Изабель Кларк",
+            "genres": [
+              {
+                "id": 51,
+                "title": "История"
+              },
+              {
+                "id": 56,
+                "title": "Оружие / Война"
+              },
+              {
+                "id": 133,
+                "title": "Эксклюзив"
+              }
+            ],
+            "countries": [
+              {
+                "id": 8,
+                "title": "Франция"
+              },
+              {
+                "id": 14,
+                "title": "Канада"
+              }
+            ],
+            "voice": null,
+            "duration": {
+              "average": 5350,
+              "total": 5350
+            },
+            "ac3": 0,
+            "langs": 2,
+            "quality": 1080,
+            "plot": "11 ноября 1918 года. Мир выходит из самого ужасного конфликта, который когда-либо был известен. В то время как лидеры победоносных стран разрабатывают новый мировой порядок, другие народы пытаются наладить жизнь заново. В послевоенные годы русские, немецкие, австро-венгерские и османские империи развалились, люди обнищали. Ненависть, страх и злоба вновь выходят из глубин общества, ведя мир к новому Апокалипсису.",
+            "tracklist": [],
+            "imdb": 8561666,
+            "imdb_rating": 8.1,
+            "imdb_votes": 229,
+            "kinopoisk": 1224068,
+            "kinopoisk_rating": 0,
+            "kinopoisk_votes": 23,
+            "rating": 7,
+            "rating_votes": 7,
+            "rating_percentage": 100,
+            "views": 422,
+            "comments": 2,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/45403.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/45403.jpg",
+              "big": "https://cdn.example.com/poster/item/big/45403.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/45403.jpg"
+            },
+            "trailer": null,
+            "finished": false,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1549547042,
+            "updated_at": 1552676432,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 880,
+            "type": "movie",
+            "subtype": "",
+            "title": "Чарли и шоколадная фабрика / Charlie and the Chocolate Factory",
+            "year": 2005,
+            "cast": "Джонни Депп, Фредди Хаймор, Хелена Бонем Картер, Ноа Тейлор, Дип Рой, Дэвид Келли, Анна-София Робб, Кристофер Ли, Адам Годли, Мисси Пайл, Джеймс Фокс, Франциска Трёгнер, Джулия Винтер, Джордан Фрай, Филип Виграц",
+            "director": "Тим Бёртон",
+            "genres": [
+              {
+                "id": 1,
+                "title": "Комедия"
+              },
+              {
+                "id": 5,
+                "title": "Фэнтези"
+              },
+              {
+                "id": 6,
+                "title": "Семейный"
+              },
+              {
+                "id": 8,
+                "title": "Приключения"
+              }
+            ],
+            "countries": [
+              {
+                "id": 1,
+                "title": "США"
+              }
+            ],
+            "voice": "Дубляж, Профессиональный двухголосый, Оригинал",
+            "duration": {
+              "average": 6925,
+              "total": 6925
+            },
+            "ac3": 0,
+            "langs": 4,
+            "quality": 1080,
+            "plot": "Какие чудеса ждут вас на фабрике Вилли Вонки? Только представьте: травяные луга из сладкого мятного сахара в Шоколадной Комнате. .. Можно проплыть по Шоколадной реке на розовой сахарной лодке. .. Или поставить эксперименты в Комнате изобретений с леденцами, которые никогда не тают. .. Понаблюдать за дрессированными белками в Ореховой Комнате или отправиться в стеклянном лифте в Телевизионную Комнату. Вы найдете слишком много смешного, чуть таинственного и настолько захватывающего в этом путешествии, что оно станет настолько же приятным и сладким для вас, как восхитительная сладкая палочка с розовой сливочной помадкой от Вилли Вонки.",
+            "tracklist": [
+              {
+                "artists": "",
+                "title": "Дубляж",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Оригинал, Английский",
+                "url": ""
+              },
+              {
+                "artists": "",
+                "title": "Профессиональный двухголосый, Tycoon-Studio",
+                "url": ""
+              }
+            ],
+            "imdb": 367594,
+            "imdb_rating": 6.6,
+            "imdb_votes": 430687,
+            "kinopoisk": 38905,
+            "kinopoisk_rating": 7.586,
+            "kinopoisk_votes": 256636,
+            "rating": 201,
+            "rating_votes": 217,
+            "rating_percentage": 96,
+            "views": 62695,
+            "comments": 10,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/880.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/880.jpg",
+              "big": "https://cdn.example.com/poster/item/big/880.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/880.jpg"
+            },
+            "trailer": {
+              "id": 880,
+              "file": "/trailers/4/fd/880.mp4"
+            },
+            "finished": false,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1295335590,
+            "updated_at": 1490184227,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 12695,
+            "type": "serial",
+            "subtype": "",
+            "title": "Аватар: Легенда об Аанге / Avatar: The Last Airbender",
+            "year": 2005,
+            "cast": "Зак Тайлер, Мэй Уитман, Джек Де Сена, Ди Брэдли Бейкер, Данте Баско, Джесси Флауер, Мако, Грэй Гриффин, Андре Соглиуззо, Крикет Ли, Оливия Хэк, Марк Хэмилл, Дженни Кван, Грег Болдуин, Джим Мескимен",
+            "director": "Джанкарло Волп, Этан Сполдинг, Лорен МакМаллен, Дэйв Филони, Хоаким Дос Сантос, Энтони Льои, Майкл Данте ДиМартино",
+            "genres": [
+              {
+                "id": 2,
+                "title": "Боевик"
+              },
+              {
+                "id": 5,
+                "title": "Фэнтези"
+              },
+              {
+                "id": 6,
+                "title": "Семейный"
+              },
+              {
+                "id": 8,
+                "title": "Приключения"
+              },
+              {
+                "id": 23,
+                "title": "Мультфильм"
+              }
+            ],
+            "countries": [
+              {
+                "id": 1,
+                "title": "США"
+              }
+            ],
+            "voice": "Nickelodeon",
+            "duration": {
+              "average": 1424.327868852459,
+              "total": 86884
+            },
+            "ac3": 0,
+            "langs": 122,
+            "quality": 1080,
+            "plot": "Мир разделен на четыре народа: Водные племена, королевство Земли, Воздушные кочевники и Огненная нация. Представители каждого народа обладают способностями управления своей стихией и именуют себя магами Воды, Земли, Воздуха или Огня. Только Аватар является властелином всех четырех стихий. Его роль заключается в поддержке баланса между народами и сохранении мирового порядка.\nОднажды предводитель Огненной нации Хозяин Огня развязал войну с целью подчинить себе остальные народы. Отвественность за спасение мира легла на плечи двенадцатилетного мальчика, мага Воздуха по имени Аанг, который узнал, что он Аватар. Аанг отправляется в опасное путешествие вместе со своими отважными друзьями из племени Воды, Катарой и ее братом Соккой. Ему предстоит овладеть всеми стихиями, пройти через множество испытаний, перебороть свои страхи и сразить Хозяина Огня, чтобы остановить войну и восстановить равновесие в мире.",
+            "tracklist": [],
+            "imdb": 417299,
+            "imdb_rating": 9.2,
+            "imdb_votes": 249139,
+            "kinopoisk": 401152,
+            "kinopoisk_rating": 8.548,
+            "kinopoisk_votes": 175420,
+            "rating": 116,
+            "rating_votes": 122,
+            "rating_percentage": 97,
+            "views": 233973,
+            "comments": 8,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/12695.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/12695.jpg",
+              "big": "https://cdn.example.com/poster/item/big/12695.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/12695.jpg"
+            },
+            "trailer": {
+              "id": 12695,
+              "file": "/trailers/7/3a/12695.mp4"
+            },
+            "finished": true,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1452870386,
+            "updated_at": 1601497574,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 7503,
+            "type": "movie",
+            "subtype": "",
+            "title": "Рио 2 / Rio 2",
+            "year": 2014,
+            "cast": "Энн Хэтэуэй, Джесси Айзенберг, Рэйчел Кроу, Амандла Стенберг, Пирс Гэнон, Джемейн Клемент, Уилл Ай Эм, Джейми Фокс, Трэйси Морган, Джордж Лопес, Лесли Манн, Бебель Жилберту, Родриго Санторо, Джейк Т. Остин, Кристин Ченоуэт",
+            "director": "Карлос Салдана",
+            "genres": [
+              {
+                "id": 1,
+                "title": "Комедия"
+              },
+              {
+                "id": 6,
+                "title": "Семейный"
+              },
+              {
+                "id": 8,
+                "title": "Приключения"
+              },
+              {
+                "id": 23,
+                "title": "Мультфильм"
+              }
+            ],
+            "countries": [
+              {
+                "id": 1,
+                "title": "США"
+              }
+            ],
+            "voice": "",
+            "duration": {
+              "average": 6071,
+              "total": 6071
+            },
+            "ac3": 0,
+            "langs": 4,
+            "quality": 1080,
+            "plot": "Голубчик, Жемчужинка и их трое детей живут счастливой жизнью в волшебном городе Рио-де-Жанейро. Когда Жемчужинка решает, что их детям нужно научиться жить как настоящим птицам, она настаивает на авантюрной поездке в дебри реки Амазонки. Там, пытаясь вписаться в новое окружение, Голубчик начинает беспокоиться, что может потерять Жемчужинку и детей, идущих на зов дикой природы.",
+            "tracklist": [],
+            "imdb": 2357291,
+            "imdb_rating": 6.3,
+            "imdb_votes": 80674,
+            "kinopoisk": 677437,
+            "kinopoisk_rating": 6.694,
+            "kinopoisk_votes": 43043,
+            "rating": 177,
+            "rating_votes": 197,
+            "rating_percentage": 94,
+            "views": 18459,
+            "comments": 30,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/7503.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/7503.jpg",
+              "big": "https://cdn.example.com/poster/item/big/7503.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/7503.jpg"
+            },
+            "trailer": {
+              "id": 7503,
+              "file": "/trailers/3/4f/7503.mp4"
+            },
+            "finished": false,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1404154315,
+            "updated_at": 1488053408,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 57259,
+            "type": "documovie",
+            "subtype": "",
+            "title": "Встреча с Горбачевым / Meeting Gorbachev",
+            "year": 2018,
+            "cast": "James Baker, Михаил Горбачев, Вернер Херцог, Miklos Nemeth, Рональд Рейган, Джордж Шульц, Андре Сингер, Horst Teltschik, Маргарет Тэтчер, Лех Валенса",
+            "director": "Вернер Херцог",
+            "genres": [
+              {
+                "id": 51,
+                "title": "История"
+              },
+              {
+                "id": 59,
+                "title": "Политика"
+              },
+              {
+                "id": 133,
+                "title": "Эксклюзив"
+              }
+            ],
+            "countries": [
+              {
+                "id": 1,
+                "title": "США"
+              },
+              {
+                "id": 4,
+                "title": "Германия"
+              },
+              {
+                "id": 5,
+                "title": "Великобритания"
+              }
+            ],
+            "voice": null,
+            "duration": {
+              "average": 5479,
+              "total": 5479
+            },
+            "ac3": 0,
+            "langs": 3,
+            "quality": 1080,
+            "plot": "Знаменитый кинематографист расспрашивает последнего Генсекретаря ЦК КПСС и единственного президента СССР о его самых важных, по мнению интервьюера, достижениях: прекращении холодной войны, прекращении контроля Советским Союзом Восточной Европы и объединение Германии.",
+            "tracklist": [],
+            "imdb": 8811382,
+            "imdb_rating": 7.2,
+            "imdb_votes": 1747,
+            "kinopoisk": 1178979,
+            "kinopoisk_rating": 6.53,
+            "kinopoisk_votes": 305,
+            "rating": 3,
+            "rating_votes": 9,
+            "rating_percentage": 66,
+            "views": 586,
+            "comments": 1,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/57259.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/57259.jpg",
+              "big": "https://cdn.example.com/poster/item/big/57259.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/57259.jpg"
+            },
+            "trailer": {
+              "id": 57259,
+              "file": "/trailers/e/c9/57259.mp4"
+            },
+            "finished": false,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1573476833,
+            "updated_at": 1575828147,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 20611,
+            "type": "docuserial",
+            "subtype": "",
+            "title": "Нюрнберг",
+            "year": 2016,
+            "cast": "",
+            "director": "Олег Штром",
+            "genres": [
+              {
+                "id": 51,
+                "title": "История"
+              }
+            ],
+            "countries": [
+              {
+                "id": 2,
+                "title": "Россия"
+              }
+            ],
+            "voice": null,
+            "duration": {
+              "average": 2661.8333333333335,
+              "total": 15971
+            },
+            "ac3": 0,
+            "langs": 6,
+            "quality": 720,
+            "plot": "Недавно власти Баварии впервые со времен окончания Второй мировой войны переиздали книгу Адольфа Гитлера «Моя борьба». Как раз тогда, когда мир должен вспоминать, как и зачем 70 лет назад проходил Нюрнбергский процесс. Международный военный трибунал начал работу 20 ноября 1945 года. Об этом знают все. Но до сих пор неизвестным остается то, о чем говорить не принято. 1 октября 1946 года в Нюрнберге был провозглашен приговор Международного военного трибунала, осудивший главных военных преступников. Нередко его называют «Судом истории». Это был не только один из самых крупных судебных процессов в истории человечества, но и важнейшая веха в развитии международного права. Нюрнбергский процесс юридически закрепил окончательный разгром фашизма.",
+            "tracklist": [],
+            "imdb": null,
+            "imdb_rating": null,
+            "imdb_votes": null,
+            "kinopoisk": null,
+            "kinopoisk_rating": null,
+            "kinopoisk_votes": null,
+            "rating": 11,
+            "rating_votes": 15,
+            "rating_percentage": 86,
+            "views": 1712,
+            "comments": 4,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/20611.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/20611.jpg",
+              "big": "https://cdn.example.com/poster/item/big/20611.jpg",
+              "wide": null
+            },
+            "trailer": null,
+            "finished": true,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1496827662,
+            "updated_at": 1533173415,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 10088,
+            "type": "docuserial",
+            "subtype": "",
+            "title": "Апокалипсис: Первая мировая война / Apocalypse la 1ère Guerre mondiale",
+            "year": 2014,
+            "cast": "Франсуа Арно, Матьё Кассовиц, Жозеф Жоффр, Эрих Людендорф, Филипп  Петен, Вудро Вильсон, Император Карл, Фердинанд Фош, Дуглас Хейг, Джон Дж. Першинг, Раймон Пуанкаре, Пауль фон Гинденбург, Эрцгерцог Франц Фердинанд, Мустафа Кемаль Ататюрк, Чарльз Чаплин",
+            "director": "Изабель Кларк, Даниэль Костель",
+            "genres": [
+              {
+                "id": 51,
+                "title": "История"
+              },
+              {
+                "id": 56,
+                "title": "Оружие / Война"
+              },
+              {
+                "id": 83,
+                "title": "Люди"
+              }
+            ],
+            "countries": [
+              {
+                "id": 1,
+                "title": "США"
+              },
+              {
+                "id": 8,
+                "title": "Франция"
+              }
+            ],
+            "voice": "",
+            "duration": {
+              "average": 2638.6,
+              "total": 13193
+            },
+            "ac3": 0,
+            "langs": 5,
+            "quality": 1080,
+            "plot": "Этот новый документальный сериал создан на основе более 500 часов восстановленных в цвете и озвученных архивных киноматериалов, большая часть которых ранее не показывалась. Мы перенесемся в эпицентр военных действий, от окопов северной Франции до менее известных фронтов в России, Сербии, Турции и Палестине, и также увидим повседневную жизнь гражданского населения в тылу.",
+            "tracklist": [],
+            "imdb": 3638584,
+            "imdb_rating": 8.9,
+            "imdb_votes": 2311,
+            "kinopoisk": 842865,
+            "kinopoisk_rating": 8.635,
+            "kinopoisk_votes": 1514,
+            "rating": 10,
+            "rating_votes": 12,
+            "rating_percentage": 91,
+            "views": 1881,
+            "comments": 2,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/10088.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/10088.jpg",
+              "big": "https://cdn.example.com/poster/item/big/10088.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/10088.jpg"
+            },
+            "trailer": {
+              "id": 10088,
+              "file": "/trailers/6/51/10088.mp4"
+            },
+            "finished": true,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1413830994,
+            "updated_at": 1605659539,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 9408,
+            "type": "docuserial",
+            "subtype": "",
+            "title": "Апокалипсис: Вторая мировая война / Apocalypse - La 2ème guerre mondiale / Apocalypse: The Second World War",
+            "year": 2009,
+            "cast": "Матьё Кассовиц, Дэвид Ричи, Шарль де Голль, Франсуа Дарлан, Анри Жиро, Дуглас МакАртур, Георгий Жуков, Джозефин Бейкер, Невилл Чемберлен, Эдуард Даладье, Марлен Дитрих, Джеймс Дулиттл, Фернандель, Генри Форд, Фудзита",
+            "director": "Изабель Кларк, Даниэль Костель",
+            "genres": [
+              {
+                "id": 51,
+                "title": "История"
+              },
+              {
+                "id": 56,
+                "title": "Оружие / Война"
+              }
+            ],
+            "countries": [
+              {
+                "id": 8,
+                "title": "Франция"
+              }
+            ],
+            "voice": "",
+            "duration": {
+              "average": 2811,
+              "total": 16866
+            },
+            "ac3": 0,
+            "langs": 11,
+            "quality": 1080,
+            "plot": "Зритель познакомится с неизвестными рассекреченными кинокадрами и любительскими съемками, которые рассказывают об эпизодах и событиях Второй мировой войны так, как никто и никогда их раньше не видел. \n \nДокументальная эпопея «Апокалипсис» рассказывает об огромных внутренних конфликтах и трагических судьбах тех, кто вынужден был участвовать в войне (солдатах), тех, кто пострадал и нес лишения из-за военных действий (мирных жителях), и всех тех, кто развязал и вел эту войну (политиках и военноначальниках). Эта страшная и так хорошо знакомая всем война унесла жизни 50 миллионов мужчин и женщин по всему миру. Впервые в истории в ходе этой войны потери среди гражданского населения сравнялись с потерями среди военнослужащих.",
+            "tracklist": [],
+            "imdb": 1508238,
+            "imdb_rating": 9,
+            "imdb_votes": 10131,
+            "kinopoisk": 478013,
+            "kinopoisk_rating": 8.702,
+            "kinopoisk_votes": 2202,
+            "rating": 9,
+            "rating_votes": 19,
+            "rating_percentage": 73,
+            "views": 3859,
+            "comments": 8,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/9408.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/9408.jpg",
+              "big": "https://cdn.example.com/poster/item/big/9408.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/9408.jpg"
+            },
+            "trailer": {
+              "id": 9408,
+              "file": "/trailers/3/a8/9408.mp4"
+            },
+            "finished": true,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1339052857,
+            "updated_at": 1605720067,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 9254,
+            "type": "docuserial",
+            "subtype": "",
+            "title": "Апокалипсис: Гитлер / Apocalypse: Hitler",
+            "year": 2011,
+            "cast": "Матьё Кассовиц, Пауль фон Гинденбург, Эрих Людендорф, Маринус ван дер Люббе",
+            "director": "Изабель Кларк, Даниэль Костель",
+            "genres": [
+              {
+                "id": 51,
+                "title": "История"
+              },
+              {
+                "id": 78,
+                "title": "Биография"
+              }
+            ],
+            "countries": [
+              {
+                "id": 8,
+                "title": "Франция"
+              }
+            ],
+            "voice": "",
+            "duration": {
+              "average": 3253.5,
+              "total": 6507
+            },
+            "ac3": 0,
+            "langs": 4,
+            "quality": 720,
+            "plot": "о время Первой мировой войны (1914-1918 гг.) не удавшийся художник вдруг осознает свое предназначение: спасти Германию. Никто не мог предугадать, что Гитлер станет диктатором Германии, её фюрером. Переломным моментом для него стал экономический кризис 1929 года. Нацистская диктатура покрывает своей тенью всю Германию. Гитлер заявлял, что он желает мира, но в это время он уже был готов к войне — Апокалипсису.",
+            "tracklist": [],
+            "imdb": 2094220,
+            "imdb_rating": 8.2,
+            "imdb_votes": 1718,
+            "kinopoisk": 661068,
+            "kinopoisk_rating": 7.967,
+            "kinopoisk_votes": 579,
+            "rating": 3,
+            "rating_votes": 5,
+            "rating_percentage": 80,
+            "views": 884,
+            "comments": 0,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/9254.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/9254.jpg",
+              "big": "https://cdn.example.com/poster/item/big/9254.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/9254.jpg"
+            },
+            "trailer": null,
+            "finished": true,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1335277865,
+            "updated_at": 1533173404,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 56674,
+            "type": "documovie",
+            "subtype": "multi",
+            "title": "Апокалипсис: Сталин / Apocalypse: Staline",
+            "year": 2015,
+            "cast": "Матьё Кассовиц, Даг Рэнд",
+            "director": "Изабель Кларк",
+            "genres": [
+              {
+                "id": 78,
+                "title": "Биография"
+              },
+              {
+                "id": 133,
+                "title": "Эксклюзив"
+              }
+            ],
+            "countries": [
+              {
+                "id": 8,
+                "title": "Франция"
+              }
+            ],
+            "voice": null,
+            "duration": {
+              "average": 3139.6666666666665,
+              "total": 9419
+            },
+            "ac3": 0,
+            "langs": 12,
+            "quality": 1080,
+            "plot": "Фильм состоит из видеоматериала, снятого военными корреспондентами, солдатами, бойцами сопротивления и частными лицами. Это коллекция раскрашенных архивных кадров киносъёмки Сталина, Ленина, Троцкого и многих других основных персонажей советской политики за последние 100 лет.",
+            "tracklist": [],
+            "imdb": 5287808,
+            "imdb_rating": 7.8,
+            "imdb_votes": 833,
+            "kinopoisk": 1113129,
+            "kinopoisk_rating": 0,
+            "kinopoisk_votes": 79,
+            "rating": 10,
+            "rating_votes": 28,
+            "rating_percentage": 67,
+            "views": 4019,
+            "comments": 8,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/56674.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/56674.jpg",
+              "big": "https://cdn.example.com/poster/item/big/56674.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/56674.jpg"
+            },
+            "trailer": null,
+            "finished": false,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1571814362,
+            "updated_at": 1571820910,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 17604,
+            "type": "serial",
+            "subtype": "",
+            "title": "Охотники на троллей / Trollhunters",
+            "year": 2016,
+            "cast": "Антон Ельчин, Чарли Сэкстон, Лекси Медрано, Келси Грэммер, Рон Перлман, Фред Таташиор, Джонатан Хайд, Стив Альтерман, Митч Картер, Эми Ландекер, Джули Фоллс, Том Кенни, Клэнси Браун, Лорен Том, Мэттью Уотерсон",
+            "director": "Родриго Блаас, Эндрю Л. Шмидт, Илэйн Боган, Йохана Матте, Гильермо дель Торо",
+            "genres": [
+              {
+                "id": 2,
+                "title": "Боевик"
+              },
+              {
+                "id": 5,
+                "title": "Фэнтези"
+              },
+              {
+                "id": 23,
+                "title": "Мультфильм"
+              }
+            ],
+            "countries": [
+              {
+                "id": 1,
+                "title": "США"
+              },
+              {
+                "id": 18,
+                "title": "Мексика"
+              }
+            ],
+            "voice": "AlexFilm",
+            "duration": {
+              "average": 1416.9615384615386,
+              "total": 73682
+            },
+            "ac3": 0,
+            "langs": 156,
+            "quality": 1080,
+            "plot": "Главный герой - пятнадцатилетний парень по имени Джим Лэйк-младший. Однажды утром, по пути в школу, он находит волшебный амулет, благодаря которому узнает о существовании мистических существ, обитающих вблизи его маленького городка Аркадии. Оказывается, под землями скрывается целая цивилизация могущественных троллей, возглавляемых злодеем Буларом. Внезапно Джим становится ключевой фигурой в сопротивлении добра и зла, полный решимости спасти мир – сразу после урока физкультуры.",
+            "tracklist": [],
+            "imdb": 1734135,
+            "imdb_rating": 8.5,
+            "imdb_votes": 13435,
+            "kinopoisk": 569073,
+            "kinopoisk_rating": 7.825,
+            "kinopoisk_votes": 3062,
+            "rating": 44,
+            "rating_votes": 52,
+            "rating_percentage": 92,
+            "views": 53803,
+            "comments": 5,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/17604.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/17604.jpg",
+              "big": "https://cdn.example.com/poster/item/big/17604.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/17604.jpg"
+            },
+            "trailer": {
+              "id": 17604,
+              "file": "/trailers/6/85/17604.mp4"
+            },
+            "finished": true,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1483713043,
+            "updated_at": 1557551755,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 44608,
+            "type": "documovie",
+            "subtype": "multi",
+            "title": "Дикая Швейцария / Wild Faces of Switzerland",
+            "year": 2018,
+            "cast": "",
+            "director": "Ми-Йонг Брем, Ульф Марквардт",
+            "genres": [
+              {
+                "id": 58,
+                "title": "Мир животных"
+              },
+              {
+                "id": 73,
+                "title": "Природа"
+              }
+            ],
+            "countries": [
+              {
+                "id": 4,
+                "title": "Германия"
+              }
+            ],
+            "voice": null,
+            "duration": {
+              "average": 3052.25,
+              "total": 12209
+            },
+            "ac3": 0,
+            "langs": 4,
+            "quality": 1080,
+            "plot": "В сердце Европы лежит Швейцария. Это удивительно страна: маленькая по площади, но большая по природной красоте. И, как и многие другие языки и культуры, его живописное разнообразие - это тоже нечто особенное: от могучих Альп, густых лесов и пышных зеленых долин до таинственных болот и бурлящих водопадов. Средиземноморские озера и скалистые ландшафты - все это в одном небольшом географическом месте.",
+            "tracklist": [],
+            "imdb": null,
+            "imdb_rating": null,
+            "imdb_votes": null,
+            "kinopoisk": null,
+            "kinopoisk_rating": null,
+            "kinopoisk_votes": null,
+            "rating": 1,
+            "rating_votes": 1,
+            "rating_percentage": 100,
+            "views": 418,
+            "comments": 0,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/44608.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/44608.jpg",
+              "big": "https://cdn.example.com/poster/item/big/44608.jpg",
+              "wide": null
+            },
+            "trailer": null,
+            "finished": false,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1548325749,
+            "updated_at": 1557158735,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 13877,
+            "type": "serial",
+            "subtype": "",
+            "title": "Том и Джерри / Tom and Jerry",
+            "year": 1940,
+            "cast": "",
+            "director": "Джозеф Барбера, Уильям Ханна",
+            "genres": [
+              {
+                "id": 1,
+                "title": "Комедия"
+              },
+              {
+                "id": 6,
+                "title": "Семейный"
+              },
+              {
+                "id": 23,
+                "title": "Мультфильм"
+              }
+            ],
+            "countries": [
+              {
+                "id": 1,
+                "title": "США"
+              }
+            ],
+            "voice": "",
+            "duration": {
+              "average": 415.44785276073617,
+              "total": 67718
+            },
+            "ac3": 0,
+            "langs": 867,
+            "quality": 480,
+            "plot": "Всемирно известная серия мультфильмов о приключениях кота Тома и мышонка Джерри. Задорные и смешные приключения этих прекрасных забавных персонажей делают его популярным не только среди детей, но и людей всех возрастов. И если первый старается поймать мышонка хитростью и коварством, то второй всегда оказывается более мудрым, чем кот. Мультфильмы пропитаны юмором и сумасшедшими погонями, которые не отпускают от экранов от начала и до конца. В 2000 году журнал Time назвал мультсериал «Том и Джерри» одним из величайших телевизионных шоу всех времён.",
+            "tracklist": [],
+            "imdb": 8335206,
+            "imdb_rating": 0,
+            "imdb_votes": 0,
+            "kinopoisk": null,
+            "kinopoisk_rating": null,
+            "kinopoisk_votes": null,
+            "rating": 68,
+            "rating_votes": 70,
+            "rating_percentage": 98,
+            "views": 253502,
+            "comments": 7,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/13877.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/13877.jpg",
+              "big": "https://cdn.example.com/poster/item/big/13877.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/13877.jpg"
+            },
+            "trailer": {
+              "id": 13877,
+              "file": "/trailers/9/c7/13877.mp4"
+            },
+            "finished": true,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1458823029,
+            "updated_at": 1584083070,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 25130,
+            "type": "documovie",
+            "subtype": "multi",
+            "title": "Вена. Империя, династия и мечта / Vienna: Empire, Dynasty and Dream",
+            "year": 2016,
+            "cast": "Саймон Себаг Монтефьоре",
+            "director": "Доминик Озанн",
+            "genres": [
+              {
+                "id": 51,
+                "title": "История"
+              }
+            ],
+            "countries": [
+              {
+                "id": 5,
+                "title": "Великобритания"
+              }
+            ],
+            "voice": null,
+            "duration": {
+              "average": 2954.6666666666665,
+              "total": 8864
+            },
+            "ac3": 0,
+            "langs": 3,
+            "quality": 720,
+            "plot": "В течение многих столетий Вена являлась городом-резиденцией Габсбургов, а во времена их правления и столицей Священной Римской империи германской нации. Отсюда они управляли Средневековой Европой почти 1000 лет. В этом фильме историк Саймон Себаг Монтефьоре описывает, как Габсбурги превратили Вену в многонациональный центр музыки, культуры и политики. Он расскажет телезрителям, какую роль во всем этом сыграли Наполеон, Моцарт, Гитлер, Штраус, Фрейд и даже Сталин.",
+            "tracklist": [],
+            "imdb": 6374520,
+            "imdb_rating": 7.5,
+            "imdb_votes": 63,
+            "kinopoisk": null,
+            "kinopoisk_rating": null,
+            "kinopoisk_votes": null,
+            "rating": 2,
+            "rating_votes": 2,
+            "rating_percentage": 100,
+            "views": 474,
+            "comments": 0,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/25130.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/25130.jpg",
+              "big": "https://cdn.example.com/poster/item/big/25130.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/25130.jpg"
+            },
+            "trailer": null,
+            "finished": false,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1519977422,
+            "updated_at": 1519984791,
+            "subscribed": false,
+            "in_watchlist": false
+          },
+          {
+            "id": 22358,
+            "type": "serial",
+            "subtype": "",
+            "title": "Маленькое королевство / Ben and Holly's Little Kingdom",
+            "year": 2009,
+            "cast": "Престон Найман, Сиан Тейлор, Сара Энн Кеннеди, Иан Палстон-Дэвис, Дэвид Грэм, Джон Шпаркс, Сара Кроу, Джуди Флинн, Стэнли Никлес, Джонни Батлер, Taig McNab, Морвенна Бэнкс, Зара Сиддиги, Cecily Bloom, Люси Мосс",
+            "director": "Невилл Эстли, Марк Бэйкер",
+            "genres": [
+              {
+                "id": 5,
+                "title": "Фэнтези"
+              },
+              {
+                "id": 6,
+                "title": "Семейный"
+              },
+              {
+                "id": 23,
+                "title": "Мультфильм"
+              }
+            ],
+            "countries": [
+              {
+                "id": 5,
+                "title": "Великобритания"
+              }
+            ],
+            "voice": "Дублированный",
+            "duration": {
+              "average": 636.25,
+              "total": 66170
+            },
+            "ac3": 0,
+            "langs": 208,
+            "quality": 720,
+            "plot": "Где-то там, за колючими кустами ежевики, есть маленькое королевство эльфов и фей, а населяют его очень-очень маленькие существа. Маленькое корлевство — это дом принцессы Холли и ее лучшего друга — эльфа Бена. \nХолли — молодая фея, которая еще только учится правильно использовать свои магические способности. Иногда ее заклинания работают не совсем так, как надо. Бен, как и все эльфы, не обладает магической силой, но зато он очень хорошо умеет создавать вещи, особенно игрушки.",
+            "tracklist": [],
+            "imdb": 1436544,
+            "imdb_rating": 7.3,
+            "imdb_votes": 962,
+            "kinopoisk": 567123,
+            "kinopoisk_rating": 6.867,
+            "kinopoisk_votes": 4480,
+            "rating": 8,
+            "rating_votes": 12,
+            "rating_percentage": 83,
+            "views": 104136,
+            "comments": 0,
+            "posters": {
+              "small": "https://cdn.example.com/poster/item/small/22358.jpg",
+              "medium": "https://cdn.example.com/poster/item/medium/22358.jpg",
+              "big": "https://cdn.example.com/poster/item/big/22358.jpg",
+              "wide": "https://cdn.example.com/poster/item/wide/22358.jpg"
+            },
+            "trailer": {
+              "id": 22358,
+              "file": "/trailers/f/9d/22358.mp4"
+            },
+            "finished": true,
+            "advert": false,
+            "poor_quality": false,
+            "created_at": 1507050242,
+            "updated_at": 1533173416,
+            "subscribed": false,
+            "in_watchlist": false
+          }
+        ],
+        "pagination": {
+          "total": 1,
+          "current": 1,
+          "perpage": 20
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "45403"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 45403,
+          "title": "Апокалипсис: Бесконечная война 1918-1926 / Apocalypse La Paix Impossible 1918-1926",
+          "type": "documovie",
+          "status": 1,
+          "videos": [
+            {
+              "id": 615961,
+              "number": 1,
+              "title": "",
+              "duration": 5350,
+              "time": 5350,
+              "status": 1,
+              "updated": 1599338308
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "880"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 880,
+          "title": "Чарли и шоколадная фабрика / Charlie and the Chocolate Factory",
+          "type": "movie",
+          "status": 0,
+          "videos": [
+            {
+              "id": 2431,
+              "number": 1,
+              "title": "",
+              "duration": 6925,
+              "time": 243,
+              "status": 0,
+              "updated": 1605211862
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "7503"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 7503,
+          "title": "Рио 2 / Rio 2",
+          "type": "movie",
+          "status": 0,
+          "videos": [
+            {
+              "id": 20311,
+              "number": 1,
+              "title": "",
+              "duration": 6071,
+              "time": 1015,
+              "status": 0,
+              "updated": 1602528439
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "57259"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 57259,
+          "title": "Встреча с Горбачевым / Meeting Gorbachev",
+          "type": "documovie",
+          "status": 0,
+          "videos": [
+            {
+              "id": 703126,
+              "number": 1,
+              "title": "",
+              "duration": 5479,
+              "time": 3384,
+              "status": 0,
+              "updated": 1600981066
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "56674"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 56674,
+          "title": "Апокалипсис: Сталин / Apocalypse: Staline",
+          "type": "documovie",
+          "status": 1,
+          "videos": [
+            {
+              "id": 697792,
+              "number": 1,
+              "title": "Демон / Le Possédé",
+              "duration": 3117,
+              "time": 3117,
+              "status": 1,
+              "updated": 1573425020
+            },
+            {
+              "id": 697789,
+              "number": 2,
+              "title": "Красный / L’Homme Rouge",
+              "duration": 3155,
+              "time": 3155,
+              "status": 1,
+              "updated": 1573511751
+            },
+            {
+              "id": 697803,
+              "number": 3,
+              "title": "Властелин мира / Le Maître du Monde",
+              "duration": 3147,
+              "time": 3147,
+              "status": 1,
+              "updated": 1573680052
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "44608"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 44608,
+          "title": "Дикая Швейцария / Wild Faces of Switzerland",
+          "type": "documovie",
+          "status": 1,
+          "videos": [
+            {
+              "id": 635197,
+              "number": 1,
+              "title": "Горы Юра / The Jura Mountains",
+              "duration": 3076,
+              "time": 3076,
+              "status": 1,
+              "updated": 1598725170
+            },
+            {
+              "id": 635200,
+              "number": 2,
+              "title": "Тичино / Ticino",
+              "duration": 3027,
+              "time": 3027,
+              "status": 1,
+              "updated": 1598712527
+            },
+            {
+              "id": 635203,
+              "number": 3,
+              "title": "Вода и лед / Water and Ice",
+              "duration": 3071,
+              "time": 3071,
+              "status": 1,
+              "updated": 1598726506
+            },
+            {
+              "id": 635206,
+              "number": 4,
+              "title": "Зима в швейцарских Альпах / Winter in the Swiss Alps",
+              "duration": 3035,
+              "time": 3035,
+              "status": 1,
+              "updated": 1598726517
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/watching",
+      "queryStringParameters": {
+        "id": [
+          "25130"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "item": {
+          "id": 25130,
+          "title": "Вена. Империя, династия и мечта / Vienna: Empire, Dynasty and Dream",
+          "type": "documovie",
+          "status": 1,
+          "videos": [
+            {
+              "id": 68995,
+              "number": 1,
+              "title": "Восхождение империи Габсбургов / Rise of the",
+              "duration": 2919,
+              "time": 2919,
+              "status": 1,
+              "updated": 1613861969
+            },
+            {
+              "id": 68998,
+              "number": 2,
+              "title": "Триумф Вены / Vienna Triumphant ",
+              "duration": 2992,
+              "time": 2992,
+              "status": 1,
+              "updated": 1541874577
+            },
+            {
+              "id": 69001,
+              "number": 3,
+              "title": "Вымирание Габсбургов / Habsburg Extinction",
+              "duration": 2953,
+              "time": 2953,
+              "status": 1,
+              "updated": 1541874577
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/v1/bookmarks/remove-folder",
+      "body": {
+        "type": "STRING",
+        "string": "folder=814132",
+        "rawBytes": "Zm9sZGVyPTgxNDEzMg==",
+        "contentType": "application/x-www-form-urlencoded"
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200
+      }
+    }
   }
 ]

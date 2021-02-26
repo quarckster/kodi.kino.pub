@@ -37,3 +37,12 @@ def test_create_bookmarks_folder(request, kodi, change_token):
     assert resp["result"] == "OK"
     resp = kodi.Files.GetDirectory(directory="plugin://video.kino.pub/bookmarks/")
     assert expected_results.TEST_CREATE_BOOKMARK == resp["result"]["files"]
+
+
+def test_remove_bookmarks_folder(kodi):
+    resp = kodi.Addons.ExecuteAddon(
+        addonid="video.kino.pub", params="/remove_bookmarks_folder/814132"
+    )
+    assert resp["result"] == "OK"
+    resp = kodi.Files.GetDirectory(directory="plugin://video.kino.pub/bookmarks/")
+    assert expected_results.BOOKMARKS == resp["result"]["files"]

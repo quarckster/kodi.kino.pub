@@ -100,3 +100,23 @@ def test_collections_headings(kodi):
 def test_bookmarks(kodi):
     resp = kodi.Files.GetDirectory(directory="plugin://video.kino.pub/bookmarks/")
     assert expected_results.BOOKMARKS == resp["result"]["files"]
+
+
+def test_bookmarks_folder(kodi):
+    resp = kodi.Files.GetDirectory(
+        directory="plugin://video.kino.pub/bookmarks/161701/",
+        properties=[
+            "country",
+            "year",
+            "rating",
+            "duration",
+            "director",
+            "trailer",
+            "plot",
+            "cast",
+            "imdbnumber",
+            "votes",
+            "fanart",
+        ],
+    )
+    assert expected_results.BOOKMARK_FOLDER_CONTENT == resp["result"]["files"]
