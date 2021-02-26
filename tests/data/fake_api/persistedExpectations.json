@@ -8559,5 +8559,95 @@
         }
       }
     }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/bookmarks",
+      "headers": {
+        "Authorization": [
+          "Bearer some_token"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "items": [
+          {
+            "id": 161701,
+            "title": "General",
+            "views": 6,
+            "count": "17",
+            "created": 1539502313,
+            "updated": 1574615952
+          }
+        ]
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/v1/bookmarks/create",
+      "body": {
+        "type": "STRING",
+        "string": "title=Test",
+        "rawBytes": "dGl0bGU9VGVzdA==",
+        "contentType": "application/x-www-form-urlencoded"
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "folder": {
+          "id": 814132,
+          "title": "Test",
+          "views": null,
+          "created": 1614287752,
+          "updated": 1614287752
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/bookmarks",
+      "headers": {
+        "Authorization": [
+          "Bearer token_after_bookmark_creating"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "items": [
+          {
+            "id": 161701,
+            "title": "General",
+            "views": 6,
+            "count": "17",
+            "created": 1539502313,
+            "updated": 1574615952
+          },
+          {
+            "id": 814132,
+            "title": "Test",
+            "views": 0,
+            "count": "0",
+            "created": 1614287752,
+            "updated": 1614287752
+          }
+        ]
+      }
+    }
   }
 ]

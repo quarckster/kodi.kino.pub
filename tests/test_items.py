@@ -95,3 +95,8 @@ def test_items_headings(kodi, item):
 def test_collections_headings(kodi):
     resp = kodi.Files.GetDirectory(directory="plugin://video.kino.pub/collections/")
     assert expected_results.COLLECTIONS_HEADINGS == resp["result"]["files"]
+
+
+def test_bookmarks(kodi):
+    resp = kodi.Files.GetDirectory(directory="plugin://video.kino.pub/bookmarks/")
+    assert expected_results.BOOKMARKS == resp["result"]["files"]
