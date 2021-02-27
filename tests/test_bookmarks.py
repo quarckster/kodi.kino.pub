@@ -3,6 +3,7 @@ import time
 import pytest
 from wait_for import wait_for
 
+from helpers import close_keyboard
 from helpers import verify_request
 from paths import HOST_DIR
 
@@ -21,16 +22,7 @@ def change_token():
 
 
 def test_create_bookmarks_folder(request, kodi, change_token):
-    @request.addfinalizer
-    def _cleanup():
-        time.sleep(3)
-        while (
-            kodi.GUI.GetProperties(properties=["currentwindow"])["result"]["currentwindow"]["label"]
-            == "Virtual keyboard"
-        ):
-            kodi.Input.Back()
-            time.sleep(3)
-
+    request.addfinalizer(lambda: close_keyboard(kodi))
     resp = kodi.Addons.ExecuteAddon(addonid="video.kino.pub", params="/create_bookmarks_folder")
     assert resp["result"] == "OK"
     time.sleep(3)

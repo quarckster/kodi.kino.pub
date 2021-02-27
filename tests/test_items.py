@@ -120,3 +120,43 @@ def test_bookmarks_folder(kodi):
         ],
     )
     assert expected_results.BOOKMARK_FOLDER_CONTENT == resp["result"]["files"]
+
+
+def test_seasons(kodi):
+    resp = kodi.Files.GetDirectory(
+        directory="plugin://video.kino.pub/seasons/8632/",
+        properties=[
+            "country",
+            "year",
+            "rating",
+            "duration",
+            "director",
+            "trailer",
+            "plot",
+            "cast",
+            "imdbnumber",
+            "votes",
+            "fanart",
+        ],
+    )
+    assert expected_results.SEASONS == resp["result"]["files"]
+
+
+def test_season_episodes(kodi):
+    resp = kodi.Files.GetDirectory(
+        directory="plugin://video.kino.pub/season_episodes/8632/1/",
+        properties=[
+            "country",
+            "year",
+            "rating",
+            "duration",
+            "director",
+            "trailer",
+            "plot",
+            "cast",
+            "imdbnumber",
+            "votes",
+            "fanart",
+        ],
+    )
+    assert expected_results.SEASON_EPISODES == resp["result"]["files"]
