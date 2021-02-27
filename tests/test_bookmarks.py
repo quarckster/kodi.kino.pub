@@ -1,8 +1,9 @@
 import time
 
 import pytest
+from wait_for import wait_for
 
-import expected_results
+from helpers import verify_request
 from paths import HOST_DIR
 
 
@@ -35,8 +36,15 @@ def test_create_bookmarks_folder(request, kodi, change_token):
     time.sleep(3)
     resp = kodi.Input.SendText(text="Test")
     assert resp["result"] == "OK"
-    resp = kodi.Files.GetDirectory(directory="plugin://video.kino.pub/bookmarks/")
-    assert expected_results.TEST_CREATE_BOOKMARK == resp["result"]["files"]
+    expected_request = {
+        "httpRequest": {
+            "method": "POST",
+            "path": "/v1/bookmarks/create",
+            "body": {"string": "title=Test"},
+        },
+        "times": {"atLeast": 1, "atMost": 1},
+    }
+    wait_for(verify_request, func_args=[expected_request], timeout=5)
 
 
 def test_remove_bookmarks_folder(kodi):
@@ -44,5 +52,12 @@ def test_remove_bookmarks_folder(kodi):
         addonid="video.kino.pub", params="/remove_bookmarks_folder/814132"
     )
     assert resp["result"] == "OK"
-    resp = kodi.Files.GetDirectory(directory="plugin://video.kino.pub/bookmarks/")
-    assert expected_results.BOOKMARKS == resp["result"]["files"]
+    expected_request = {
+        "httpRequest": {
+            "method": "POST",
+            "path": "/v1/bookmarks/remove-folder",
+            "body": {"string": "folder=814132"},
+        },
+        "times": {"atLeast": 1, "atMost": 1},
+    }
+    wait_for(verify_request, func_args=[expected_request], timeout=5)
