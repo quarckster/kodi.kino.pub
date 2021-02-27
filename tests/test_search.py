@@ -6,6 +6,7 @@ from wait_for import TimedOutError
 from wait_for import wait_for
 
 import expected_results
+from helpers import close_keyboard
 from paths import HOST_DIR
 
 
@@ -17,13 +18,7 @@ def test_new_search(request, kodi):
     def _cleanup():
         if history_path.exists():
             history_path.unlink()
-        time.sleep(3)
-        while (
-            kodi.GUI.GetProperties(properties=["currentwindow"])["result"]["currentwindow"]["label"]
-            == "Virtual keyboard"
-        ):
-            kodi.Input.Back()
-            time.sleep(3)
+        close_keyboard(kodi)
 
     resp = kodi.Addons.ExecuteAddon(addonid="video.kino.pub", params="/new_search/all/")
     assert resp["result"] == "OK"
