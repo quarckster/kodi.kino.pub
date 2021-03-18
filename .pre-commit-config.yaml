@@ -4,29 +4,30 @@ repos:
     rev: v2.4.0
     hooks:
       - id: reorder-python-imports
-        language_version: python3
+        language_version: python36
         args:
           - --application-directories=.:src:tests
   - repo: https://github.com/psf/black
     rev: 20.8b1
     hooks:
       - id: black
+        language_version: python36
         args: [--safe, --quiet, --line-length, "100"]
         require_serial: true
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
     hooks:
       - id: trailing-whitespace
-        language_version: python3
+        language_version: python36
       - id: end-of-file-fixer
-        language_version: python3
+        language_version: python36
       - id: debug-statements
-        language_version: python3
+        language_version: python36
   - repo: https://gitlab.com/pycqa/flake8
     rev: "3.8.4"
     hooks:
       - id: flake8
-        language_version: python3
+        language_version: python36
         args:
           - --max-line-length=100
           - --ignore=W503,E203
@@ -34,4 +35,4 @@ repos:
     rev: v2.10.0
     hooks:
       - id: pyupgrade
-        language_version: python3
+        language_version: python36

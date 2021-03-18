@@ -3,10 +3,10 @@ import re
 import sys
 import urllib
 from collections import namedtuple
-from functools import cached_property
 
 import xbmcgui
 
+from resources.lib.utils import cached_property
 from resources.lib.utils import fix_m3u8
 from resources.lib.utils import notice
 

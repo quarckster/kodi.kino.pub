@@ -6,11 +6,11 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from functools import cached_property
 
 import xbmc
 import xbmcgui
 
+from resources.lib.utils import cached_property
 from resources.lib.utils import notice
 
 
