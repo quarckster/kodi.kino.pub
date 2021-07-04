@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import base64
 import re
 import sys
 import urllib
@@ -6,8 +7,10 @@ from collections import namedtuple
 
 import xbmcgui
 
+from resources.lib.proxy import HOST
+from resources.lib.proxy import PORT
+from resources.lib.proxy import QUERY_KEY
 from resources.lib.utils import cached_property
-from resources.lib.utils import fix_m3u8
 from resources.lib.utils import notice
 
 try:
@@ -36,7 +39,7 @@ class ItemsCollection(object):
 
     def get(self, endpoint, data=None, exclude_anime=False):
         if exclude_anime:
-            resp = self._get_anime_exluded(endpoint, data=data)
+            resp = self._get_anime_excluded(endpoint, data=data)
         else:
             resp = self.plugin.client(endpoint).get(data=data)
         items = [self.instantiate(item=item, index=i) for i, item in enumerate(resp["items"], 1)]
@@ -85,7 +88,7 @@ class ItemsCollection(object):
         else:
             return item
 
-    def _get_anime_exluded(self, endpoint, data=None, collection=None):
+    def _get_anime_excluded(self, endpoint, data=None, collection=None):
         # init items collection
         collection = collection or {"items": []}
 
@@ -101,7 +104,7 @@ class ItemsCollection(object):
 
         # filter items list from anime items
         non_anime_items = list(
-            [x for x in new_items[start_from:] if all(i["id"] != 25 for i in x["genres"])]
+            x for x in new_items[start_from:] if all(i["id"] != 25 for i in x["genres"])
         )
 
         # if not enough items continue with next API page
@@ -110,9 +113,9 @@ class ItemsCollection(object):
 
             if int(pagination["current"]) + 1 < int(pagination["total"]):
                 data.update({"page": pagination["current"] + 1, "start_from": 0})
-                collection = self._get_anime_exluded(endpoint, data, collection)
+                collection = self._get_anime_excluded(endpoint, data, collection)
         else:
-            # exlude extra items from filtered items
+            # exclude extra items from filtered items
             count_items_to_extend = page_size - len(collection["items"])
             items = non_anime_items[:count_items_to_extend]
             last_item_id = items[-1]["id"]
@@ -257,7 +260,9 @@ class PlayableItem(ItemEntity):
     def media_url(self):
         url = self.get_media_url()
         if urllib.parse.urlsplit(url).path.endswith("m3u8"):
-            return fix_m3u8(url, self.plugin.logger)
+            encoded_url = base64.urlsafe_b64encode(url.encode("utf-8")).decode("utf-8")
+            query = urllib.parse.urlencode({QUERY_KEY: encoded_url})
+            return urllib.parse.urlunsplit(("http", f"{HOST}:{PORT}", "", query, ""))
         return url
 
     @property
