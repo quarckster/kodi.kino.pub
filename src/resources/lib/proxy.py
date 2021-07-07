@@ -4,7 +4,6 @@ import urllib
 from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer
 from pathlib import PosixPath
-from socketserver import ThreadingMixIn
 
 import m3u8
 import xbmc
@@ -48,7 +47,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             playlist.uri = playlist.absolute_uri
         for media in master_playlist.media:
             media.uri = media.absolute_uri
-        return master_playlist.dumps().encode("utf8")
+        return master_playlist.dumps().encode("utf-8")
 
     def get_m3u8_response(self, url, headers):
         request = urllib.request.Request(url, headers=headers)
@@ -74,17 +73,25 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(content)
 
 
-class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
-    daemon_threads = True
+class ProxyServer(HTTPServer):
+
+    threads = {}
+
+    def start_in_thread(self):
+        if self not in self.threads:
+            thread = threading.Thread(target=self.serve_forever)
+            self.threads[self] = thread
+            thread.start()
+
+    @classmethod
+    def stop_all_threads(cls):
+        xbmc.Monitor().waitForAbort()
+        for server, thread in cls.threads.items():
+            server.shutdown()
+            server.server_close()
+            server.socket.close()
+            thread.join()
 
 
-def main():
-    server = ThreadedHTTPServer((HOST, PORT), RequestHandler)
-    server.allow_reuse_address = True
-    httpd_thread = threading.Thread(target=server.serve_forever)
-    httpd_thread.start()
-    xbmc.Monitor().waitForAbort()
-    server.shutdown()
-    server.server_close()
-    server.socket.close()
-    httpd_thread.join()
+def start():
+    ProxyServer((HOST, PORT), RequestHandler).start_in_thread()
