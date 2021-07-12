@@ -103,5 +103,6 @@ class Player(xbmc.Player):
             self.plugin.client("watching/toggle").get(data=data)
 
     def onPlaybackError(self):
+        proxy.stop()
         self.plugin.logger.error("playback error")
         self.is_playing = False
