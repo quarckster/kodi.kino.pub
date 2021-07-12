@@ -90,6 +90,7 @@ class ProxyServer(HTTPServer):
             server.server_close()
             server.socket.close()
             thread.join()
+            del cls.threads[server]
 
 
 def start():
