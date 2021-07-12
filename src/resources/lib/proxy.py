@@ -6,7 +6,6 @@ from http.server import HTTPServer
 from pathlib import PosixPath
 
 import m3u8
-import xbmc
 
 
 HOST = "127.0.0.1"
@@ -74,18 +73,18 @@ class RequestHandler(BaseHTTPRequestHandler):
 
 
 class ProxyServer(HTTPServer):
-
+    allow_reuse_address = True
     threads = {}
 
-    def start_in_thread(self):
-        if self not in self.threads:
-            thread = threading.Thread(target=self.serve_forever)
-            self.threads[self] = thread
-            thread.start()
+    @classmethod
+    def start_in_thread(cls):
+        proxy = cls((HOST, PORT), RequestHandler)
+        thread = threading.Thread(target=proxy.serve_forever)
+        cls.threads[proxy] = thread
+        thread.start()
 
     @classmethod
     def stop_all_threads(cls):
-        xbmc.Monitor().waitForAbort()
         for server, thread in cls.threads.items():
             server.shutdown()
             server.server_close()
@@ -95,3 +94,7 @@ class ProxyServer(HTTPServer):
 
 def start():
     ProxyServer((HOST, PORT), RequestHandler).start_in_thread()
+
+
+def stop():
+    ProxyServer.stop_all_threads()
