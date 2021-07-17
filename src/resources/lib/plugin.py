@@ -19,6 +19,12 @@ from resources.lib.search_history import SearchHistory
 from resources.lib.settings import Settings
 
 
+try:
+    import inputstreamhelper
+except ImportError:
+    inputstreamhelper = None
+
+
 MainMenuItem = namedtuple("MainMenuItem", ["title", "url", "icon", "is_dir", "is_displayed"])
 
 
@@ -244,3 +250,11 @@ class Plugin(object):
         if item:
             item._plugin = self
         return item
+
+    @property
+    def is_hls_enabled(self):
+        return (
+            "hls" in self.settings.stream_type
+            and self.settings.inputstream_adaptive_enabled == "true"
+            and inputstreamhelper
+        )

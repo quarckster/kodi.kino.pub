@@ -282,7 +282,8 @@ def play(item_id):
     si = plugin.kwargs.get("season_index")
     i = plugin.kwargs.get("index")
     playable_li = plugin.items.get_playable(item, season_index=si, index=i).playable_list_item
-    proxy.start()
+    if plugin.is_hls_enabled:
+        proxy.start()
     player = Player(list_item=playable_li)
     xbmcplugin.setResolvedUrl(plugin.handle, True, playable_li)
     while player.is_playing:

@@ -13,10 +13,12 @@ from resources.lib.proxy import QUERY_KEY
 from resources.lib.utils import cached_property
 from resources.lib.utils import notice
 
+
 try:
     import inputstreamhelper
 except ImportError:
     inputstreamhelper = None
+
 
 Response = namedtuple("Response", ["items", "pagination"])
 
@@ -259,7 +261,7 @@ class PlayableItem(ItemEntity):
     @property
     def media_url(self):
         url = self.get_media_url()
-        if urllib.parse.urlsplit(url).path.endswith("m3u8"):
+        if self.plugin.is_hls_enabled:
             encoded_url = base64.urlsafe_b64encode(url.encode("utf-8")).decode("utf-8")
             query = urllib.parse.urlencode({QUERY_KEY: encoded_url})
             return urllib.parse.urlunsplit(("http", f"{HOST}:{PORT}", "", query, ""))
@@ -280,11 +282,7 @@ class PlayableItem(ItemEntity):
 
     @property
     def hls_properties(self):
-        if (
-            "hls" in self.plugin.settings.stream_type
-            and self.plugin.settings.inputstream_adaptive_enabled == "true"
-            and inputstreamhelper
-        ):
+        if self.plugin.is_hls_enabled:
             helper = inputstreamhelper.Helper("hls")
             if not helper.check_inputstream():
                 notice("HLS поток не поддерживается")

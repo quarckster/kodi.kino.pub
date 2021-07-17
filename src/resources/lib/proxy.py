@@ -31,7 +31,8 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.send_error(404)
 
     def do_HEAD(self):
-        self.send_error(404)
+        self.send_response(200, "Ok")
+        self.end_headers()
 
     def get_hls_base_uri(self, hls_playlist_uri):
         parsed = urllib.parse.urlparse(hls_playlist_uri)
@@ -95,6 +96,8 @@ class ProxyServer(HTTPServer):
 
 def start():
     ProxyServer((HOST, PORT), RequestHandler).start_in_thread()
+    request = urllib.request.Request(f"http://{HOST}:{PORT}", method="HEAD")
+    urllib.request.urlopen(request, timeout=5)
 
 
 def stop():
