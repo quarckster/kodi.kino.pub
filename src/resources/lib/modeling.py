@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
-import base64
 import re
 import sys
-import urllib
 from collections import namedtuple
 
 import xbmcgui
 
-from resources.lib.proxy import HOST
-from resources.lib.proxy import PORT
-from resources.lib.proxy import QUERY_KEY
 from resources.lib.utils import cached_property
 from resources.lib.utils import notice
 
@@ -223,7 +218,8 @@ class ItemEntity(object):
 class PlayableItem(ItemEntity):
     isdir = False
 
-    def get_media_url(self):
+    @property
+    def media_url(self):
         quality = self.plugin.settings.video_quality
         stream_type = self.plugin.settings.stream_type
         ask_quality = self.plugin.settings.ask_quality
@@ -257,15 +253,6 @@ class PlayableItem(ItemEntity):
             except KeyError:
                 # if there is no such quality then return a link with the highest available quality
                 return files[natural_sort(list(files.keys()))[-1]][stream_type]
-
-    @property
-    def media_url(self):
-        url = self.get_media_url()
-        if self.plugin.is_hls_enabled:
-            encoded_url = base64.urlsafe_b64encode(url.encode("utf-8")).decode("utf-8")
-            query = urllib.parse.urlencode({QUERY_KEY: encoded_url})
-            return urllib.parse.urlunsplit(("http", f"{HOST}:{PORT}", "", query, ""))
-        return url
 
     @property
     def list_item(self):

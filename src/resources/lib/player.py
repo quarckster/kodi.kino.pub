@@ -5,8 +5,6 @@ import time
 import xbmc
 import xbmcgui
 
-from resources.lib import proxy
-
 
 class Player(xbmc.Player):
     def __init__(self, list_item):
@@ -58,7 +56,6 @@ class Player(xbmc.Player):
         return data
 
     def onPlayBackStarted(self):
-        proxy.stop()
         self.plugin.logger.info("playback started")
         self.plugin.clear_window_property()
         if self.should_refresh_token:
@@ -103,6 +100,5 @@ class Player(xbmc.Player):
             self.plugin.client("watching/toggle").get(data=data)
 
     def onPlaybackError(self):
-        proxy.stop()
         self.plugin.logger.error("playback error")
         self.is_playing = False
