@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 import json
-import pathlib
 import time
 
 import xbmc
 import xbmcgui
-import xbmcvfs
 
 
 class Player(xbmc.Player):
@@ -57,11 +55,6 @@ class Player(xbmc.Player):
             data = {"id": item_id, "video": video_number}
         return data
 
-    def delete_temp_playlist(self):
-        if pathlib.Path(self.list_item.getPath()).exists():
-            xbmcvfs.delete(self.list_item.getPath())
-            self.plugin.logger.info(f"deleted {self.list_item.getPath()}")
-
     def onPlayBackStarted(self):
         self.plugin.logger.info("playback started")
         self.plugin.clear_window_property()
@@ -82,7 +75,6 @@ class Player(xbmc.Player):
         self.is_playing = False
         data = self._base_data
         self.plugin.logger.info("playback stopped")
-        self.delete_temp_playlist()
         if self.should_make_resume_point:
             data["time"] = self.marktime
             self.plugin.logger.info("sending resume point")
@@ -101,7 +93,6 @@ class Player(xbmc.Player):
     def onPlayBackEnded(self):
         self.is_playing = False
         self.plugin.logger.info("playback ended")
-        self.delete_temp_playlist()
         if int(self.list_item.getProperty("playcount")) < 1:
             data = self._base_data
             data["status"] = 1
@@ -111,4 +102,3 @@ class Player(xbmc.Player):
     def onPlaybackError(self):
         self.plugin.logger.error("playback error")
         self.is_playing = False
-        self.delete_temp_playlist()

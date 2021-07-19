@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 import re
 import sys
-import urllib
 from collections import namedtuple
 
 import xbmcgui
 
 from resources.lib.utils import cached_property
-from resources.lib.utils import fix_m3u8
 from resources.lib.utils import notice
+
 
 try:
     import inputstreamhelper
 except ImportError:
     inputstreamhelper = None
+
 
 Response = namedtuple("Response", ["items", "pagination"])
 
@@ -36,7 +36,7 @@ class ItemsCollection(object):
 
     def get(self, endpoint, data=None, exclude_anime=False):
         if exclude_anime:
-            resp = self._get_anime_exluded(endpoint, data=data)
+            resp = self._get_anime_excluded(endpoint, data=data)
         else:
             resp = self.plugin.client(endpoint).get(data=data)
         items = [self.instantiate(item=item, index=i) for i, item in enumerate(resp["items"], 1)]
@@ -85,7 +85,7 @@ class ItemsCollection(object):
         else:
             return item
 
-    def _get_anime_exluded(self, endpoint, data=None, collection=None):
+    def _get_anime_excluded(self, endpoint, data=None, collection=None):
         # init items collection
         collection = collection or {"items": []}
 
@@ -101,7 +101,7 @@ class ItemsCollection(object):
 
         # filter items list from anime items
         non_anime_items = list(
-            [x for x in new_items[start_from:] if all(i["id"] != 25 for i in x["genres"])]
+            x for x in new_items[start_from:] if all(i["id"] != 25 for i in x["genres"])
         )
 
         # if not enough items continue with next API page
@@ -110,9 +110,9 @@ class ItemsCollection(object):
 
             if int(pagination["current"]) + 1 < int(pagination["total"]):
                 data.update({"page": pagination["current"] + 1, "start_from": 0})
-                collection = self._get_anime_exluded(endpoint, data, collection)
+                collection = self._get_anime_excluded(endpoint, data, collection)
         else:
-            # exlude extra items from filtered items
+            # exclude extra items from filtered items
             count_items_to_extend = page_size - len(collection["items"])
             items = non_anime_items[:count_items_to_extend]
             last_item_id = items[-1]["id"]
@@ -218,7 +218,8 @@ class ItemEntity(object):
 class PlayableItem(ItemEntity):
     isdir = False
 
-    def get_media_url(self):
+    @property
+    def media_url(self):
         quality = self.plugin.settings.video_quality
         stream_type = self.plugin.settings.stream_type
         ask_quality = self.plugin.settings.ask_quality
@@ -254,13 +255,6 @@ class PlayableItem(ItemEntity):
                 return files[natural_sort(list(files.keys()))[-1]][stream_type]
 
     @property
-    def media_url(self):
-        url = self.get_media_url()
-        if urllib.parse.urlsplit(url).path.endswith("m3u8"):
-            return fix_m3u8(url, self.plugin.logger)
-        return url
-
-    @property
     def list_item(self):
         li = super(PlayableItem, self).list_item
         li.setProperty("isPlayable", "true")
@@ -275,11 +269,7 @@ class PlayableItem(ItemEntity):
 
     @property
     def hls_properties(self):
-        if (
-            "hls" in self.plugin.settings.stream_type
-            and self.plugin.settings.inputstream_adaptive_enabled == "true"
-            and inputstreamhelper
-        ):
+        if self.plugin.is_hls_enabled:
             helper = inputstreamhelper.Helper("hls")
             if not helper.check_inputstream():
                 notice("HLS поток не поддерживается")
