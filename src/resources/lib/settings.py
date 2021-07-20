@@ -5,7 +5,7 @@ import xbmcvfs
 
 
 class Settings(object):
-    advancedsettings_file = xbmcvfs.translatePath("special://home/userdata/advancedsettings.xml")
+    advancedsettings_file = xbmcvfs.translatePath("special://profile/advancedsettings.xml")
     defaults = {
         ("video", "playcountminimumpercent"): 90,
         ("video", "ignoresecondsatstart"): 180,
