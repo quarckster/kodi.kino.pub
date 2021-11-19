@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import sys
+import urllib
 from collections import namedtuple
 
 import xbmcgui
@@ -218,6 +219,19 @@ class ItemEntity(object):
 class PlayableItem(ItemEntity):
     isdir = False
 
+    def _choose_cdn_loc(self, url):
+        parsed = urllib.parse.urlparse(url)
+        return urllib.parse.urlunparse(
+            (
+                parsed.scheme,
+                parsed.netloc,
+                parsed.path,
+                parsed.params,
+                f"loc={self.plugin.settings.loc}",
+                parsed.fragment,
+            )
+        )
+
     @property
     def media_url(self):
         quality = self.plugin.settings.video_quality
@@ -246,13 +260,15 @@ class PlayableItem(ItemEntity):
             if result == -1:
                 sys.exit()
             else:
-                return flatten_urls_dict[urls_list[result]]
+                return self._choose_cdn_loc(flatten_urls_dict[urls_list[result]])
         else:
             try:
-                return files[quality][stream_type]
+                return self._choose_cdn_loc(files[quality][stream_type])
             except KeyError:
                 # if there is no such quality then return a link with the highest available quality
-                return files[natural_sort(list(files.keys()))[-1]][stream_type]
+                return self._choose_cdn_loc(
+                    files[natural_sort(list(files.keys()))[-1]][stream_type]
+                )
 
     @property
     def list_item(self):

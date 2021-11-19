@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
     <category label="Общие">
-        <setting id="video_quality" type="select" label="Качество видео" values="2160p|1080p|720p|480p" enable="eq(2,false)" default="1080p"/>
-        <setting id="stream_type" type="select" label="Тип стриминга" values="http|hls|hls2|hls4" enable="eq(1,false)" default="hls"/>
+        <setting id="video_quality" type="select" label="Качество видео" values="2160p|1080p|720p|480p" enable="eq(3,false)" default="720p"/>
+        <setting id="stream_type" type="select" label="Тип стриминга" values="http|hls|hls2|hls4" enable="eq(2,false)" default="http"/>
+        <setting id="loc" type="select" label="Локация CDN" values="Россия|Нидерланды" default="Россия"/>
         <setting id="ask_quality" type="bool" label="Задавать вопрос о качестве видео перед воспроизведением" default="false"/>
         <setting id="mark_advert" type="bool" label="Отмечать видео с рекламой (!)" default="false"/>
         <setting id="exclude_anime" type="bool" label="Исключать аниме" default="false"/>
