@@ -1,20 +1,20 @@
 #!/bin/bash
 
 function check_version() {
-    if [[ "$#" -eq 1 ]]; then
-        VERSION="$1"
+    if [[ ${#} -eq 1 ]]; then
+        VERSION=${1}
     elif [[ -d .git ]]; then
         VERSION=$(git tag --sort=committerdate -l | tail -n1)
-    elif [[ "$#" -eq 0 ]]; then
+    elif [[ ${#} -eq 0 ]]; then
         echo "Current directory is not a git repository."
         echo "Provide a version as an argument."
         exit 1
     fi
-    DIR=video.kino.pub-"$VERSION"
+    DIR=video.kino.pub-"${VERSION}"
 }
 
 function build_video_addon() {
-    check_version $1
+    check_version "${1}"
     echo "Creating video.kino.pub add-on archive"
     echo "======================================"
     mkdir "$DIR"
@@ -34,23 +34,23 @@ function build_repo_addon() {
 }
 
 function create_repo() {
-    build_video_addon $1
+    build_video_addon "${1}"
     build_repo_addon
     echo "Creating repository add-on directory structure"
     echo "=============================================="
     mkdir -p repo/video.kino.pub
-    VERSION="$VERSION" envsubst < repo_src/addons.xml > repo/addons.xml
+    VERSION="${VERSION}" envsubst < repo_src/addons.xml > repo/addons.xml
     md5sum repo/addons.xml | cut -d " " -f 1 > repo/addons.xml.md5
     mv repo.kino.pub.zip repo/
-    mv "$DIR".zip repo/video.kino.pub/
+    mv "${DIR}".zip repo/video.kino.pub/
     echo
 }
 
 function deploy() {
-    create_repo $1
+    create_repo "${1}"
     echo "Deploying files to Netlify"
     echo "=========================="
-    node_modules/netlify-cli/bin/run deploy --dir=repo --prod --auth="$NETLIFY_AUTH_TOKEN" --site="$NETLIFY_SITE_ID"
+    node_modules/netlify-cli/bin/run deploy --dir=repo --prod --auth="${NETLIFY_AUTH_TOKEN}" --site="${NETLIFY_SITE_ID}"
 }
 
 "$@"
