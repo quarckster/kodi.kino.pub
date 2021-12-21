@@ -82,7 +82,7 @@ class Auth(object):
             if e.code == 400:
                 response = json.loads(e.read())
                 error = response.get("error")
-                if error and error in ["code_expired", "authorization_expired"]:
+                if error and error in ["code_expired", "authorization_expired", "invalid_refresh_token"]:
                     raise AuthExpiredException
                 if error and error == "authorization_pending":
                     raise AuthPendingException
