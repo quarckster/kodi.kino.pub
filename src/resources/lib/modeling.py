@@ -405,6 +405,7 @@ class SeasonEpisode(PlayableItem):
             **self.tvshow.video_info.copy(),
             "season": self.season.index,
             "episode": self.index,
+            "title": self.title,
             "tvshowtitle": self.tvshow.title,
             "time": self.resume_time,
             "duration": self.watching_info["duration"],
@@ -462,6 +463,7 @@ class Episode(PlayableItem):
         return {
             **self.parent.video_info.copy(),
             "episode": self.index,
+            "title": self.title,
             "tvshowtitle": self.title,
             "time": self.resume_time,
             "duration": self.watching_info["duration"],
