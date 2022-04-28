@@ -314,7 +314,7 @@ class PlayableItem(ItemEntity):
             iconImage=self.item.get("posters", {}).get("small", ""),
             thumbnailImage=self.item.get("posters", {}).get("small", ""),
             poster=self.item.get("posters", {}).get("big"),
-            subtitles=[subtitle["url"] for subtitle in self.video_data["subtitles"]],
+            subtitles=[subtitle.get("url") for subtitle in self.video_data["subtitles"]],
         )
 
 
