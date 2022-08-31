@@ -37,7 +37,7 @@ class KinoPubClient(object):
             self.plugin.logger.error(f"{type(e).__name__}. Message: {e.message}")
             notice(e.message, "Ошибка")
         else:
-            http_code = response.getcode()
+            http_code = response.status
             response = json.loads(response.read())
 
             if response and response["status"] == 200:
