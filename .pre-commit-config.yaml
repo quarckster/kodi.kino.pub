@@ -1,21 +1,21 @@
 exclude: tests/expected_results.py|tests/data
 repos:
   - repo: https://github.com/asottile/reorder_python_imports
-    rev: v2.6.0
+    rev: v3.8.2
     hooks:
       - id: reorder-python-imports
         language_version: python3
         args:
           - --application-directories=.:src:tests
   - repo: https://github.com/psf/black
-    rev: 21.11b1
+    rev: 22.6.0
     hooks:
       - id: black
         language_version: python3
         args: [--safe, --quiet, --line-length, "100"]
         require_serial: true
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
+    rev: v4.3.0
     hooks:
       - id: trailing-whitespace
         language_version: python3
@@ -23,8 +23,8 @@ repos:
         language_version: python3
       - id: debug-statements
         language_version: python3
-  - repo: https://gitlab.com/pycqa/flake8
-    rev: "3.9.2"
+  - repo: https://github.com/PyCQA/flake8
+    rev: "5.0.4"
     hooks:
       - id: flake8
         language_version: python3
@@ -32,7 +32,7 @@ repos:
           - --max-line-length=100
           - --ignore=W503,E203
   - repo: https://github.com/asottile/pyupgrade
-    rev: v2.29.1
+    rev: v2.37.3
     hooks:
       - id: pyupgrade
         language_version: python3
