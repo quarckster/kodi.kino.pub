@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import re
 from urllib.parse import urlencode
 from urllib.parse import urlunsplit
@@ -11,7 +10,7 @@ class RoutingException(Exception):
     pass
 
 
-class Routing(object):
+class Routing:
     def __init__(self, plugin):
         self._rules = {}
         self.plugin = plugin
@@ -70,7 +69,7 @@ class Routing(object):
         )
 
 
-class UrlRule(object):
+class UrlRule:
     def __init__(self, pattern):
         kw_pattern = r"<(?:[^:]+:)?([A-z]+)>"
         self._pattern = re.sub(kw_pattern, "{\\1}", pattern)
