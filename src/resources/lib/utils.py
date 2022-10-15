@@ -5,7 +5,7 @@ def notice(message, heading="", time=4000):
     xbmcgui.Dialog().notification(heading, message, time=time)
 
 
-class cached_property(object):  # noqa
+class cached_property:  # noqa
     """A property that is only computed once per instance and then replaces itself with an ordinary
     attribute. Deleting the attribute resets the property.
     """

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import re
 import sys
 import urllib
@@ -19,7 +18,7 @@ except ImportError:
 Response = namedtuple("Response", ["items", "pagination"])
 
 
-class ItemsCollection(object):
+class ItemsCollection:
     @property
     def content_type_map(self):
         return {
@@ -131,7 +130,7 @@ class ItemsCollection(object):
         return collection
 
 
-class ItemEntity(object):
+class ItemEntity:
     def __init__(self, parent, item, index=None):
         self.parent = parent
         self.item = item
@@ -272,7 +271,7 @@ class PlayableItem(ItemEntity):
 
     @property
     def list_item(self):
-        li = super(PlayableItem, self).list_item
+        li = super().list_item
         li.setProperty("isPlayable", "true")
         li.setResumeTime(self.resume_time, self.watching_info["duration"])
         return li
@@ -323,7 +322,7 @@ class TVShow(ItemEntity):
     mediatype = "tvshow"
 
     def __init__(self, *args, **kwargs):
-        super(TVShow, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.url = self.plugin.routing.build_url("seasons", f"{self.item_id}/")
         self.new = None
         self._video_info = None
@@ -333,7 +332,7 @@ class TVShow(ItemEntity):
         if self._video_info:
             return self._video_info
         return {
-            **super(TVShow, self).video_info,
+            **super().video_info,
             "trailer": self.trailer_url,
             "mediatype": self.mediatype,
             "status": "окончен" if self.item["finished"] else "в эфире",
@@ -351,7 +350,7 @@ class Season(ItemEntity):
     mediatype = "season"
 
     def __init__(self, *args, **kwargs):
-        super(Season, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.tvshow = self.parent
         self.title = f"Сезон {self.index}"
         self.item_id = self.tvshow.item_id
@@ -380,7 +379,7 @@ class SeasonEpisode(PlayableItem):
     mediatype = "episode"
 
     def __init__(self, *args, **kwargs):
-        super(SeasonEpisode, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.season = self.parent
         self.tvshow = self.season.tvshow
         self.item_id = self.tvshow.item_id
@@ -415,7 +414,7 @@ class SeasonEpisode(PlayableItem):
 
     @property
     def playable_list_item(self):
-        li = super(SeasonEpisode, self).playable_list_item
+        li = super().playable_list_item
         li.setProperties(video_number=self.index, season_number=self.season.index)
         return li
 
@@ -424,7 +423,7 @@ class Multi(ItemEntity):
     isdir = True
 
     def __init__(self, *args, **kwargs):
-        super(Multi, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.url = self.plugin.routing.build_url("episodes", f"{self.item_id}/")
 
     @property
@@ -436,20 +435,20 @@ class Multi(ItemEntity):
 
     @property
     def list_item(self):
-        li = super(Multi, self).list_item
+        li = super().list_item
         li.setProperty("subtype", "multi")
         return li
 
     @property
     def video_info(self):
-        return {**super(Multi, self).video_info, "playcount": self.watching_info["status"]}
+        return {**super().video_info, "playcount": self.watching_info["status"]}
 
 
 class Episode(PlayableItem):
     mediatype = "episode"
 
     def __init__(self, *args, **kwargs):
-        super(Episode, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.item_id = self.parent.item_id
         self.video_data = self.item
         self.url = self.plugin.routing.build_url("play", self.item_id, index=self.index)
@@ -477,7 +476,7 @@ class Episode(PlayableItem):
 
     @property
     def playable_list_item(self):
-        li = super(Episode, self).playable_list_item
+        li = super().playable_list_item
         li.setProperties(video_number=self.index)
         return li
 
@@ -486,7 +485,7 @@ class Movie(PlayableItem):
     mediatype = "movie"
 
     def __init__(self, *args, **kwargs):
-        super(Movie, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.url = self.plugin.routing.build_url("play", self.item_id)
 
     @cached_property
@@ -498,7 +497,7 @@ class Movie(PlayableItem):
     @property
     def video_info(self):
         return {
-            **super(Movie, self).video_info,
+            **super().video_info,
             "time": self.resume_time,
             "duration": self.watching_info["duration"],
             "playcount": self.watching_info["status"],
@@ -512,6 +511,6 @@ class Movie(PlayableItem):
 
     @property
     def playable_list_item(self):
-        li = super(Movie, self).playable_list_item
+        li = super().playable_list_item
         li.setProperties(video_number=1)
         return li

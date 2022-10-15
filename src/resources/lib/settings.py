@@ -4,7 +4,7 @@ import xbmcaddon
 import xbmcvfs
 
 
-class Settings(object):
+class Settings:
     advancedsettings_file = xbmcvfs.translatePath("special://profile/advancedsettings.xml")
     defaults = {
         ("video", "playcountminimumpercent"): 90,
@@ -34,7 +34,7 @@ class Settings(object):
     def _get_adv_setting(self, *args):
         try:
             root = ET.parse(self.advancedsettings_file).getroot()
-        except (ET.ParseError, IOError):
+        except (ET.ParseError, OSError):
             return self.defaults.get(args)
         elem = root.find("./{}".format("/".join(args)))
         return elem.text if elem else self.defaults.get(args)

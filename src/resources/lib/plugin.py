@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import codecs
 import pickle
 import sys
@@ -28,7 +27,7 @@ except ImportError:
 MainMenuItem = namedtuple("MainMenuItem", ["title", "url", "icon", "is_dir", "is_displayed"])
 
 
-class Plugin(object):
+class Plugin:
     PLUGIN_ID = xbmcaddon.Addon().getAddonInfo("id")
     PLUGIN_URL = f"plugin://{PLUGIN_ID}"
     settings = Settings()

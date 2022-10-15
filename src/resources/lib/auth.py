@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import json
 import platform
 import sys
@@ -30,7 +29,7 @@ class EmptyTokenException(AuthException):
     pass
 
 
-class AuthDialog(object):
+class AuthDialog:
     def __init__(self, plugin):
         self.total = 0
         self.plugin = plugin
@@ -61,7 +60,7 @@ class AuthDialog(object):
         return self._dialog.iscanceled() if self._dialog else True
 
 
-class Auth(object):
+class Auth:
     CLIENT_ID = "xbmc"
     CLIENT_SECRET = "cgg3gtifu46urtfp2zp1nqtba0k2ezxh"
     OAUTH_API_URL = "https://api.service-kp.com/oauth2/device"

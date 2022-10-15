@@ -1,7 +1,7 @@
 import xbmc
 
 
-class Logger(object):
+class Logger:
     def __init__(self, plugin):
         self.plugin = plugin
 

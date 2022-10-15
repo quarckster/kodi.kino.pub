@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 import json
 
 import xbmcvfs
 
 
-class SearchHistory(object):
+class SearchHistory:
     def __init__(self, plugin):
         self.plugin = plugin
         self.history_max_qty = int(self.plugin.settings.history_max_qty)

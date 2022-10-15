@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 from xbmcgui import ListItem
 
 
 class ExtendedListItem(ListItem):
     def __new__(cls, name, label2="", path="", **kwargs):
-        return super(ExtendedListItem, cls).__new__(cls, name, label2, path)
+        return super().__new__(cls, name, label2, path)
 
     def __init__(
         self,
@@ -21,7 +20,7 @@ class ExtendedListItem(ListItem):
         subtitles=None,
         plugin=None,
     ):
-        super(ExtendedListItem, self).__init__(name, label2, path)
+        super().__init__(name, label2, path)
         self.plugin = plugin
         if properties:
             self.setProperties(**properties)
