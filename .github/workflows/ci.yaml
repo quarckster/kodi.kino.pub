@@ -9,21 +9,8 @@ on:
   create:
 
 jobs:
-  lint:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.6"
-          architecture: "x64"
-      - name: Pre-commit checks
-        uses: pre-commit/action@v2.0.0
-      - name: Analysis (git diff)
-        if: failure()
-        run: git diff
   tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
