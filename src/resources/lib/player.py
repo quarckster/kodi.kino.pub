@@ -1,23 +1,27 @@
 import json
 import time
+from typing import Dict
+from typing import Union
 
 import xbmc
 import xbmcgui
 
+from resources.lib.listitem import ExtendedListItem
+
 
 class Player(xbmc.Player):
-    def __init__(self, list_item):
+    def __init__(self, list_item: ExtendedListItem) -> None:
         self.plugin = list_item.plugin
         self.list_item = list_item
         self.is_playing = True
         self.marktime = 0
 
-    def set_marktime(self):
+    def set_marktime(self) -> None:
         if self.isPlaying():
             self.marktime = int(self.getTime())
 
     @property
-    def should_make_resume_point(self):
+    def should_make_resume_point(self) -> bool:
         # https://kodi.wiki/view/HOW-TO:Modify_automatic_watch_and_resume_points#Settings_explained
         return (
             self.marktime > self.plugin.settings.advanced("video", "ignoresecondsatstart")
@@ -25,26 +29,26 @@ class Player(xbmc.Player):
         )
 
     @property
-    def should_mark_as_watched(self):
+    def should_mark_as_watched(self) -> bool:
         return 100 * self.marktime / float(
             self.list_item.getProperty("play_duration")
         ) > self.plugin.settings.advanced("video", "playcountminimumpercent")
 
     @property
-    def should_reset_resume_point(self):
+    def should_reset_resume_point(self) -> bool:
         return self.marktime < self.plugin.settings.advanced("video", "ignoresecondsatstart") and (
             float(self.list_item.getProperty("play_resumetime"))
             > self.plugin.settings.advanced("video", "ignoresecondsatstart")
         )
 
     @property
-    def should_refresh_token(self):
+    def should_refresh_token(self) -> bool:
         return int(time.time()) + int(self.list_item.getProperty("play_duration")) >= int(
             self.plugin.settings.access_token_expire
         )
 
     @property
-    def _base_data(self):
+    def _base_data(self) -> Dict[str, Union[str, int]]:
         item_id = self.list_item.getProperty("item_id")
         video_number = self.list_item.getProperty("video_number")
         season_number = self.list_item.getProperty("season_number")
@@ -54,7 +58,7 @@ class Player(xbmc.Player):
             data = {"id": item_id, "video": video_number}
         return data
 
-    def onPlayBackStarted(self):
+    def onPlayBackStarted(self) -> None:
         self.plugin.logger.info("playback started")
         self.plugin.clear_window_property()
         if self.should_refresh_token:
@@ -70,7 +74,7 @@ class Player(xbmc.Player):
         ids = json.dumps({"imdb": imdb_id})
         xbmcgui.Window(10000).setProperty("script.trakt.ids", ids)
 
-    def onPlayBackStopped(self):
+    def onPlayBackStopped(self) -> None:
         self.is_playing = False
         data = self._base_data
         self.plugin.logger.info("playback stopped")
@@ -89,7 +93,7 @@ class Player(xbmc.Player):
         else:
             return
 
-    def onPlayBackEnded(self):
+    def onPlayBackEnded(self) -> None:
         self.is_playing = False
         self.plugin.logger.info("playback ended")
         if int(self.list_item.getProperty("playcount")) < 1:
@@ -98,6 +102,6 @@ class Player(xbmc.Player):
             self.plugin.logger.info("marking as watched")
             self.plugin.client("watching/toggle").get(data=data)
 
-    def onPlaybackError(self):
+    def onPlaybackError(self) -> None:
         self.plugin.logger.error("playback error")
         self.is_playing = False
