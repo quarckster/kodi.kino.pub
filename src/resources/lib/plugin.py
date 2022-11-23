@@ -2,6 +2,12 @@ import codecs
 import pickle
 import sys
 from collections import namedtuple
+from typing import Any
+from typing import ClassVar
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Union
 from urllib.parse import parse_qsl
 from urllib.parse import urlsplit
 
@@ -13,6 +19,9 @@ from resources.lib.client import KinoPubClient
 from resources.lib.listitem import ExtendedListItem
 from resources.lib.logger import Logger
 from resources.lib.modeling import ItemsCollection
+from resources.lib.modeling import Movie
+from resources.lib.modeling import Multi
+from resources.lib.modeling import TVShow
 from resources.lib.routing import Routing
 from resources.lib.search_history import SearchHistory
 from resources.lib.settings import Settings
@@ -28,12 +37,11 @@ MainMenuItem = namedtuple("MainMenuItem", ["title", "url", "icon", "is_dir", "is
 
 
 class Plugin:
-    PLUGIN_ID = xbmcaddon.Addon().getAddonInfo("id")
-    PLUGIN_URL = f"plugin://{PLUGIN_ID}"
-    settings = Settings()
+    PLUGIN_ID: ClassVar[str] = xbmcaddon.Addon().getAddonInfo("id")
+    PLUGIN_URL: ClassVar[str] = f"plugin://{PLUGIN_ID}"
+    settings: ClassVar[Settings] = Settings()
 
-    def __init__(self):
-        self._rules = {}
+    def __init__(self) -> None:
         self.path = urlsplit(sys.argv[0]).path or "/"
         self.handle = int(sys.argv[1])
         self.kwargs = dict(parse_qsl(sys.argv[2].lstrip("?")))
@@ -44,25 +52,26 @@ class Plugin:
         self.main_menu_items = self._main_menu_items()
         self.items = ItemsCollection(self)
 
-    def client(self, endpoint):
+    def client(self, endpoint: str) -> KinoPubClient:
         return KinoPubClient(self, endpoint)
 
     def list_item(
         self,
-        name,
-        label2="",
-        iconImage="",
-        thumbnailImage="",
-        path="",
-        poster=None,
-        fanart=None,
-        video_info=None,
-        properties=None,
-        addContextMenuItems=False,
-        subtitles=None,
-    ):
+        *,
+        name: str,
+        label2: str = "",
+        iconImage: str = "",
+        thumbnailImage: str = "",
+        path: str = "",
+        poster: Optional[str] = None,
+        fanart: Optional[str] = None,
+        video_info: Optional[Dict] = None,
+        properties: Optional[Dict[str, Any]] = None,
+        addContextMenuItems: bool = False,
+        subtitles: Optional[List[str]] = None,
+    ) -> ExtendedListItem:
         return ExtendedListItem(
-            name,
+            name=name,
             label2=label2,
             iconImage=iconImage,
             thumbnailImage=thumbnailImage,
@@ -76,10 +85,10 @@ class Plugin:
             plugin=self,
         )
 
-    def run(self):
+    def run(self) -> None:
         self.routing.dispatch(self.path)
 
-    def _main_menu_items(self):
+    def _main_menu_items(self) -> List[MainMenuItem]:
         return [
             MainMenuItem(
                 "Профиль",
@@ -210,11 +219,11 @@ class Plugin:
         ]
 
     @property
-    def sorting_title(self):
+    def sorting_title(self) -> str:
         return f"По {self.settings.sort_by} {self.settings.sort_direction}"
 
     @property
-    def sorting_params(self):
+    def sorting_params(self) -> Dict[str, str]:
         sorting = {
             "дате обновления": "updated",
             "дате добавления": "created",
@@ -231,15 +240,15 @@ class Plugin:
             "sort": f"{sorting[self.settings.sort_by]}{direction[self.settings.sort_direction]}"
         }
 
-    def clear_window_property(self):
+    def clear_window_property(self) -> None:
         xbmcgui.Window(10000).clearProperty("video.kino.pub-playback_data")
 
-    def set_window_property(self, value):
+    def set_window_property(self, value: Dict) -> None:
         self.clear_window_property()
         pickled = codecs.encode(pickle.dumps(value), "base64").decode("utf-8")
         xbmcgui.Window(10000).setProperty("video.kino.pub-playback_data", pickled)
 
-    def get_window_property(self, item_id):
+    def get_window_property(self, item_id: str) -> Union[TVShow, Multi, Movie]:
         try:
             data = xbmcgui.Window(10000).getProperty("video.kino.pub-playback_data").encode("utf-8")
             items = pickle.loads(codecs.decode(data, "base64"))
@@ -251,7 +260,7 @@ class Plugin:
         return item
 
     @property
-    def is_hls_enabled(self):
+    def is_hls_enabled(self) -> bool:
         return (
             "hls" in self.settings.stream_type
             and self.settings.inputstream_adaptive_enabled == "true"

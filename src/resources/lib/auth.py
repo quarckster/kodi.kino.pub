@@ -5,10 +5,13 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from typing import Any
+from typing import Dict
 
 import xbmc
 import xbmcgui
 
+from resources.lib.plugin import Plugin
 from resources.lib.utils import cached_property
 from resources.lib.utils import notice
 
@@ -30,7 +33,7 @@ class EmptyTokenException(AuthException):
 
 
 class AuthDialog:
-    def __init__(self, plugin):
+    def __init__(self, plugin: Plugin) -> None:
         self.total = 0
         self.plugin = plugin
 
@@ -40,7 +43,7 @@ class AuthDialog:
         # The classes include: N9XBMCAddon7xbmcgui14DialogProgressE
         return xbmcgui.DialogProgress()
 
-    def close(self, cancel=False):
+    def close(self, cancel: bool = False) -> None:
         if self._dialog:
             self._dialog.close()
             self._dialog = None
@@ -48,15 +51,15 @@ class AuthDialog:
         if cancel:
             self.plugin.routing.redirect("/")
 
-    def update(self, step):
+    def update(self, step: int) -> None:
         position = int(100 * step / float(self.total))
         self._dialog.update(position)
 
-    def show(self, text):
+    def show(self, text: str) -> None:
         self._dialog.create("Активация устройства", text)
 
     @property
-    def iscanceled(self):
+    def iscanceled(self) -> bool:
         return self._dialog.iscanceled() if self._dialog else True
 
 
@@ -65,7 +68,7 @@ class Auth:
     CLIENT_SECRET = "cgg3gtifu46urtfp2zp1nqtba0k2ezxh"
     OAUTH_API_URL = "https://api.service-kp.com/oauth2/device"
 
-    def __init__(self, plugin):
+    def __init__(self, plugin: Plugin) -> None:
         self._auth_dialog = AuthDialog(plugin)
         self.plugin = plugin
 
@@ -106,7 +109,7 @@ class Auth:
                 notice(f"Server status code {e.code}", "Activation error")
                 sys.exit()
 
-    def _get_device_code(self):
+    def _get_device_code(self) -> Dict[str, Any]:
         payload = {
             "grant_type": "device_code",
             "client_id": self.CLIENT_ID,
@@ -120,7 +123,7 @@ class Auth:
             "refresh_interval": int(resp["interval"]),
         }
 
-    def _get_device_token(self, device_code):
+    def _get_device_token(self, device_code: str) -> None:
         self.plugin.logger.info("getting a new device token")
         payload = {
             "grant_type": "device_token",
@@ -131,7 +134,7 @@ class Auth:
         resp = self._make_request(payload)
         self._update_settings(resp["refresh_token"], resp["access_token"], resp["expires_in"])
 
-    def _refresh_token(self):
+    def _refresh_token(self) -> None:
         self.plugin.logger.info("refreshing token")
         payload = {
             "grant_type": "refresh_token",
@@ -146,7 +149,7 @@ class Auth:
             return
         self._update_settings(resp["refresh_token"], resp["access_token"], resp["expires_in"])
 
-    def _update_device_info(self):
+    def _update_device_info(self) -> None:
         result = {"build_version": "Busy", "friendly_name": "Busy"}
         while "Busy" in list(result.values()):
             result = {
@@ -159,7 +162,7 @@ class Auth:
             data={"title": title, "hardware": platform.machine(), "software": software}
         )
 
-    def _verify_device_code(self, interval, device_code):
+    def _verify_device_code(self, interval: int, device_code: str) -> None:
         steps = (5 * 60) // interval
         self._auth_dialog.total = steps
         for i in range(steps):
@@ -179,7 +182,7 @@ class Auth:
         else:
             self._auth_dialog.close(cancel=True)
 
-    def _update_settings(self, refresh_token, access_token, expires_in):
+    def _update_settings(self, refresh_token: str, access_token: str, expires_in: int) -> None:
         self.plugin.settings.refresh_token = refresh_token
         self.plugin.settings.access_token = access_token
         self.plugin.settings.access_token_expire = str(expires_in + int(time.time()))
@@ -188,7 +191,7 @@ class Auth:
             f"expires in - {expires_in}"
         )
 
-    def _activate(self):
+    def _activate(self) -> None:
         resp = self._get_device_code()
         self._auth_dialog.show(
             f"Откройте [B]{resp['verification_uri']}[/B]\n"
@@ -197,10 +200,10 @@ class Auth:
         self._verify_device_code(resp["refresh_interval"], resp["device_code"])
 
     @property
-    def is_token_expired(self):
+    def is_token_expired(self) -> bool:
         return int(self.plugin.settings.access_token_expire) < int(time.time())
 
-    def get_token(self):
+    def get_token(self) -> None:
         if not self.plugin.settings.access_token:
             self._activate()
         else:

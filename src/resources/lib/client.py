@@ -4,18 +4,22 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from typing import Any
+from typing import Dict
+from typing import Optional
 
+from resources.lib.plugin import Plugin
 from resources.lib.utils import notice
 
 
 class KinoPubClient:
     url = os.getenv("KINO_PUB_API_URL", "https://api.service-kp.com/v1")
 
-    def __init__(self, plugin, action):
+    def __init__(self, plugin: Plugin, action: str) -> None:
         self.action = action
         self.plugin = plugin
 
-    def _make_request(self, request, timeout=600):
+    def _make_request(self, request: urllib.request.Request, timeout: int = 600):
         self.plugin.logger.info(
             f"sending {request.get_method()} request to {request.get_full_url()}"
         )
@@ -33,8 +37,8 @@ class KinoPubClient:
                 notice(f"Код ответа сервера {e.code}", "Ошибка")
                 sys.exit()
         except Exception as e:
-            self.plugin.logger.error(f"{type(e).__name__}. Message: {e.message}")
-            notice(e.message, "Ошибка")
+            self.plugin.logger.error(f"{type(e).__name__}. Message: {e.message}")  # type: ignore
+            notice(e.message, "Ошибка")  # type: ignore
         else:
             http_code = response.status
             response = json.loads(response.read())
@@ -47,12 +51,14 @@ class KinoPubClient:
                 self.plugin.logger.error(f"Unknown error. Code: {response['status']}")
                 notice(f"Код ответа сервера {response['status']}", "Ошибка")
 
-    def get(self, data=""):
-        data = f"?{urllib.parse.urlencode(data)}" if data else ""
-        request = urllib.request.Request(f"{self.url}/{self.action}{data}")
+    def get(self, data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        urlencoded_data = urllib.parse.urlencode(data if data else {})
+        query = f"?{urlencoded_data}" if urlencoded_data else ""
+        request = urllib.request.Request(f"{self.url}/{self.action}{query}")
         return self._make_request(request)
 
-    def post(self, data=""):
-        data = urllib.parse.urlencode(data).encode("utf-8")
-        request = urllib.request.Request(f"{self.url}/{self.action}", data=data)
+    def post(self, data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        data = data or {}
+        encoded_data = urllib.parse.urlencode(data).encode("utf-8")
+        request = urllib.request.Request(f"{self.url}/{self.action}", data=encoded_data)
         return self._make_request(request)

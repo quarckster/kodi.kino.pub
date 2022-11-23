@@ -26,7 +26,7 @@ class Settings:
             self._locs[xbmcaddon.Addon().getSetting(name)]
         return xbmcaddon.Addon().getSetting(name)
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name: str, value: str) -> None:
         if value is not None:
             value = str(value)
         xbmcaddon.Addon().setSetting(name, value)
