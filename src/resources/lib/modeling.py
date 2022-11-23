@@ -50,8 +50,8 @@ class ItemsCollection:
     def watching_movies(self) -> List["Movie"]:
         movies = []
         for movie_item in self.plugin.client("watching/movies").get()["items"]:
-            item_data = self.get_api_item(movie_item["id"])
-            movies.append(Movie(item_data))
+            movie = cast(Movie, self.instantiate_from_item_id(movie_item["id"]))
+            movies.append(movie)
         return movies
 
     @property
@@ -62,7 +62,7 @@ class ItemsCollection:
         ]:
             # This needs in order to add context menu items in "Я смотрю"
             tvshow_item["in_watchlist"] = 1
-            tvshow = TVShow(self, tvshow_item)
+            tvshow = cast(TVShow, self.instantiate_from_item_data(item_data=tvshow_item))
             tvshow.new = tvshow_item["new"]
             tvshow._video_info = {"mediatype": tvshow.mediatype}
             tvshows.append(tvshow)
@@ -346,8 +346,8 @@ class TVShow(ItemEntity):
     isdir: ClassVar[bool] = True
     mediatype: ClassVar[str] = "tvshow"
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, *, parent=ItemsCollection, item_data=Dict, **kwargs) -> None:
+        super().__init__(parent=parent, item_data=item_data)
         self.url = self.plugin.routing.build_url("seasons", f"{self.item_id}/")
         self.new: int
         self.li_title = ""
@@ -450,8 +450,8 @@ class SeasonEpisode(PlayableItem):
 class Multi(ItemEntity):
     isdir: ClassVar[bool] = True
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, *, parent: ItemsCollection, item_data: Dict) -> None:
+        super().__init__(parent=parent, item_data=item_data)
         self.url = self.plugin.routing.build_url("episodes", f"{self.item_id}/")
 
     @property
@@ -512,8 +512,8 @@ class Episode(PlayableItem):
 class Movie(PlayableItem):
     mediatype: ClassVar[str] = "movie"
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, *, parent: ItemsCollection, item_data: Dict) -> None:
+        super().__init__(parent=parent, item_data=item_data)
         self.url = self.plugin.routing.build_url("play", self.item_id)
 
     @cached_property
