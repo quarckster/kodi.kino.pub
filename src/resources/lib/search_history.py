@@ -1,13 +1,15 @@
 import json
 from typing import List
+from typing import TYPE_CHECKING
 
 import xbmcvfs
 
-from resources.lib.plugin import Plugin
+if TYPE_CHECKING:
+    from resources.lib.plugin import Plugin
 
 
 class SearchHistory:
-    def __init__(self, plugin: Plugin) -> None:
+    def __init__(self, plugin: "Plugin") -> None:
         self.plugin = plugin
         self.history_max_qty = int(self.plugin.settings.history_max_qty)
         self.path = xbmcvfs.translatePath(

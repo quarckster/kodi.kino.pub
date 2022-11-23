@@ -7,11 +7,13 @@ import urllib.parse
 import urllib.request
 from typing import Any
 from typing import Dict
+from typing import TYPE_CHECKING
 
 import xbmc
 import xbmcgui
 
-from resources.lib.plugin import Plugin
+if TYPE_CHECKING:
+    from resources.lib.plugin import Plugin
 from resources.lib.utils import cached_property
 from resources.lib.utils import notice
 
@@ -33,7 +35,7 @@ class EmptyTokenException(AuthException):
 
 
 class AuthDialog:
-    def __init__(self, plugin: Plugin) -> None:
+    def __init__(self, plugin: "Plugin") -> None:
         self.total = 0
         self.plugin = plugin
 
@@ -68,7 +70,7 @@ class Auth:
     CLIENT_SECRET = "cgg3gtifu46urtfp2zp1nqtba0k2ezxh"
     OAUTH_API_URL = "https://api.service-kp.com/oauth2/device"
 
-    def __init__(self, plugin: Plugin) -> None:
+    def __init__(self, plugin: "Plugin") -> None:
         self._auth_dialog = AuthDialog(plugin)
         self.plugin = plugin
 

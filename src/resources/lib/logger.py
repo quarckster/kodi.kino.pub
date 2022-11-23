@@ -1,10 +1,13 @@
+from typing import TYPE_CHECKING
+
 import xbmc
 
-from resources.lib.plugin import Plugin
+if TYPE_CHECKING:
+    from resources.lib.plugin import Plugin
 
 
 class Logger:
-    def __init__(self, plugin: Plugin) -> None:
+    def __init__(self, plugin: "Plugin") -> None:
         self.plugin = plugin
 
     def _log(self, message: str, level: str) -> None:

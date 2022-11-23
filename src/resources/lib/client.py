@@ -7,15 +7,17 @@ import urllib.request
 from typing import Any
 from typing import Dict
 from typing import Optional
+from typing import TYPE_CHECKING
 
-from resources.lib.plugin import Plugin
+if TYPE_CHECKING:
+    from resources.lib.plugin import Plugin
 from resources.lib.utils import notice
 
 
 class KinoPubClient:
     url = os.getenv("KINO_PUB_API_URL", "https://api.service-kp.com/v1")
 
-    def __init__(self, plugin: Plugin, action: str) -> None:
+    def __init__(self, plugin: "Plugin", action: str) -> None:
         self.action = action
         self.plugin = plugin
 

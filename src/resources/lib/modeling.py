@@ -9,12 +9,15 @@ from typing import ClassVar
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import TYPE_CHECKING
 from typing import Union
 
 import xbmcgui
 
 from resources.lib.listitem import ExtendedListItem
-from resources.lib.plugin import Plugin
+
+if TYPE_CHECKING:
+    from resources.lib.plugin import Plugin
 from resources.lib.utils import cached_property
 from resources.lib.utils import notice
 
@@ -29,7 +32,7 @@ Response = namedtuple("Response", ["items", "pagination"])
 
 
 class ItemsCollection:
-    def __init__(self, plugin: Plugin):
+    def __init__(self, plugin: "Plugin"):
         self.plugin = plugin
 
     def get(self, endpoint: str, data=None, exclude_anime: bool = False) -> Response:
@@ -154,11 +157,11 @@ class ItemEntity:
         self.item = item_data
         self.item_id = self.item["id"]
         self.title = self.item.get("title", "")
-        self._plugin: Plugin
+        self._plugin: "Plugin"
         self.url: str
 
     @property
-    def plugin(self) -> Plugin:
+    def plugin(self) -> "Plugin":
         return self._plugin or self.parent.plugin
 
     @property
@@ -346,7 +349,7 @@ class TVShow(ItemEntity):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.url = self.plugin.routing.build_url("seasons", f"{self.item_id}/")
-        self.new = None
+        self.new: int
         self.li_title = ""
         self._video_info: Dict[str, str] = {}
 

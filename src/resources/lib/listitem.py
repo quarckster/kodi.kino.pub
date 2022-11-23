@@ -3,10 +3,12 @@ from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Tuple
+from typing import TYPE_CHECKING
 
 from xbmcgui import ListItem
 
-from resources.lib.plugin import Plugin
+if TYPE_CHECKING:
+    from resources.lib.plugin import Plugin
 
 
 class ExtendedListItem(ListItem):
@@ -17,7 +19,7 @@ class ExtendedListItem(ListItem):
         self,
         *,
         name: str,
-        plugin: Plugin,
+        plugin: "Plugin",
         label2: str = "",
         iconImage: str = "",
         thumbnailImage: str = "",

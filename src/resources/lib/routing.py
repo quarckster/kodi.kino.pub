@@ -4,6 +4,7 @@ from typing import Callable
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import TYPE_CHECKING
 from typing import Union
 from urllib.parse import urlencode
 from urllib.parse import urlunsplit
@@ -11,7 +12,8 @@ from urllib.parse import urlunsplit
 import xbmc
 import xbmcvfs
 
-from resources.lib.plugin import Plugin
+if TYPE_CHECKING:
+    from resources.lib.plugin import Plugin
 
 
 class RoutingException(Exception):
@@ -19,7 +21,7 @@ class RoutingException(Exception):
 
 
 class Routing:
-    def __init__(self, plugin: Plugin) -> None:
+    def __init__(self, plugin: "Plugin") -> None:
         self._rules: Dict[Callable, List[UrlRule]] = {}
         self.plugin = plugin
 
