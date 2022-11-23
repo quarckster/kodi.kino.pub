@@ -157,8 +157,8 @@ class ItemEntity:
         self.item = item_data
         self.item_id = self.item["id"]
         self.title = self.item.get("title", "")
-        self._plugin: "Plugin"
-        self.url: str
+        self._plugin: Optional["Plugin"] = None
+        self.url: Optional[str] = None
 
     @property
     def plugin(self) -> "Plugin":
@@ -205,7 +205,7 @@ class ItemEntity:
 
     @property
     def list_item(self) -> ExtendedListItem:
-        def is_in_watchlist():
+        def is_in_watchlist() -> str:
             if self.item.get("in_watchlist") is not None:
                 return str(int(self.item["in_watchlist"]))
             return ""
@@ -345,12 +345,12 @@ class PlayableItem(ItemEntity):
 class TVShow(ItemEntity):
     isdir: ClassVar[bool] = True
     mediatype: ClassVar[str] = "tvshow"
+    li_title: str
+    new: int
 
     def __init__(self, *, parent=ItemsCollection, item_data=Dict, **kwargs) -> None:
         super().__init__(parent=parent, item_data=item_data)
         self.url = self.plugin.routing.build_url("seasons", f"{self.item_id}/")
-        self.new: int
-        self.li_title = ""
         self._video_info: Dict[str, str] = {}
 
     @property
@@ -408,7 +408,7 @@ class SeasonEpisode(PlayableItem):
 
     def __init__(self, *, index: int, parent: Season, item_data: Dict) -> None:
         super().__init__(parent=parent, item_data=item_data)
-        self.index: int = index
+        self.index = index
         self.season = self.parent
         self.tvshow = self.season.tvshow
         self.item_id = self.tvshow.item_id
@@ -450,7 +450,7 @@ class SeasonEpisode(PlayableItem):
 class Multi(ItemEntity):
     isdir: ClassVar[bool] = True
 
-    def __init__(self, *, parent: ItemsCollection, item_data: Dict) -> None:
+    def __init__(self, *, parent: ItemsCollection, item_data: Dict, **kwargs) -> None:
         super().__init__(parent=parent, item_data=item_data)
         self.url = self.plugin.routing.build_url("episodes", f"{self.item_id}/")
 
@@ -512,7 +512,7 @@ class Episode(PlayableItem):
 class Movie(PlayableItem):
     mediatype: ClassVar[str] = "movie"
 
-    def __init__(self, *, parent: ItemsCollection, item_data: Dict) -> None:
+    def __init__(self, *, parent: ItemsCollection, item_data: Dict, **kwargs201) -> None:
         super().__init__(parent=parent, item_data=item_data)
         self.url = self.plugin.routing.build_url("play", self.item_id)
 
