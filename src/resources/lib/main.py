@@ -170,9 +170,7 @@ def genres(content_type: str) -> None:
 @plugin.routing.route("/items/<content_type>/genres/<genre>/")
 def genre_items(content_type: str, genre: str) -> None:
     content_type = content_type.rstrip("s")
-    data = {"type": content_type, "genre": genre}
-    data.update(plugin.kwargs)
-    data.update(plugin.sorting_params)
+    data = {"type": content_type, "genre": genre, **plugin.kwargs, **plugin.sorting_params}
     response = plugin.items.get("items", data)
     render_items(response.items, content_type)
     render_pagination(response.pagination)
@@ -199,9 +197,7 @@ def alphabet(content_type: str) -> None:
 @plugin.routing.route("/items/<content_type>/alphabet/<letter>/")
 def alphabet_items(content_type: str, letter: str) -> None:
     content_type = content_type.rstrip("s")
-    data = {"type": content_type, "letter": letter}
-    data.update(plugin.kwargs)
-    data.update(plugin.sorting_params)
+    data = {"type": content_type, "letter": letter, **plugin.kwargs, **plugin.sorting_params}
     response = plugin.items.get("items", data)
     render_items(response.items, content_type)
     render_pagination(response.pagination)
@@ -239,10 +235,9 @@ def search(content_type: str) -> None:
 def search_results(content_type: str) -> None:
     data = {
         "type": None if content_type == "all" else content_type.rstrip("s"),
-        "title": plugin.kwargs["title"],
+        **plugin.kwargs,
+        **plugin.sorting_params,
     }
-    data.update(plugin.kwargs)
-    data.update(plugin.sorting_params)
     response = plugin.items.get("items", data)
     render_items(response.items, content_type)
     render_pagination(response.pagination)
@@ -379,8 +374,7 @@ def collections() -> None:
 
 @plugin.routing.route("/collections/<sorting>/")
 def sorted_collections(sorting: str) -> None:
-    data = {"sort": f"-{sorting}"}
-    data.update(plugin.kwargs)
+    data = {"sort": f"-{sorting}", **plugin.kwargs}
     response = plugin.client("collections/index").get(data=data)
     xbmcplugin.setContent(plugin.handle, "movies")
     for item in response["items"]:
@@ -399,8 +393,7 @@ def collection(item_id: str) -> None:
 
 @plugin.routing.route("/toggle_watched/<item_id>")
 def toggle_watched(item_id: str) -> None:
-    data = {"id": item_id}
-    data.update(plugin.kwargs)
+    data = {"id": item_id, **plugin.kwargs}
     plugin.client("watching/toggle").get(data=data)
     if "video" in data:
         data["time"] = "0"
