@@ -512,7 +512,7 @@ class Episode(PlayableItem):
 class Movie(PlayableItem):
     mediatype: ClassVar[str] = "movie"
 
-    def __init__(self, *, parent: ItemsCollection, item_data: Dict, **kwargs201) -> None:
+    def __init__(self, *, parent: ItemsCollection, item_data: Dict, **kwargs) -> None:
         super().__init__(parent=parent, item_data=item_data)
         self.url = self.plugin.routing.build_url("play", self.item_id)
 
