@@ -1,0 +1,4 @@
+pre-commit
+pytest
+kodi-json
+wait_for
