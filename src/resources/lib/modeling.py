@@ -49,22 +49,19 @@ class ItemsCollection:
     @property
     def watching_movies(self) -> List["Movie"]:
         movies = []
-        for movie_item in self.plugin.client("watching/movies").get()["items"]:
-            movie = cast(Movie, self.instantiate_from_item_id(movie_item["id"]))
+        for item_data in self.plugin.client("watching/movies").get()["items"]:
+            movie = cast(Movie, self.instantiate_from_item_id(item_data["id"]))
             movies.append(movie)
         return movies
 
     @property
     def watching_tvshows(self) -> List["TVShow"]:
         tvshows = []
-        for tvshow_item in self.plugin.client("watching/serials").get(data={"subscribed": 1})[
-            "items"
-        ]:
+        items_data = self.plugin.client("watching/serials").get(data={"subscribed": 1})["items"]
+        for item_data in items_data:
             # This needs in order to add context menu items in "Я смотрю"
-            tvshow_item["in_watchlist"] = 1
-            tvshow = cast(TVShow, self.instantiate_from_item_data(item_data=tvshow_item))
-            tvshow.new = tvshow_item["new"]
-            tvshow._video_info = {"mediatype": tvshow.mediatype}
+            item_data["from_watching"] = True
+            tvshow = cast(TVShow, self.instantiate_from_item_data(item_data=item_data))
             tvshows.append(tvshow)
         return tvshows
 
@@ -205,11 +202,6 @@ class ItemEntity:
 
     @property
     def list_item(self) -> ExtendedListItem:
-        def is_in_watchlist() -> str:
-            if self.item.get("in_watchlist") is not None:
-                return str(int(self.item["in_watchlist"]))
-            return ""
-
         li = self.plugin.list_item(
             name=getattr(self, "li_title", self.title),
             poster=self.item.get("posters", {}).get("big"),
@@ -217,7 +209,7 @@ class ItemEntity:
             thumbnailImage=self.item.get(
                 "thumbnail", self.item.get("posters", {}).get("small", "")
             ),
-            properties={"id": self.item_id, "in_watchlist": is_in_watchlist()},
+            properties={"id": self.item_id},
             video_info=self.video_info,
             addContextMenuItems=True,
         )
@@ -345,24 +337,32 @@ class PlayableItem(ItemEntity):
 class TVShow(ItemEntity):
     isdir: ClassVar[bool] = True
     mediatype: ClassVar[str] = "tvshow"
-    li_title: str
-    new: int
 
     def __init__(self, *, parent=ItemsCollection, item_data=Dict, **kwargs) -> None:
         super().__init__(parent=parent, item_data=item_data)
         self.url = self.plugin.routing.build_url("seasons", f"{self.item_id}/")
-        self._video_info: Dict[str, str] = {}
+        self.is_in_watchlist = self.item.get("from_watching") is True
+        if self.is_in_watchlist:
+            self.plugin.logger.info(f"TVSHOWITEM: {self.item}")
+            self.li_title = f"{self.title} : [COLOR FFFFF000]+{self.item['new']}[/COLOR]"
 
     @property
     def video_info(self) -> Dict:
-        if self._video_info:
-            return self._video_info
+        if self.is_in_watchlist:
+            return {"mediatype": self.mediatype}
         return {
             **super().video_info,
             "trailer": self.trailer_url,
             "mediatype": self.mediatype,
             "status": "окончен" if self.item["finished"] else "в эфире",
         }
+
+    @property
+    def list_item(self) -> ExtendedListItem:
+        li = super().list_item
+        if self.is_in_watchlist:
+            li.setProperty("in_watchlist", "1")
+        return li
 
     @property
     def seasons(self) -> List["Season"]:
@@ -512,7 +512,7 @@ class Episode(PlayableItem):
 class Movie(PlayableItem):
     mediatype: ClassVar[str] = "movie"
 
-    def __init__(self, *, parent: ItemsCollection, item_data: Dict, **kwargs201) -> None:
+    def __init__(self, *, parent: ItemsCollection, item_data: Dict, **kwargs) -> None:
         super().__init__(parent=parent, item_data=item_data)
         self.url = self.plugin.routing.build_url("play", self.item_id)
 
