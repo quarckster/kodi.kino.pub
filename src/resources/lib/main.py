@@ -88,7 +88,7 @@ def reset_auth() -> None:
     plugin.settings.access_token = ""
     plugin.settings.access_token_expire = ""
     plugin.settings.refresh_token = ""
-    xbmc.executebuiltin("Cfontainer.Refresh")
+    xbmc.executebuiltin("Container.Refresh")
 
 
 @plugin.routing.route("/")
