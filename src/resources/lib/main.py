@@ -88,7 +88,7 @@ def reset_auth() -> None:
     plugin.settings.access_token = ""
     plugin.settings.access_token_expire = ""
     plugin.settings.refresh_token = ""
-    xbmc.executebuiltin("Container.Refresh")
+    xbmc.executebuiltin("Cfontainer.Refresh")
 
 
 @plugin.routing.route("/")
@@ -335,7 +335,6 @@ def show_bookmark_folder(folder_id: str) -> None:
 def watching() -> None:
     xbmcplugin.setContent(plugin.handle, "tvshows")
     for tvshow in plugin.items.watching_tvshows:
-        tvshow.li_title = f"{tvshow.title} : [COLOR FFFFF000]+{tvshow.new}[/COLOR]"
         xbmcplugin.addDirectoryItem(plugin.handle, tvshow.url, tvshow.list_item, True)
     xbmcplugin.endOfDirectory(plugin.handle)
 
