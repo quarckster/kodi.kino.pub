@@ -18,7 +18,7 @@ jobs:
           python-version: "3.6"
           architecture: "x64"
       - name: Install deps
-        run: pip install pytest wait_for kodi-json
+        run: pip install -r requirements_dev.txt
       - name: Pull conkodi container image
         run: podman pull quay.io/quarck/conkodi:19
       - name: Pull mockserver container image
