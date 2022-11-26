@@ -1,8 +1,9 @@
 # How to develop on this project
 
-kodi.kino.opub welcomes contributions from the community.
+kodi.kino.pub welcomes contributions from the community.
 
-You need PYTHON>=3.6!
+The code is written to be compatible with Python 3.6. Development can be done with more modern
+Python.
 
 ## Setting up your own fork of this repo
 
