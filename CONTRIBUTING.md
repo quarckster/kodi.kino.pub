@@ -20,7 +20,7 @@ Run `python3 -m venv <PATH>` to create a virtual environment. Then activate it w
 ## Install development dependencies
 
 Run `pip install -r requirements_dev.txt` to install python development dependencies. You also need
-(`podman`)[https://podman.io] to run tests.
+[`podman`](https://podman.io) to run tests.
 
 ## Run the tests to ensure everything is working
 
