@@ -32,7 +32,7 @@ repos:
           - --max-line-length=100
           - --ignore=W503,E203
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.2.2
+    rev: v3.3.0
     hooks:
       - id: pyupgrade
         language_version: python3
