@@ -6,7 +6,7 @@
 #
 attrs==22.1.0
     # via pytest
-certifi==2022.9.24
+certifi==2022.12.7
     # via requests
 cfgv==3.3.1
     # via pre-commit
@@ -14,8 +14,6 @@ charset-normalizer==2.1.1
     # via requests
 distlib==0.3.6
     # via virtualenv
-exceptiongroup==1.0.4
-    # via pytest
 filelock==3.8.0
     # via virtualenv
 identify==2.5.9
@@ -48,8 +46,6 @@ requests==2.28.1
     # via kodi-json
 toml==0.10.2
     # via pre-commit
-tomli==2.0.1
-    # via pytest
 urllib3==1.26.13
     # via requests
 virtualenv==20.16.7
