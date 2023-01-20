@@ -23,7 +23,7 @@ class Settings:
         if name.startswith("show_"):
             return eval(xbmcaddon.Addon().getSetting(name).title())
         if name == "loc":
-            self._locs[xbmcaddon.Addon().getSetting(name)]
+            return self._locs[xbmcaddon.Addon().getSetting(name)]
         return xbmcaddon.Addon().getSetting(name)
 
     def __setattr__(self, name: str, value: str) -> None:
