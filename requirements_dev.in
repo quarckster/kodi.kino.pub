@@ -1,4 +1,5 @@
 pre-commit
 pytest
 kodi-json
+Kodistubs
 wait_for
