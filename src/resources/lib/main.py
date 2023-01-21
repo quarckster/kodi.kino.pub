@@ -67,7 +67,7 @@ def render_items(items: List[ItemEntity], content_type: str) -> None:
     container_content_type = f"{content_type_map[content_type.rstrip('s')]}s"
     xbmcplugin.setContent(plugin.handle, container_content_type)
     playback_data = {}
-    for index, item in enumerate(items, 1):
+    for item in items:
         if not item.isdir:
             playback_data[item.item_id] = item
         xbmcplugin.addDirectoryItem(plugin.handle, item.url, item.list_item, item.isdir)
