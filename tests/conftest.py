@@ -1,21 +1,17 @@
 import shutil
-import subprocess
 from urllib.request import urlopen
 
 import pytest
 from kodijson import Kodi
 from wait_for import wait_for
 
+from helpers import podman
 from paths import CON_DIR
 from paths import HOST_DIR
 
 
 JSON_RPC_URL = "http://127.0.0.1:8080/jsonrpc"
 MOCKSERVER_URL = "http://127.0.0.1:1080/v1"
-
-
-def podman(*args):
-    subprocess.run(["podman"] + list(args), stdout=subprocess.DEVNULL)
 
 
 @pytest.fixture(scope="session")
@@ -47,7 +43,7 @@ def run_kodi_pod(build_plugin):
         "--pod=kodipod",
         "--name=kodi",
         "--umask=0002",
-        "--env=KINO_PUB_API_URL=http://localhost:1080/v1",
+        "--env=KINO_PUB_TEST=1",
         f"--volume={HOST_DIR}/addons/:{CON_DIR}/addons",
         f"--volume={HOST_DIR}/Database/:{CON_DIR}/userdata/Database",
         f"--volume={HOST_DIR}/addon_data/:{CON_DIR}/userdata/addon_data/video.kino.pub",
@@ -71,7 +67,7 @@ def kodi(run_kodi_pod):
     wait_for(urlopen, func_args=[JSON_RPC_URL], timeout=10, handle_exception=True)
     wait_for(
         urlopen,
-        func_args=[f"{MOCKSERVER_URL}/user"],
+        func_args=[f"{MOCKSERVER_URL}/"],
         timeout=10,
         handle_exception=True,
     )
