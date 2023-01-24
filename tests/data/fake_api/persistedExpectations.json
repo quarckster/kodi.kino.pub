@@ -1,4 +1,13 @@
-[
+[ {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK"
+    }
+  },
   {
     "httpRequest": {
       "method": "GET",
@@ -8648,6 +8657,97 @@
           }
         ]
       }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/bookmarks/401",
+      "headers": {
+        "Authorization": [
+          "Bearer some_token"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 401,
+      "reasonPhrase": "OK"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/bookmarks/401",
+      "headers": {
+        "Authorization": [
+          "Bearer new_access_token"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "folder": {
+          "id": 161701,
+          "title": "General",
+          "views": 0,
+          "created": 1539502313,
+          "updated": 1574615952
+        },
+        "items": []
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/v1/oauth2/device"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK",
+      "body": {
+        "status": 200,
+        "code": "some_code",
+        "user_code": "some_user_code",
+        "verification_uri": "some_verification_uri",
+        "interval": "1",
+        "refresh_token": "some_refresh_token",
+        "access_token": "new_access_token",
+        "expires_in": 1
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/v1/device/notify"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "reasonPhrase": "OK"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/bookmarks/429"
+    },
+    "httpResponse": {
+      "statusCode": 429,
+      "reasonPhrase": "OK"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/v1/bookmarks/500"
+    },
+    "httpResponse": {
+      "statusCode": 500,
+      "reasonPhrase": "OK"
     }
   },
   {

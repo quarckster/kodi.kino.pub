@@ -10,7 +10,7 @@ from paths import HOST_DIR
 
 @pytest.fixture
 def change_token():
-    "This fixture is required in order to coorectly match http request in he mock server."
+    "This fixture is required in order to correctly match an http request in the mock server."
     with open(f"{HOST_DIR}/addon_data/settings.xml", "r+") as settings_xml:
         orig_content = settings_xml.read()
         new_content = orig_content.replace("some_token", "token_after_bookmark_creating")

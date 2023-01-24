@@ -1,4 +1,5 @@
 import json
+import subprocess
 import time
 
 import requests
@@ -19,3 +20,7 @@ def close_keyboard(kodi):
 
     time.sleep(3)
     wait_for(kodi.Input.Back, fail_condition=_fail_condition, timeout=15, delay=3)
+
+
+def podman(*args):
+    subprocess.run(["podman"] + list(args), stdout=subprocess.DEVNULL)

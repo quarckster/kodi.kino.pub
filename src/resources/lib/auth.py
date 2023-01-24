@@ -68,7 +68,6 @@ class AuthDialog:
 class Auth:
     CLIENT_ID = "xbmc"
     CLIENT_SECRET = "cgg3gtifu46urtfp2zp1nqtba0k2ezxh"
-    OAUTH_API_URL = "https://api.service-kp.com/oauth2/device"
 
     def __init__(self, plugin: "Plugin") -> None:
         self._auth_dialog = AuthDialog(plugin)
@@ -78,7 +77,7 @@ class Auth:
         self.plugin.logger.info(f"sending payload {payload} to oauth api")
         try:
             response = urllib.request.urlopen(
-                urllib.request.Request(self.OAUTH_API_URL),
+                urllib.request.Request(self.plugin.settings.oauth_api_url),
                 urllib.parse.urlencode(payload).encode("utf-8"),
             ).read()
             return json.loads(response)

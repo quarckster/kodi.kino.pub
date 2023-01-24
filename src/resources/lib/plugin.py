@@ -51,9 +51,7 @@ class Plugin:
         self.search_history = SearchHistory(self)
         self.main_menu_items = self._main_menu_items()
         self.items = ItemsCollection(self)
-
-    def client(self, endpoint: str) -> KinoPubClient:
-        return KinoPubClient(self, endpoint)
+        self.client = KinoPubClient(self)
 
     def list_item(
         self,
