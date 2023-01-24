@@ -9,11 +9,24 @@ on:
   create:
 
 jobs:
-  tests:
+  tests-unit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+          architecture: "x64"
+      - name: Install deps
+        run: pip install -r requirements_dev.txt
+      - name: Unit tests
+        run: pytest -v tests/test_unit.py
+
+  tests-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
         with:
           python-version: "3.10"
           architecture: "x64"
@@ -26,7 +39,7 @@ jobs:
       - name: Set permissions
         run: sudo chmod -R a+rwx tests/data
       - name: Integration tests
-        run: pytest -vv
+        run: pytest -v -k "(not test_unit)"
       - name: Kodi logs analysis
         if: failure()
         run: podman logs kodi
