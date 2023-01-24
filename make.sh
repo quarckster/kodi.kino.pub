@@ -19,7 +19,7 @@ function build_video_addon() {
     echo "======================================"
     mkdir "$DIR"
     VERSION="$VERSION" envsubst < src/addon.xml > "$DIR"/addon.xml
-    rsync -rv --exclude=*.pyc src/resources src/addon.py LICENSE "$DIR"
+    rsync -rv --exclude=*.pyc --exclude=__pycache__/ src/resources src/addon.py LICENSE "$DIR"
     zip -rv -9 -m "$DIR".zip "$DIR"
     echo
 }
@@ -50,7 +50,7 @@ function deploy() {
     create_repo "${1}"
     echo "Deploying files to Netlify"
     echo "=========================="
-    node_modules/netlify-cli/bin/run deploy --dir=repo --prod --auth="${NETLIFY_AUTH_TOKEN}" --site="${NETLIFY_SITE_ID}"
+    podman run -t -e NETLIFY_AUTH_TOKEN -e NETLIFY_SITE_ID -v $(pwd):/mnt -w /mnt quay.io/quarck/netlify netlify deploy --dir=repo/ --prod
 }
 
 "$@"
