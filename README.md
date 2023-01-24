@@ -1,6 +1,7 @@
 # Kodi add-on for kino.pub
 
-[![Build Status](https://github.com/quarckster/kodi.kino.pub/workflows/tests/badge.svg)](https://github.com/quarckster/kodi.kino.pub/actions?query=workflow%3Atests)
+[![Build Status](https://github.com/quarckster/kodi.kino.pub/workflows/ci/badge.svg)](https://github.com/quarckster/kodi.kino.pub/actions?query=workflow%3Aci)
+
 [![Netlify Status](https://api.netlify.com/api/v1/badges/28217532-a2a0-408c-a780-e6270c7568ee/deploy-status)](https://app.netlify.com/sites/kodi-kino-pub/deploys)
 
 Versions 3.x.x. work only with Kodi 19. For Kodi 17 and 18 use 2.12.4 versions.
