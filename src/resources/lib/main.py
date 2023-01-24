@@ -210,7 +210,6 @@ def new_search(content_type: str) -> None:
     kbd.doModal()
     if kbd.isConfirmed():
         title = kbd.getText()
-        plugin.logger.info(title)
         plugin.search_history.save(title)
         url = plugin.routing.build_url("search", content_type, "results/", title=title)
         plugin.routing.redirect(url)

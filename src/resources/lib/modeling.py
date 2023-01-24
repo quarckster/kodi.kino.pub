@@ -343,7 +343,6 @@ class TVShow(ItemEntity):
         self.url = self.plugin.routing.build_url("seasons", f"{self.item_id}/")
         self.is_in_watchlist = self.item.get("from_watching") is True
         if self.is_in_watchlist:
-            self.plugin.logger.info(f"TVSHOWITEM: {self.item}")
             self.li_title = f"{self.title} : [COLOR FFFFF000]+{self.item['new']}[/COLOR]"
 
     @property
