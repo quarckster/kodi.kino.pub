@@ -1,8 +1,6 @@
 import http
 import json
-import os
 import sys
-import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -15,9 +13,14 @@ from typing import Optional
 from typing import TYPE_CHECKING
 from typing import Union
 
+import xbmc
+
 if TYPE_CHECKING:
     from resources.lib.plugin import Plugin
 from resources.lib.utils import notice
+
+
+TIMEOUT = 60
 
 
 class KinoApiRequestProcessor(urllib.request.BaseHandler):
@@ -46,7 +49,7 @@ class KinoApiDefaultErrorHandler(urllib.request.HTTPDefaultErrorHandler):
         msg: str,
         headers: HTTPMessage,
     ) -> NoReturn:
-        self.plugin.logger.error(f"HTTPError. Code: {code}")
+        self.plugin.logger.error(f"HTTPError. {request.get_full_url()}. Code: {code}. Exiting.")
         notice(f"Код ответа сервера {code}", "Ошибка")
         sys.exit()
 
@@ -75,7 +78,7 @@ class KinoApiErrorProcessor(urllib.request.HTTPErrorProcessor):
             self.plugin.logger.error("Access token is empty.")
             notice("Аутентификация не удалась", "Ошибка")
             sys.exit()
-        return self.parent.open(request, timeout=60)
+        return self.parent.open(request, timeout=TIMEOUT)
 
     def http_error_429(
         self,
@@ -94,13 +97,11 @@ class KinoApiErrorProcessor(urllib.request.HTTPErrorProcessor):
             f"HTTPError. Code: {code}. Retrying after 5 seconds. "
             f"Attempt {request.recursion_counter_429}."  # type: ignore[attr-defined]
         )
-        time.sleep(5)
-        return self.parent.open(request, timeout=60)
+        xbmc.sleep(5000)
+        return self.parent.open(request, timeout=TIMEOUT)
 
 
 class KinoPubClient:
-    url = os.getenv("KINO_PUB_API_URL", "https://api.service-kp.com/v1")
-
     def __init__(self, plugin: "Plugin") -> None:
         self.plugin = plugin
         self.opener = urllib.request.build_opener(
@@ -133,7 +134,7 @@ class KinoPubClient:
         request.recursion_counter_401 = 0  # type: ignore[attr-defined]
         request.recursion_counter_429 = 0  # type: ignore[attr-defined]
         try:
-            response = self.opener.open(request, timeout=60)
+            response = self.opener.open(request, timeout=TIMEOUT)
         except Exception:
             notice("Не удалось получить ответ от kino.pub", "Ошибка")
             raise
@@ -142,10 +143,12 @@ class KinoPubClient:
     def get(self, data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         urlencoded_data = urllib.parse.urlencode(data or {})
         query = f"?{urlencoded_data}" if urlencoded_data else ""
-        request = urllib.request.Request(f"{self.url}/{self.endpoint}{query}")
+        request = urllib.request.Request(f"{self.plugin.settings.api_url}/{self.endpoint}{query}")
         return self._make_request(request)
 
     def post(self, data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         encoded_data = urllib.parse.urlencode(data or {}).encode("utf-8")
-        request = urllib.request.Request(f"{self.url}/{self.endpoint}", data=encoded_data)
+        request = urllib.request.Request(
+            f"{self.plugin.settings.api_url}/{self.endpoint}", data=encoded_data
+        )
         return self._make_request(request)
