@@ -15,7 +15,7 @@ from resources.lib.modeling import Multi
 from resources.lib.modeling import TVShow
 from resources.lib.player import Player
 from resources.lib.plugin import Plugin
-from resources.lib.utils import notice
+from resources.lib.utils import popup_info
 
 
 content_type_map = {
@@ -405,9 +405,9 @@ def toggle_watchlist(item_id: str) -> None:
     added = int(plugin.kwargs["added"])
     plugin.client("watching/togglewatchlist").get(data={"id": item_id})
     if added:
-        notice('Сериал добавлен в список "Буду смотреть"')
+        popup_info('Сериал добавлен в список "Буду смотреть"')
     else:
-        notice('Сериал удалён из списка "Буду смотреть"')
+        popup_info('Сериал удалён из списка "Буду смотреть"')
     plugin.clear_window_property()
     xbmc.executebuiltin("Container.Refresh")
 
@@ -442,7 +442,7 @@ def edit_bookmarks(item_id: str) -> None:
         plugin.client("bookmarks/remove-item").post(
             data={"item": item_id, "folder": get_folder_id(folder)}
         )
-    notice("Закладки для видео изменены")
+    popup_info("Закладки для видео изменены")
 
 
 @plugin.routing.route("/remove_bookmarks_folder/<folder_id>")
@@ -510,6 +510,6 @@ def similar(item_id: str) -> None:
 def install_inputstream_helper() -> None:
     try:
         xbmcaddon.Addon("script.module.inputstreamhelper")
-        notice("inputstream helper установлен")
+        popup_info("inputstream helper установлен")
     except RuntimeError:
         xbmc.executebuiltin("InstallAddon(script.module.inputstreamhelper)")

@@ -5,8 +5,16 @@ from typing import Type
 import xbmcgui
 
 
-def notice(message: str, heading: str = "", time: int = 4000) -> None:
-    xbmcgui.Dialog().notification(heading, message, time=time)
+def popup_error(message: str, time: int = 4000) -> None:
+    xbmcgui.Dialog().notification("Ошибка", message, icon=xbmcgui.NOTIFICATION_ERROR, time=time)
+
+
+def popup_info(message: str, heading: str = "", time: int = 4000) -> None:
+    xbmcgui.Dialog().notification(heading, message, icon=xbmcgui.NOTIFICATION_INFO, time=time)
+
+
+def popup_warning(message: str, heading: str = "", time: int = 4000) -> None:
+    xbmcgui.Dialog().notification(heading, message, icon=xbmcgui.NOTIFICATION_WARNING, time=time)
 
 
 class cached_property:  # noqa
