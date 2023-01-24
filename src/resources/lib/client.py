@@ -29,7 +29,9 @@ class KinoApiRequestProcessor(urllib.request.BaseHandler):
         super().__init__()
 
     def https_request(self, request: urllib.request.Request) -> urllib.request.Request:
-        self.plugin.logger.debug("Preparing request")
+        self.plugin.logger.debug(
+            f"Sending {request.get_method()} request to {request.get_full_url()}"
+        )
         request.add_header("Authorization", f"Bearer {self.plugin.settings.access_token}")
         return request
 
@@ -49,7 +51,7 @@ class KinoApiDefaultErrorHandler(urllib.request.HTTPDefaultErrorHandler):
         msg: str,
         headers: HTTPMessage,
     ) -> NoReturn:
-        self.plugin.logger.error(f"HTTPError. {request.get_full_url()}. Code: {code}. Exiting.")
+        self.plugin.logger.fatal(f"HTTPError. {request.get_full_url()}. Code: {code}. Exiting.")
         notice(f"Код ответа сервера {code}", "Ошибка")
         sys.exit()
 
@@ -68,14 +70,14 @@ class KinoApiErrorProcessor(urllib.request.HTTPErrorProcessor):
         headers: HTTPMessage,
     ) -> Union[http.client.HTTPResponse, NoReturn]:
         if request.recursion_counter_401 > 0:  # type: ignore[attr-defined]
-            self.plugin.logger.error("Recursion limit exceeded in handling status code 401")
+            self.plugin.logger.fatal("Recursion limit exceeded in handling status code 401")
             notice("Аутентификация не удалась", "Ошибка")
             sys.exit()
         self.plugin.logger.error(f"HTTPError. Code: {code}. Attempting to refresh the token.")
         request.recursion_counter_401 += 1  # type: ignore[attr-defined]
         self.plugin.auth.get_token()
         if not self.plugin.settings.access_token:
-            self.plugin.logger.error("Access token is empty.")
+            self.plugin.logger.fatal("Access token is empty.")
             notice("Аутентификация не удалась", "Ошибка")
             sys.exit()
         return self.parent.open(request, timeout=TIMEOUT)
@@ -89,7 +91,7 @@ class KinoApiErrorProcessor(urllib.request.HTTPErrorProcessor):
         headers: HTTPMessage,
     ) -> Union[http.client.HTTPResponse, NoReturn]:
         if request.recursion_counter_429 > 2:  # type: ignore[attr-defined]
-            self.plugin.logger.error("Recursion limit exceeded in handling status code 429")
+            self.plugin.logger.fatal("Recursion limit exceeded in handling status code 429")
             notice(f"Код ответа сервера {code}. Попробуйте ещё раз.", "Ошибка")
             sys.exit()
         request.recursion_counter_429 += 1  # type: ignore[attr-defined]
@@ -128,9 +130,6 @@ class KinoPubClient:
             sys.exit()
 
     def _make_request(self, request: urllib.request.Request) -> Dict[str, Any]:
-        self.plugin.logger.info(
-            f"sending {request.get_method()} request to {request.get_full_url()}"
-        )
         request.recursion_counter_401 = 0  # type: ignore[attr-defined]
         request.recursion_counter_429 = 0  # type: ignore[attr-defined]
         try:

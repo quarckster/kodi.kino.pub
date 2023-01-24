@@ -74,7 +74,7 @@ class Auth:
         self.plugin = plugin
 
     def _make_request(self, payload):
-        self.plugin.logger.info(f"sending payload {payload} to oauth api")
+        self.plugin.logger.debug(f"Sending payload {payload} to oauth api")
         try:
             response = urllib.request.urlopen(
                 urllib.request.Request(self.plugin.settings.oauth_api_url),
@@ -105,7 +105,7 @@ class Auth:
             else:
                 self._auth_dialog.close(cancel=True)
                 self.plugin.logger.fatal(
-                    f"oauth request error; status: {e.code}; message: {e.message}"
+                    f"Oauth request error; status: {e.code}; message: {e.message}"
                 )
                 notice(f"Server status code {e.code}", "Activation error")
                 sys.exit()
@@ -125,7 +125,7 @@ class Auth:
         }
 
     def _get_device_token(self, device_code: str) -> None:
-        self.plugin.logger.info("getting a new device token")
+        self.plugin.logger.debug("Getting a new device token")
         payload = {
             "grant_type": "device_token",
             "client_id": self.CLIENT_ID,
@@ -136,7 +136,7 @@ class Auth:
         self._update_settings(resp["refresh_token"], resp["access_token"], resp["expires_in"])
 
     def _refresh_token(self) -> None:
-        self.plugin.logger.info("refreshing token")
+        self.plugin.logger.debug("Refreshing token")
         payload = {
             "grant_type": "refresh_token",
             "refresh_token": self.plugin.settings.refresh_token,
@@ -187,8 +187,8 @@ class Auth:
         self.plugin.settings.refresh_token = refresh_token
         self.plugin.settings.access_token = access_token
         self.plugin.settings.access_token_expire = str(expires_in + int(time.time()))
-        self.plugin.logger.info(
-            f"refresh token - {refresh_token}; access token - {access_token}; "
+        self.plugin.logger.debug(
+            f"Refresh token - {refresh_token}; access token - {access_token}; "
             f"expires in - {expires_in}"
         )
 
