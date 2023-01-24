@@ -14,8 +14,7 @@ import xbmcgui
 
 if TYPE_CHECKING:
     from resources.lib.plugin import Plugin
-from resources.lib.utils import cached_property
-from resources.lib.utils import notice
+from resources.lib.utils import cached_property, popup_error
 
 
 class AuthException(Exception):
@@ -94,7 +93,7 @@ class Auth:
                 if error and error == "authorization_pending":
                     raise AuthPendingException
                 if error:
-                    notice("Ошибка аутентификации")
+                    popup_error("Ошибка аутентификации")
                     raise AuthException(error)
                 return response
             # server can respond with 429 status, so we just wait until it gives a correct response
@@ -107,7 +106,7 @@ class Auth:
                 self.plugin.logger.fatal(
                     f"Oauth request error; status: {e.code}; message: {e.message}"
                 )
-                notice(f"Server status code {e.code}", "Activation error")
+                popup_error("Активация не удалась")
                 sys.exit()
 
     def _get_device_code(self) -> Dict[str, Any]:

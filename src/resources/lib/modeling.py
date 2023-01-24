@@ -19,7 +19,7 @@ from resources.lib.listitem import ExtendedListItem
 if TYPE_CHECKING:
     from resources.lib.plugin import Plugin
 from resources.lib.utils import cached_property
-from resources.lib.utils import notice
+from resources.lib.utils import popup_warning
 
 
 try:
@@ -304,7 +304,7 @@ class PlayableItem(ItemEntity):
         if self.plugin.is_hls_enabled:
             helper = inputstreamhelper.Helper("hls")
             if not helper.check_inputstream():
-                notice("HLS поток не поддерживается")
+                popup_warning("HLS поток не поддерживается")
                 return {}
             else:
                 return {
