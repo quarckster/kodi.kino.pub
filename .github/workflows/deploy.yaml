@@ -16,15 +16,18 @@ jobs:
       - name: Fix permissions
         run: chmod -R a+rw ${PWD}
       - name: Build an addon
-        run: bash make.sh build_video_addon ${{ github.ref_name }}
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: make video_addon
       - name: Deploy to Netlify
         env:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        run: |
-          bash make.sh deploy ${{ github.ref_name }}
+          VERSION: ${{ github.ref_name }}
+        run: make deploy
       - name: Create a release
         uses: softprops/action-gh-release@v1
         with:
           files: video.kino.pub-${{ github.ref_name }}.zip
           generate_release_notes: true
+          fail_on_unmatched_files: true
