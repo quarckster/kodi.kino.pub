@@ -52,12 +52,13 @@ class ExtendedListItem(ListItem):
             self.addPredefinedContextMenuItems()
 
     def _addWatchlistContextMenuItem(self, menu_items: List[Tuple[str, str]]) -> None:
-        in_watchlist = self.getProperty("in_watchlist")
-        if in_watchlist == "":
+        is_subscribed = self.getProperty("is_subscribed")
+        if is_subscribed == "":
             return
-        label = "Не буду смотреть" if int(in_watchlist) else "Буду смотреть"
+        is_subscribed = is_subscribed == "True"
+        label = "Не буду смотреть" if is_subscribed else "Буду смотреть"
         url = self.plugin.routing.build_url(
-            "toggle_watchlist", self.getProperty("id"), added=int(not int(in_watchlist))
+            "toggle_watchlist", self.getProperty("id"), added=int(not is_subscribed)
         )
         menu_items.append((label, f"Container.Update({url})"))
 

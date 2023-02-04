@@ -209,7 +209,7 @@ class ItemEntity:
             thumbnailImage=self.item.get(
                 "thumbnail", self.item.get("posters", {}).get("small", "")
             ),
-            properties={"id": self.item_id},
+            properties={"id": self.item_id, "is_subscribed": getattr(self, "is_subscribed", "")},
             video_info=self.video_info,
             addContextMenuItems=True,
         )
@@ -344,6 +344,7 @@ class TVShow(ItemEntity):
         self.is_in_watchlist = self.item.get("from_watching") is True
         if self.is_in_watchlist:
             self.li_title = f"{self.title} : [COLOR FFFFF000]+{self.item['new']}[/COLOR]"
+        self.is_subscribed = self.is_in_watchlist or self.item.get("subscribed")
 
     @property
     def video_info(self) -> Dict:
@@ -355,13 +356,6 @@ class TVShow(ItemEntity):
             "mediatype": self.mediatype,
             "status": "окончен" if self.item["finished"] else "в эфире",
         }
-
-    @property
-    def list_item(self) -> ExtendedListItem:
-        li = super().list_item
-        if self.is_in_watchlist:
-            li.setProperty("in_watchlist", "1")
-        return li
 
     @property
     def seasons(self) -> List["Season"]:
