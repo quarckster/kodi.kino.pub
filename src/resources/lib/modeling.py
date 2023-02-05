@@ -156,6 +156,7 @@ class ItemEntity:
         self.title = self.item.get("title", "")
         self._plugin: Optional["Plugin"] = None
         self.url: Optional[str] = None
+        self.properties: Dict[str, Union[str, float, bool]] = {}
 
     @property
     def plugin(self) -> "Plugin":
@@ -209,7 +210,7 @@ class ItemEntity:
             thumbnailImage=self.item.get(
                 "thumbnail", self.item.get("posters", {}).get("small", "")
             ),
-            properties={"id": self.item_id},
+            properties={"id": self.item_id, **self.properties},
             video_info=self.video_info,
             addContextMenuItems=True,
         )
@@ -321,6 +322,7 @@ class PlayableItem(ItemEntity):
             "play_resumetime": self.resume_time,
             "playcount": self.video_info["playcount"],
             "imdbnumber": self.video_info["imdbnumber"],
+            **self.properties,
             **self.hls_properties,
         }
         return self.plugin.list_item(
@@ -344,6 +346,9 @@ class TVShow(ItemEntity):
         self.is_in_watchlist = self.item.get("from_watching") is True
         if self.is_in_watchlist:
             self.li_title = f"{self.title} : [COLOR FFFFF000]+{self.item['new']}[/COLOR]"
+        self.properties = {
+            "is_subscribed": self.is_in_watchlist or self.item.get("subscribed", False)
+        }
 
     @property
     def video_info(self) -> Dict:
@@ -355,13 +360,6 @@ class TVShow(ItemEntity):
             "mediatype": self.mediatype,
             "status": "окончен" if self.item["finished"] else "в эфире",
         }
-
-    @property
-    def list_item(self) -> ExtendedListItem:
-        li = super().list_item
-        if self.is_in_watchlist:
-            li.setProperty("in_watchlist", "1")
-        return li
 
     @property
     def seasons(self) -> List["Season"]:
@@ -424,6 +422,7 @@ class SeasonEpisode(PlayableItem):
             self.watching_status = self.watching_info["status"]
         except IndexError:
             self.watching_info = self.watching_status = None
+        self.properties = {"video_number": self.index, "season_number": self.season.index}
 
     @property
     def video_info(self) -> Dict:
@@ -439,12 +438,6 @@ class SeasonEpisode(PlayableItem):
             "mediatype": self.mediatype,
         }
 
-    @property
-    def playable_list_item(self) -> ExtendedListItem:
-        li = super().playable_list_item
-        li.setProperties(video_number=self.index, season_number=self.season.index)
-        return li
-
 
 class Multi(ItemEntity):
     isdir: ClassVar[bool] = True
@@ -452,6 +445,7 @@ class Multi(ItemEntity):
     def __init__(self, *, parent: ItemsCollection, item_data: Dict, **kwargs) -> None:
         super().__init__(parent=parent, item_data=item_data)
         self.url = self.plugin.routing.build_url("episodes", f"{self.item_id}/")
+        self.properties = {"subtype": "multi"}
 
     @property
     def videos(self) -> List["Episode"]:
@@ -459,12 +453,6 @@ class Multi(ItemEntity):
             Episode(parent=self, item_data=episode_item, index=i)
             for i, episode_item in enumerate(self.item["videos"], 1)
         ]
-
-    @property
-    def list_item(self) -> ExtendedListItem:
-        li = super().list_item
-        li.setProperty("subtype", "multi")
-        return li
 
     @property
     def video_info(self) -> Dict:
@@ -483,6 +471,7 @@ class Episode(PlayableItem):
         if self.title:
             self.li_title = f"{self.li_title} | {self.title}"
         self.watching_status = self.watching_info["status"]
+        self.properties = {"video_number": self.index}
 
     @property
     def video_info(self) -> Dict:
@@ -501,12 +490,6 @@ class Episode(PlayableItem):
     def watching_info(self) -> Dict:
         return self.parent.watching_info["videos"][int(self.index) - 1]
 
-    @property
-    def playable_list_item(self) -> ExtendedListItem:
-        li = super().playable_list_item
-        li.setProperties(video_number=self.index)
-        return li
-
 
 class Movie(PlayableItem):
     mediatype: ClassVar[str] = "movie"
@@ -514,6 +497,7 @@ class Movie(PlayableItem):
     def __init__(self, *, parent: ItemsCollection, item_data: Dict, **kwargs) -> None:
         super().__init__(parent=parent, item_data=item_data)
         self.url = self.plugin.routing.build_url("play", self.item_id)
+        self.properties = {"video_number": "1"}
 
     @cached_property
     def video_data(self) -> Dict:
@@ -535,12 +519,6 @@ class Movie(PlayableItem):
     @cached_property
     def watching_info(self) -> Dict:
         return self.plugin.client("watching").get(data={"id": self.item_id})["item"]["videos"][0]
-
-    @property
-    def playable_list_item(self) -> ExtendedListItem:
-        li = super().playable_list_item
-        li.setProperties(video_number=1)
-        return li
 
 
 CONTENT_TYPE_MAP = {
