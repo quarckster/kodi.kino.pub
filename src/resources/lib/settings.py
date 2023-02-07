@@ -6,7 +6,6 @@ import xbmcvfs
 
 
 class Settings:
-
     advancedsettings_file = xbmcvfs.translatePath("special://profile/advancedsettings.xml")
     defaults = {
         ("video", "playcountminimumpercent"): 90,
