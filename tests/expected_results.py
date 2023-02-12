@@ -2,7 +2,7 @@ NONACTIVATED_HOME = [
     {
         "file": "plugin://video.kino.pub/login/",
         "filetype": "file",
-        "label": "Активировать устройство",
+        "label": "Activate device",
         "type": "unknown",
     }
 ]
@@ -12,85 +12,85 @@ ACTIVATED_HOME = [
     {
         "file": "plugin://video.kino.pub/profile/",
         "filetype": "file",
-        "label": "Профиль",
+        "label": "Profile",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/search/all/",
         "filetype": "directory",
-        "label": "Поиск",
+        "label": "Search",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/bookmarks/",
         "filetype": "directory",
-        "label": "Закладки",
+        "label": "Bookmarks",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/watching/",
         "filetype": "directory",
-        "label": "Я смотрю",
+        "label": "I'm watching",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/watching_movies/",
         "filetype": "directory",
-        "label": "Недосмотренные",
+        "label": "Watching movies",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/items/all/fresh/",
         "filetype": "directory",
-        "label": "Последние",
+        "label": "Fresh",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/items/all/popular/",
         "filetype": "directory",
-        "label": "Популярные",
+        "label": "Popular",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/items/all/hot/",
         "filetype": "directory",
-        "label": "Горячие",
+        "label": "Hot",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/items/all/sort/",
         "filetype": "directory",
-        "label": "По рейтингу по убыванию",
+        "label": "By rating desc",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/tv/",
         "filetype": "directory",
-        "label": "ТВ",
+        "label": "TV",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/collections/",
         "filetype": "directory",
-        "label": "Подборки",
+        "label": "Collections",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/items/movies/",
         "filetype": "directory",
-        "label": "Фильмы",
+        "label": "Movies",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/items/serials/",
         "filetype": "directory",
-        "label": "Сериалы",
+        "label": "TV series",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/items/tvshow/",
         "filetype": "directory",
-        "label": "ТВ шоу",
+        "label": "TV show",
         "type": "unknown",
     },
     {
@@ -102,19 +102,19 @@ ACTIVATED_HOME = [
     {
         "file": "plugin://video.kino.pub/items/concerts/",
         "filetype": "directory",
-        "label": "Концерты",
+        "label": "Concerts",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/items/documovies/",
         "filetype": "directory",
-        "label": "Документальные фильмы",
+        "label": "Documentary",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/items/docuserials/",
         "filetype": "directory",
-        "label": "Документальные сериалы",
+        "label": "Documentary series",
         "type": "unknown",
     },
 ]
@@ -649,14 +649,14 @@ ITEMS_ALL = [
         "fanart": "",
         "file": "plugin://video.kino.pub/items/all/{sorting}/?page=2",
         "filetype": "directory",
-        "label": "[COLOR FFFFF000]Вперёд[/COLOR]",
+        "label": "[COLOR FFFFF000]Next[/COLOR]",
         "type": "unknown",
     },
     {
         "fanart": "",
         "file": "plugin://video.kino.pub/",
         "filetype": "directory",
-        "label": "[COLOR FFFFF000]Домой[/COLOR]",
+        "label": "[COLOR FFFFF000]Home[/COLOR]",
         "type": "unknown",
     },
 ]
@@ -1021,7 +1021,7 @@ HISTORY = [
     {
         "file": "plugin://video.kino.pub/new_search/all/",
         "filetype": "file",
-        "label": "Новый поиск",
+        "label": "New search",
         "type": "unknown",
     },
     {
@@ -1054,7 +1054,7 @@ EMPTY_HISTORY = [
     {
         "file": "plugin://video.kino.pub/new_search/all/",
         "filetype": "file",
-        "label": "Новый поиск",
+        "label": "New search",
         "type": "unknown",
     }
 ]
@@ -1063,43 +1063,43 @@ BASIC_HEADINGS = [
     {
         "file": "plugin://video.kino.pub/items/{item}/search/",
         "filetype": "directory",
-        "label": "Поиск",
+        "label": "Search",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/items/{item}/fresh/",
         "filetype": "directory",
-        "label": "Последние",
+        "label": "Fresh",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/items/{item}/hot/",
         "filetype": "directory",
-        "label": "Горячие",
+        "label": "Hot",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/items/{item}/popular/",
         "filetype": "directory",
-        "label": "Популярные",
+        "label": "Popular",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/items/{item}/alphabet/",
         "filetype": "directory",
-        "label": "По алфавиту",
+        "label": "Alphabet",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/items/{item}/genres/",
         "filetype": "directory",
-        "label": "Жанры",
+        "label": "Genres",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/items/{item}/sort/",
         "filetype": "directory",
-        "label": "По рейтингу по убыванию",
+        "label": "By rating desc",
         "type": "unknown",
     },
 ]
@@ -1108,19 +1108,19 @@ COLLECTIONS_HEADINGS = [
     {
         "file": "plugin://video.kino.pub/collections/created/",
         "filetype": "directory",
-        "label": "Последние",
+        "label": "Fresh",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/collections/watchers/",
         "filetype": "directory",
-        "label": "Просматриваемые",
+        "label": "Hot",
         "type": "unknown",
     },
     {
         "file": "plugin://video.kino.pub/collections/views/",
         "filetype": "directory",
-        "label": "Популярные",
+        "label": "Popular",
         "type": "unknown",
     },
 ]
@@ -1129,7 +1129,7 @@ BOOKMARKS = [
     {
         "file": "plugin://video.kino.pub/create_bookmarks_folder",
         "filetype": "file",
-        "label": "Создать папку",
+        "label": "Make a folder",
         "type": "unknown",
     },
     {
