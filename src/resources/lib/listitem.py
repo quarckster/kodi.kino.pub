@@ -10,6 +10,8 @@ from xbmcgui import ListItem
 if TYPE_CHECKING:
     from resources.lib.plugin import Plugin
 
+from resources.lib.utils import localize
+
 
 class ExtendedListItem(ListItem):
     def __new__(cls, name: str, label2: str = "", path: str = "", **kwargs) -> "ExtendedListItem":
@@ -56,7 +58,8 @@ class ExtendedListItem(ListItem):
         if is_subscribed == "":
             return
         is_subscribed = is_subscribed == "True"
-        label = "Не буду смотреть" if is_subscribed else "Буду смотреть"
+        # Won't watch, Will watch
+        label = localize(32009) if is_subscribed else localize(32010)
         url = self.plugin.routing.build_url(
             "toggle_watchlist", self.getProperty("id"), added=int(not is_subscribed)
         )
@@ -68,7 +71,8 @@ class ExtendedListItem(ListItem):
         video_number = self.getVideoInfoTag().getEpisode()
         video_number = video_number if video_number != -1 else 1
         watched = int(self.getVideoInfoTag().getPlayCount()) > 0
-        label = "Отметить как непросмотренное" if watched else "Отметить как просмотренное"
+        # Mark as unseen, Mark as seen
+        label = localize(32011) if watched else localize(32012)
         if self.getVideoInfoTag().getMediaType() == "tvshow":
             return
         elif self.getVideoInfoTag().getMediaType() == "season":
@@ -86,20 +90,23 @@ class ExtendedListItem(ListItem):
         if self.getVideoInfoTag().getMediaType() == "season":
             return
         item_id = self.getProperty("id")
-        label = "Изменить закладки"
+        # Change bookmarks
+        label = localize(32013)
         url = self.plugin.routing.build_url("edit_bookmarks", item_id)
         menu_items.append((label, f"Container.Update({url})"))
 
     def _addCommentsContextMenuItem(self, menu_items: List[Tuple[str, str]]) -> None:
         item_id = self.getProperty("id")
-        label = "Комментарии KinoPub"
+        # kino.pub comments
+        label = localize(32014)
         url = self.plugin.routing.build_url("comments", item_id)
         menu_items.append((label, f"Container.Update({url})"))
 
     def _addSimilarContextMenuItem(self, menu_items: List[Tuple[str, str]]) -> None:
         item_id = self.getProperty("id")
         title = self.getLabel()
-        label = "Похожие фильмы"
+        # Similar movies
+        label = localize(32015)
         url = self.plugin.routing.build_url("similar", item_id, title=title)
         menu_items.append((label, f"Container.Update({url})"))
 

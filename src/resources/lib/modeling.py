@@ -19,6 +19,7 @@ from resources.lib.listitem import ExtendedListItem
 if TYPE_CHECKING:
     from resources.lib.plugin import Plugin
 from resources.lib.utils import cached_property
+from resources.lib.utils import localize
 from resources.lib.utils import popup_warning
 
 
@@ -273,7 +274,8 @@ class PlayableItem(ItemEntity):
         urls_list = natural_sort(list(flatten_urls_dict.keys()))
         if ask_quality == "true":
             dialog = xbmcgui.Dialog()
-            result = dialog.select("Выберите качество видео", urls_list)
+            # Choose video quality
+            result = dialog.select(localize(32043), urls_list)
             if result == -1:
                 sys.exit()
             else:
@@ -305,7 +307,8 @@ class PlayableItem(ItemEntity):
         if self.plugin.is_hls_enabled:
             helper = inputstreamhelper.Helper("hls")
             if not helper.check_inputstream():
-                popup_warning("HLS поток не поддерживается")
+                # HLS stream is not supported
+                popup_warning(localize(32044))
                 return {}
             else:
                 return {
@@ -358,7 +361,8 @@ class TVShow(ItemEntity):
             **super().video_info,
             "trailer": self.trailer_url,
             "mediatype": self.mediatype,
-            "status": "окончен" if self.item["finished"] else "в эфире",
+            # ended, on air
+            "status": localize(32045) if self.item["finished"] else localize(32046),
         }
 
     @property

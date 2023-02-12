@@ -2,6 +2,7 @@ from typing import Any
 from typing import Callable
 from typing import Type
 
+import xbmcaddon
 import xbmcgui
 
 
@@ -30,3 +31,6 @@ class cached_property:  # noqa
             return self
         value = obj.__dict__[self.func.__name__] = self.func(obj)
         return value
+
+
+localize = xbmcaddon.Addon().getLocalizedString

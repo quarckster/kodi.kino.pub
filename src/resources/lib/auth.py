@@ -14,7 +14,9 @@ import xbmcgui
 
 if TYPE_CHECKING:
     from resources.lib.plugin import Plugin
-from resources.lib.utils import cached_property, popup_error
+from resources.lib.utils import cached_property
+from resources.lib.utils import localize
+from resources.lib.utils import popup_error
 
 
 class AuthException(Exception):
@@ -57,7 +59,8 @@ class AuthDialog:
         self._dialog.update(position)
 
     def show(self, text: str) -> None:
-        self._dialog.create("Активация устройства", text)
+        # Device activation
+        self._dialog.create(localize(32001), text)
 
     @property
     def iscanceled(self) -> bool:
@@ -93,7 +96,8 @@ class Auth:
                 if error and error == "authorization_pending":
                     raise AuthPendingException
                 if error:
-                    popup_error("Ошибка аутентификации")
+                    # Authentication error
+                    popup_error(localize(32002))
                     raise AuthException(error)
                 return response
             # server can respond with 429 status, so we just wait until it gives a correct response
@@ -106,7 +110,8 @@ class Auth:
                 self.plugin.logger.fatal(
                     f"Oauth request error; status: {e.code}; message: {e.message}"
                 )
-                popup_error("Активация не удалась")
+                # Authentication failed
+                popup_error(localize(32003))
                 sys.exit()
 
     def _get_device_code(self) -> Dict[str, Any]:
@@ -194,8 +199,9 @@ class Auth:
     def _activate(self) -> None:
         resp = self._get_device_code()
         self._auth_dialog.show(
-            f"Откройте [B]{resp['verification_uri']}[/B]\n"
-            f"и введите следующий код: [B]{resp['user_code']}[/B]",
+            # Open and enter the code
+            f"{localize(32004)} [B]{resp['verification_uri']}[/B]\n"
+            f"{localize(32005)}: [B]{resp['user_code']}[/B]",
         )
         self._verify_device_code(resp["refresh_interval"], resp["device_code"])
 
