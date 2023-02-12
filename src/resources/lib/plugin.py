@@ -25,6 +25,7 @@ from resources.lib.modeling import TVShow
 from resources.lib.routing import Routing
 from resources.lib.search_history import SearchHistory
 from resources.lib.settings import Settings
+from resources.lib.utils import localize
 
 
 try:
@@ -89,56 +90,56 @@ class Plugin:
     def _main_menu_items(self) -> List[MainMenuItem]:
         return [
             MainMenuItem(
-                "Профиль",
+                localize(32047),
                 self.routing.build_url("profile/"),
                 self.routing.build_icon_path("profile"),
                 False,
                 True,
             ),
             MainMenuItem(
-                "Поиск",
+                localize(32019),
                 self.routing.build_url("search", "all/"),
                 self.routing.build_icon_path("search"),
                 True,
                 self.settings.show_search,
             ),
             MainMenuItem(
-                "Закладки",
+                localize(32048),
                 self.routing.build_url("bookmarks/"),
                 self.routing.build_icon_path("bookmarks"),
                 True,
                 True,
             ),
             MainMenuItem(
-                "Я смотрю",
+                localize(32049),
                 self.routing.build_url("watching/"),
                 self.routing.build_icon_path("watching"),
                 True,
                 True,
             ),
             MainMenuItem(
-                "Недосмотренные",
+                localize(32050),
                 self.routing.build_url("watching_movies/"),
                 self.routing.build_icon_path("watching_movies"),
                 True,
                 True,
             ),
             MainMenuItem(
-                "Последние",
+                localize(32020),
                 self.routing.build_url("items", "all", "fresh/"),
                 self.routing.build_icon_path("fresh"),
                 True,
                 self.settings.show_last,
             ),
             MainMenuItem(
-                "Популярные",
+                localize(32022),
                 self.routing.build_url("items", "all", "popular/"),
                 self.routing.build_icon_path("popular"),
                 True,
                 self.settings.show_popular,
             ),
             MainMenuItem(
-                "Горячие",
+                localize(32021),
                 self.routing.build_url("items", "all", "hot/"),
                 self.routing.build_icon_path("hot"),
                 True,
@@ -152,35 +153,35 @@ class Plugin:
                 self.settings.show_sort,
             ),
             MainMenuItem(
-                "ТВ",
+                localize(32051),
                 self.routing.build_url("tv/"),
                 self.routing.build_icon_path("tv"),
                 True,
                 self.settings.show_tv,
             ),
             MainMenuItem(
-                "Подборки",
+                localize(32052),
                 self.routing.build_url("collections/"),
                 self.routing.build_icon_path("collections"),
                 True,
                 self.settings.show_collections,
             ),
             MainMenuItem(
-                "Фильмы",
+                localize(32053),
                 self.routing.build_url("items", "movies/"),
                 self.routing.build_icon_path("movies"),
                 True,
                 self.settings.show_movies,
             ),
             MainMenuItem(
-                "Сериалы",
+                localize(32054),
                 self.routing.build_url("items", "serials/"),
                 self.routing.build_icon_path("serials"),
                 True,
                 self.settings.show_serials,
             ),
             MainMenuItem(
-                "ТВ шоу",
+                localize(32055),
                 self.routing.build_url("items", "tvshow/"),
                 self.routing.build_icon_path("tvshows"),
                 True,
@@ -194,21 +195,21 @@ class Plugin:
                 self.settings.show_3d,
             ),
             MainMenuItem(
-                "Концерты",
+                localize(32056),
                 self.routing.build_url("items", "concerts/"),
                 self.routing.build_icon_path("concerts"),
                 True,
                 self.settings.show_concerts,
             ),
             MainMenuItem(
-                "Документальные фильмы",
+                localize(32057),
                 self.routing.build_url("items", "documovies/"),
                 self.routing.build_icon_path("documovies"),
                 True,
                 self.settings.show_documovies,
             ),
             MainMenuItem(
-                "Документальные сериалы",
+                localize(32058),
                 self.routing.build_url("items", "docuserials/"),
                 self.routing.build_icon_path("docuserials"),
                 True,
@@ -218,25 +219,14 @@ class Plugin:
 
     @property
     def sorting_title(self) -> str:
-        return f"По {self.settings.sort_by} {self.settings.sort_direction}"
+        sd = self.settings.sorting_direction_title
+        sb = self.settings.sort_by_localized
+        # By
+        return f"{localize(32089)} {sb} {sd}"
 
     @property
     def sorting_params(self) -> Dict[str, str]:
-        sorting = {
-            "дате обновления": "updated",
-            "дате добавления": "created",
-            "году": "year",
-            "названию": "title",
-            "рейтингу": "rating",
-            "Кинопоиску": "kinopoisk_rating",
-            "IMDB": "imdb_rating",
-            "просмотрам": "views",
-            "зрителям": "watchers",
-        }
-        direction = {"по убыванию": "-", "по возрастанию": ""}
-        return {
-            "sort": f"{sorting[self.settings.sort_by]}{direction[self.settings.sort_direction]}"
-        }
+        return {"sort": f"{self.settings.sort_by}{self.settings.sorting_direction_param}"}
 
     def clear_window_property(self) -> None:
         xbmcgui.Window(10000).clearProperty("video.kino.pub-playback_data")

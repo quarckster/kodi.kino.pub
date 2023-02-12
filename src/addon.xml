@@ -8,7 +8,9 @@
     <provides>video</provides>
   </extension>
   <extension point="xbmc.addon.metadata">
-    <summary>kino.pub - онлайн-кинотеатр.</summary>
+    <summary lang="en_GB">kino.pub - online movie theater</summary>
+    <summary lang="ru_RU">kino.pub - онлайн кинотеатр</summary>
+    <summary lang="uk_UA">kino.pub - онлайн кінотеатр</summary>
     <platform>all</platform>
     <license>BSD-3-Clause</license>
     <source>https://github.com/quarckster/kodi.kino.pub</source>

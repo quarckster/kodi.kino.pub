@@ -15,6 +15,7 @@ from resources.lib.modeling import Multi
 from resources.lib.modeling import TVShow
 from resources.lib.player import Player
 from resources.lib.plugin import Plugin
+from resources.lib.utils import localize
 from resources.lib.utils import popup_info
 
 
@@ -40,15 +41,17 @@ def render_pagination(pagination: Optional[Dict[str, Any]]) -> None:
         if plugin.settings.exclude_anime == "true" and "start_from" in pagination:
             kwargs["start_from"] = pagination["start_from"]
         img = plugin.routing.build_icon_path("next_page")
+        # Next
         li = plugin.list_item(
-            name="[COLOR FFFFF000]Вперёд[/COLOR]", iconImage=img, thumbnailImage=img
+            name=f"[COLOR FFFFF000]{localize(32016)}[/COLOR]", iconImage=img, thumbnailImage=img
         )
         url = plugin.routing.add_kwargs_to_url(**kwargs)
         xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
         img = plugin.routing.build_icon_path("home")
         home_url = plugin.routing.build_url("/")
+        # Home
         li = plugin.list_item(
-            name="[COLOR FFFFF000]Домой[/COLOR]", iconImage=img, thumbnailImage=img
+            name=f"[COLOR FFFFF000]{localize(32017)}[/COLOR]", iconImage=img, thumbnailImage=img
         )
         xbmcplugin.addDirectoryItem(plugin.handle, home_url, li, True)
     xbmcplugin.endOfDirectory(plugin.handle)
@@ -95,8 +98,9 @@ def reset_auth() -> None:
 def index() -> None:
     """Main screen - show type list"""
     if not plugin.settings.access_token:
+        # Activate device
         li = plugin.list_item(
-            name="Активировать устройство", iconImage=plugin.routing.build_icon_path("activate")
+            name=localize(32018), iconImage=plugin.routing.build_icon_path("activate")
         )
         xbmcplugin.addDirectoryItem(plugin.handle, plugin.routing.build_url("login/"), li, False)
     else:
@@ -118,12 +122,12 @@ def render_heading(name: str, localized_name: str, content_type: str, is_dir: bo
 
 @plugin.routing.route("/items/<content_type>/")
 def headings(content_type: str) -> None:
-    render_heading("search", "Поиск", content_type, True)
-    render_heading("fresh", "Последние", content_type, True)
-    render_heading("hot", "Горячие", content_type, True)
-    render_heading("popular", "Популярные", content_type, True)
-    render_heading("alphabet", "По алфавиту", content_type, True)
-    render_heading("genres", "Жанры", content_type, True)
+    render_heading("search", localize(32019), content_type, True)
+    render_heading("fresh", localize(32020), content_type, True)
+    render_heading("hot", localize(32021), content_type, True)
+    render_heading("popular", localize(32022), content_type, True)
+    render_heading("alphabet", localize(32023), content_type, True)
+    render_heading("genres", localize(32024), content_type, True)
     render_heading("sort", plugin.sorting_title, content_type, True)
     xbmcplugin.endOfDirectory(plugin.handle)
 
@@ -206,7 +210,8 @@ def alphabet_items(content_type: str, letter: str) -> None:
 @plugin.routing.route("/new_search/<content_type>/")
 def new_search(content_type: str) -> None:
     kbd = xbmc.Keyboard()
-    kbd.setHeading("Поиск")
+    # Search
+    kbd.setHeading(localize(32019))
     kbd.doModal()
     if kbd.isConfirmed():
         title = kbd.getText()
@@ -218,7 +223,8 @@ def new_search(content_type: str) -> None:
 @plugin.routing.route("/search/<content_type>/")
 def search(content_type: str) -> None:
     img = plugin.routing.build_icon_path("search")
-    li = plugin.list_item(name="Новый поиск", iconImage=img, thumbnailImage=img)
+    # New search
+    li = plugin.list_item(name=localize(32025), iconImage=img, thumbnailImage=img)
     url = plugin.routing.build_url("new_search", f"{content_type}/")
     xbmcplugin.addDirectoryItem(plugin.handle, url, li, False)
 
@@ -244,7 +250,8 @@ def search_results(content_type: str) -> None:
 
 @plugin.routing.route("/clean_search_history/")
 def clean_search_history() -> None:
-    confirm = xbmcgui.Dialog().yesno("kino.pub", "Очистить историю поиска?")
+    # Clean search history?
+    confirm = xbmcgui.Dialog().yesno("kino.pub", localize(32026))
     if confirm:
         plugin.search_history.clean()
         xbmc.executebuiltin("Container.Refresh")
@@ -297,14 +304,16 @@ def play(item_id: str) -> None:
 def trailer(item_id: str) -> None:
     response = plugin.client("items/trailer").get(data={"id": item_id})
     url = response["trailer"][0]["url"]
-    li = plugin.list_item(name="Трейлер", path=url)
+    # Trailer
+    li = plugin.list_item(name=localize(32027), path=url)
     xbmcplugin.setResolvedUrl(plugin.handle, True, li)
 
 
 @plugin.routing.route("/bookmarks/")
 def bookmarks() -> None:
     img = plugin.routing.build_icon_path("create_bookmarks_folder")
-    li = plugin.list_item(name="Создать папку", iconImage=img, thumbnailImage=img)
+    # Make a folder
+    li = plugin.list_item(name=localize(32028), iconImage=img, thumbnailImage=img)
     url = plugin.routing.build_url("create_bookmarks_folder")
     xbmcplugin.addDirectoryItem(plugin.handle, url, li, False)
     response = plugin.client("bookmarks").get()
@@ -317,7 +326,8 @@ def bookmarks() -> None:
             properties={"folder-id": str(folder["id"]), "views": str(folder["views"])},
         )
         url = plugin.routing.build_url("remove_bookmarks_folder", folder["id"])
-        li.addContextMenuItems([("Удалить", f"RunPlugin({url})")])
+        # Delete
+        li.addContextMenuItems([(localize(32029), f"RunPlugin({url})")])
         url = plugin.routing.build_url("bookmarks", f"{folder['id']}/")
         xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
     xbmcplugin.endOfDirectory(plugin.handle)
@@ -353,17 +363,20 @@ def watching_movies() -> None:
 @plugin.routing.route("/collections/")
 def collections() -> None:
     img = plugin.routing.build_icon_path("fresh")
-    li = plugin.list_item(name="Последние", iconImage=img, thumbnailImage=img)
+    # Fresh
+    li = plugin.list_item(name=localize(32020), iconImage=img, thumbnailImage=img)
     url = plugin.routing.build_url("collections", "created/")
     xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
 
     img = plugin.routing.build_icon_path("hot")
-    li = plugin.list_item(name="Просматриваемые", iconImage=img, thumbnailImage=img)
+    # Hot
+    li = plugin.list_item(name=localize(32021), iconImage=img, thumbnailImage=img)
     url = plugin.routing.build_url("collections", "watchers/")
     xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
 
     img = plugin.routing.build_icon_path("popular")
-    li = plugin.list_item(name="Популярные", iconImage=img, thumbnailImage=img)
+    # Popular
+    li = plugin.list_item(name=localize(32022), iconImage=img, thumbnailImage=img)
     url = plugin.routing.build_url("collections", "views/")
     xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
 
@@ -405,9 +418,11 @@ def toggle_watchlist(item_id: str) -> None:
     added = int(plugin.kwargs["added"])
     plugin.client("watching/togglewatchlist").get(data={"id": item_id})
     if added:
-        popup_info('Сериал добавлен в список "Буду смотреть"')
+        # TV show has been added to the watchlist
+        popup_info(localize(32030))
     else:
-        popup_info('Сериал удалён из списка "Буду смотреть"')
+        # TV show has been removed from the watchlist
+        popup_info(localize(32031))
     plugin.clear_window_property()
     xbmc.executebuiltin("Container.Refresh")
 
@@ -420,7 +435,8 @@ def edit_bookmarks(item_id: str) -> None:
     item_folders = [f["title"] for f in item_folders_resp["folders"]]
     preselect = [all_folders.index(f) for f in item_folders]
     dialog = xbmcgui.Dialog()
-    indexes = dialog.multiselect("Папки закладок", all_folders, preselect=preselect)
+    # Bookmarks folders
+    indexes = dialog.multiselect(localize(32032), all_folders, preselect=preselect)
     # Cancel button was pressed
     if indexes is None:
         return
@@ -442,7 +458,8 @@ def edit_bookmarks(item_id: str) -> None:
         plugin.client("bookmarks/remove-item").post(
             data={"item": item_id, "folder": get_folder_id(folder)}
         )
-    popup_info("Закладки для видео изменены")
+    # Bookmarks have been changed
+    popup_info(localize(32033))
 
 
 @plugin.routing.route("/remove_bookmarks_folder/<folder_id>")
@@ -454,7 +471,8 @@ def remove_bookmarks_folder(folder_id: str) -> None:
 @plugin.routing.route("/create_bookmarks_folder")
 def create_bookmarks_folder() -> None:
     kbd = xbmc.Keyboard()
-    kbd.setHeading("Имя папки закладок")
+    # Bookmarks folder name
+    kbd.setHeading(localize(32034))
     kbd.doModal()
     if kbd.isConfirmed():
         title = kbd.getText()
@@ -467,12 +485,14 @@ def profile() -> None:
     user_data = plugin.client("user").get()["user"]
     reg_date = date.fromtimestamp(user_data["reg_date"])
     dialog = xbmcgui.Dialog()
+    # User name, Registration date, Subscription days remaining
     message = (
-        f"Имя пользователя: [B]{user_data['username']}[/B]\n"
-        f"Дата регистрации: [B]{reg_date:%d.%m.%Y}[/B]\n"
-        f"Остаток дней подписки: [B]{int(user_data['subscription']['days'])}[/B]"
+        f"{localize(32035)}: [B]{user_data['username']}[/B]\n"
+        f"{localize(32036)}: [B]{reg_date:%d.%m.%Y}[/B]\n"
+        f"{localize(32037)}: [B]{int(user_data['subscription']['days'])}[/B]"
     )
-    dialog.ok("Информация о профиле", message)
+    # Account data
+    dialog.ok(localize(32038), message)
 
 
 @plugin.routing.route("/comments/<item_id>")
@@ -480,7 +500,8 @@ def comments(item_id: str) -> None:
     response = plugin.client("items/comments").get(data={"id": item_id})
     comments = response["comments"]
     title = response["item"]["title"]
-    message = "" if comments else "Пока тут пусто"
+    # It's empty here
+    message = "" if comments else localize(32039)
     for i in comments:
         if int(i["rating"]) > 0:
             rating = f" [COLOR FF00B159](+{i['rating']})[/COLOR]"
@@ -492,7 +513,8 @@ def comments(item_id: str) -> None:
             message, i["user"]["name"], rating, i["message"].replace("\n", " ")
         )
     dialog = xbmcgui.Dialog()
-    dialog.textviewer(f'Комментарии "{title}"', message)
+    # Comments
+    dialog.textviewer(f'{localize(32040)} "{title}"', message)
 
 
 @plugin.routing.route("/similar/<item_id>")
@@ -500,7 +522,8 @@ def similar(item_id: str) -> None:
     response = plugin.items.get("items/similar", data={"id": item_id})
     if not response.items:
         dialog = xbmcgui.Dialog()
-        dialog.ok(f"Похожие фильмы: {plugin.kwargs['title']}", "Пока тут пусто")
+        # Similar movies, It's empty here
+        dialog.ok(f"{localize(32015)}: {plugin.kwargs['title']}", localize(32039))
     else:
         render_items(response.items, "movie")
         xbmcplugin.endOfDirectory(plugin.handle, cacheToDisc=False)
@@ -510,6 +533,7 @@ def similar(item_id: str) -> None:
 def install_inputstream_helper() -> None:
     try:
         xbmcaddon.Addon("script.module.inputstreamhelper")
-        popup_info("inputstream helper установлен")
+        # InputStream helper has been installed
+        popup_info(localize(32042))
     except RuntimeError:
         xbmc.executebuiltin("InstallAddon(script.module.inputstreamhelper)")
