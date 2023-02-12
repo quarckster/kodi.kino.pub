@@ -1,0 +1,373 @@
+# Kodi Media Center language file
+# Addon Name: kino.pub
+# Addon id: video.kino.pub
+# Addon Provider: quarckster
+msgid ""
+msgstr ""
+"Project-Id-Version: KODI Main\n"
+"Report-Msgid-Bugs-To: https://github.com/quarckster/kodi.kino.pub/issues/\n"
+"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2023-02-11 00:00+0000\n"
+"Last-Translator: Dmitry Misharov <mail@misharov.pro>\n"
+"Language-Team: LANGUAGE\n"
+"Language: uk_ua\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
+
+msgctxt "#32001"
+msgid "Device activation"
+msgstr "Активація пристрою"
+
+msgctxt "#32002"
+msgid "Authentication error"
+msgstr "Помилка аутентифікації"
+
+msgctxt "#32003"
+msgid "Authentication failed"
+msgstr "Активація не вдалася"
+
+msgctxt "#32004"
+msgid "Open"
+msgstr "Відкрийте"
+
+msgctxt "#32005"
+msgid "and enter the code"
+msgstr "та введіть код"
+
+msgctxt "#32006"
+msgid "Server response status code"
+msgstr "Код відповіді серверу"
+
+msgctxt "#32007"
+msgid "Try again"
+msgstr "Спробуйте ще раз"
+
+msgctxt "#32008"
+msgid "kino.pub does not respond"
+msgstr "Не вдалося отримати відповідь від kino.pub"
+
+msgctxt "#32009"
+msgid "Won't watch"
+msgstr "Не буду дивитись"
+
+msgctxt "#32010"
+msgid "Will watch"
+msgstr "Буду дивитись"
+
+msgctxt "#32011"
+msgid "Mark as unseen"
+msgstr "Відмітити як непереглянуте"
+
+msgctxt "#32012"
+msgid "Mark as seen"
+msgstr "Відмітити як переглянуте"
+
+msgctxt "#32013"
+msgid "Change bookmarks"
+msgstr "Змінити закладку"
+
+msgctxt "#32014"
+msgid "kino.pub comments"
+msgstr "Коментарі kino.pub"
+
+msgctxt "#32015"
+msgid "Similar movies"
+msgstr "Схожі фільми"
+
+msgctxt "#32016"
+msgid "Next"
+msgstr "Вперед"
+
+msgctxt "#32017"
+msgid "Home"
+msgstr "Додому"
+
+msgctxt "#32018"
+msgid "Activate device"
+msgstr "Активувати пристрій"
+
+msgctxt "#32019"
+msgid "Search"
+msgstr "Пошук"
+
+msgctxt "#32020"
+msgid "Fresh"
+msgstr "Останні"
+
+msgctxt "#32021"
+msgid "Hot"
+msgstr "Гарячі"
+
+msgctxt "#32022"
+msgid "Popular"
+msgstr "Популярні"
+
+msgctxt "#32023"
+msgid "Alphabet"
+msgstr "За алфавітом"
+
+msgctxt "#32024"
+msgid "Genres"
+msgstr "Жанри"
+
+msgctxt "#32025"
+msgid "New search"
+msgstr "Новий пошук"
+
+msgctxt "#32026"
+msgid "Clean search history?"
+msgstr "Очистити історію пошуку"
+
+msgctxt "#32027"
+msgid "Trailer"
+msgstr "Tрейлер"
+
+msgctxt "#32028"
+msgid "Make a folder"
+msgstr "Створити папку"
+
+msgctxt "#32029"
+msgid "Delete"
+msgstr "Видалити"
+
+msgctxt "#32030"
+msgid "TV show has been added to the watchlist"
+msgstr "Серіал додано у список \"Буду дивитись\""
+
+msgctxt "#32031"
+msgid "TV show has been removed from the watchlist"
+msgstr "Серіал видалено зі списку \"Буду дивитись\""
+
+msgctxt "#32032"
+msgid "Bookmarks folders"
+msgstr "Папки закладок"
+
+msgctxt "#32033"
+msgid "Bookmarks have been changed"
+msgstr "Закладки для відео змінені"
+
+msgctxt "#32034"
+msgid "Bookmarks folder name"
+msgstr "Імʼя папки закладок"
+
+msgctxt "#32035"
+msgid "User name"
+msgstr "Імʼя користувача"
+
+msgctxt "#32036"
+msgid "Registration date"
+msgstr "Дата реєстрації"
+
+msgctxt "#32037"
+msgid "Subscription days remaining"
+msgstr "Залишилося днів підписки"
+
+msgctxt "#32038"
+msgid "Account data"
+msgstr "Данні аккаунту"
+
+msgctxt "#32039"
+msgid "It's empty here"
+msgstr "Наразі тут нічого нема"
+
+msgctxt "#32040"
+msgid "Comments"
+msgstr "Коментарі"
+
+msgctxt "#32042"
+msgid "InputStream helper has been installed"
+msgstr "inputstream helper встановлено"
+
+msgctxt "#32043"
+msgid "Choose video quality"
+msgstr "Оберіть якість відео"
+
+msgctxt "#32044"
+msgid "HLS stream is not supported"
+msgstr ""
+
+msgctxt "#32045"
+msgid "ended"
+msgstr "завершено"
+
+msgctxt "#32046"
+msgid "on air"
+msgstr "в ефірі"
+
+msgctxt "#32047"
+msgid "Profile"
+msgstr "Профіль"
+
+msgctxt "#32048"
+msgid "Bookmarks"
+msgstr "Закладки"
+
+msgctxt "#32049"
+msgid "I'm watching"
+msgstr "Я дивлюсь"
+
+msgctxt "#32050"
+msgid "Watching movies"
+msgstr "Додивитись"
+
+msgctxt "#32051"
+msgid "TV"
+msgstr "ТБ"
+
+msgctxt "#32052"
+msgid "Collections"
+msgstr "Підборки"
+
+msgctxt "#32053"
+msgid "Movies"
+msgstr "Фільми"
+
+msgctxt "#32054"
+msgid "TV series"
+msgstr "Серіали"
+
+msgctxt "#32055"
+msgid "TV show"
+msgstr "ТБ шоу"
+
+msgctxt "#32056"
+msgid "Concerts"
+msgstr "Концерти"
+
+msgctxt "#32057"
+msgid "Documentary"
+msgstr "Документальні фільми"
+
+msgctxt "#32058"
+msgid "Documentary series"
+msgstr "Документальні серіали"
+
+msgctxt "#32059"
+msgid "last update"
+msgstr "останні оновлення"
+
+msgctxt "#32060"
+msgid "adding date"
+msgstr "дата додання"
+
+msgctxt "#32061"
+msgid "year"
+msgstr "за роком"
+
+msgctxt "#32062"
+msgid "title"
+msgstr "назвою"
+
+msgctxt "#32063"
+msgid "rating"
+msgstr "рейтингом"
+
+msgctxt "#32064"
+msgid "Kinopoisk rating"
+msgstr "Kinopoisk"
+
+msgctxt "#32065"
+msgid "views"
+msgstr "переглядами"
+
+msgctxt "#32066"
+msgid "watchers"
+msgstr "глядачами"
+
+msgctxt "#32067"
+msgid "desc"
+msgstr "за убуванням"
+
+msgctxt "#32068"
+msgid "asc"
+msgstr "за зростанням"
+
+msgctxt "#32069"
+msgid "General"
+msgstr "Загальні"
+
+msgctxt "#32070"
+msgid "Video quality"
+msgstr "Якість відео"
+
+msgctxt "#32071"
+msgid "Streaming type"
+msgstr "Тип стримінгу"
+
+msgctxt "#32072"
+msgid "CDN location"
+msgstr "Локація CDN"
+
+msgctxt "#32073"
+msgid "Russia"
+msgstr "Росія"
+
+msgctxt "#32074"
+msgid "Netherlands"
+msgstr "Нідерланди"
+
+msgctxt "#32075"
+msgid "Ask about video quality"
+msgstr "Питати про якість відео"
+
+msgctxt "#32076"
+msgid "Mark videos with ads"
+msgstr "Відмічати відео з рекламою"
+
+msgctxt "#32077"
+msgid "Exclude anime"
+msgstr "Виключити аніме"
+
+msgctxt "#32078"
+msgid "InputStream Adaptive required"
+msgstr ""
+
+msgctxt "#32079"
+msgid "Use InputStream Adaptive"
+msgstr ""
+
+msgctxt "#32080"
+msgid "Install InputStream helper"
+msgstr "Встановити InputStream helper"
+
+msgctxt "#32081"
+msgid "Sorting"
+msgstr "Сортування"
+
+msgctxt "#32082"
+msgid "Sort by"
+msgstr "Сортувати за"
+
+msgctxt "#32083"
+msgid "Sort direction"
+msgstr "Напрям сортирування"
+
+msgctxt "#32084"
+msgid "Search history settings"
+msgstr "Налаштування історії пошуку"
+
+msgctxt "#32085"
+msgid "Search history entries"
+msgstr "Кількість записів в історії пошуку"
+
+msgctxt "#32086"
+msgid "Reset search history"
+msgstr "Очистити історію пошуку"
+
+msgctxt "#32087"
+msgid "Reset auth"
+msgstr "Збити аутентифікацію"
+
+msgctxt "#32088"
+msgid "Main menu elements"
+msgstr "Елементи головного меню"
+
+msgctxt "#32089"
+msgid "By"
+msgstr "За"
+
+msgctxt "#32090"
+msgid "IMDB"
+msgstr ""

@@ -1,0 +1,373 @@
+# Kodi Media Center language file
+# Addon Name: kino.pub
+# Addon id: video.kino.pub
+# Addon Provider: quarckster
+msgid ""
+msgstr ""
+"Project-Id-Version: KODI Main\n"
+"Report-Msgid-Bugs-To: https://github.com/quarckster/kodi.kino.pub/issues/\n"
+"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2023-02-11 00:00+0000\n"
+"Last-Translator: Dmitry Misharov <mail@misharov.pro>\n"
+"Language-Team: LANGUAGE\n"
+"Language: ru_ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+msgctxt "#32001"
+msgid "Device activation"
+msgstr "Активация устройства"
+
+msgctxt "#32002"
+msgid "Authentication error"
+msgstr "Ошибка аутентификации"
+
+msgctxt "#32003"
+msgid "Authentication failed"
+msgstr "Активация не удалась"
+
+msgctxt "#32004"
+msgid "Open"
+msgstr "Откройте"
+
+msgctxt "#32005"
+msgid "and enter the code"
+msgstr "и введите следующий код"
+
+msgctxt "#32006"
+msgid "Server response status code"
+msgstr "Код ответа сервера"
+
+msgctxt "#32007"
+msgid "Try again"
+msgstr "Попробуйте ещё раз"
+
+msgctxt "#32008"
+msgid "kino.pud does not respond"
+msgstr "Не удалось получить ответ от kino.pub"
+
+msgctxt "#32009"
+msgid "Won't watch"
+msgstr "Не буду смотреть"
+
+msgctxt "#32010"
+msgid "Will watch"
+msgstr "Буду смотреть"
+
+msgctxt "#32011"
+msgid "Mark as unseen"
+msgstr "Отметить как непросмотренное"
+
+msgctxt "#32012"
+msgid "Mark as seen"
+msgstr "Отметить как просмотренное"
+
+msgctxt "#32013"
+msgid "Change bookmarks"
+msgstr "Изменить закладки"
+
+msgctxt "#32014"
+msgid "kino.pub comments"
+msgstr "Комментарии kino.pub"
+
+msgctxt "#32015"
+msgid "Similar movies"
+msgstr "Похожие фильмы"
+
+msgctxt "#32016"
+msgid "Next"
+msgstr "Вперёд"
+
+msgctxt "#32017"
+msgid "Home"
+msgstr "Домой"
+
+msgctxt "#32018"
+msgid "Activate device"
+msgstr "Активировать устройство"
+
+msgctxt "#32019"
+msgid "Search"
+msgstr "Поиск"
+
+msgctxt "#32020"
+msgid "Fresh"
+msgstr "Последние"
+
+msgctxt "#32021"
+msgid "Hot"
+msgstr "Горячие"
+
+msgctxt "#32022"
+msgid "Popular"
+msgstr "Популярные"
+
+msgctxt "#32023"
+msgid "Alphabet"
+msgstr "По алфавиту"
+
+msgctxt "#32024"
+msgid "Genres"
+msgstr "Жанры"
+
+msgctxt "#32025"
+msgid "New search"
+msgstr "Новый поиск"
+
+msgctxt "#32026"
+msgid "Clean search history?"
+msgstr "Очистить историю поиска?"
+
+msgctxt "#32027"
+msgid "Trailer"
+msgstr "Трейлер"
+
+msgctxt "#32028"
+msgid "Make a folder"
+msgstr "Создать папку"
+
+msgctxt "#32029"
+msgid "Delete"
+msgstr "Удалить"
+
+msgctxt "#32030"
+msgid "TV Show has been added to the watchlist"
+msgstr "Сериал добавлен в список \"Буду смотреть\""
+
+msgctxt "#32031"
+msgid "TV Show has been removed from the watchlist"
+msgstr "Сериал удалён из списка \"Буду смотреть\""
+
+msgctxt "#32032"
+msgid "Bookmarks folders"
+msgstr "Папки закладок"
+
+msgctxt "#32033"
+msgid "Bookmarks have been changed"
+msgstr "Закладки для видео изменены"
+
+msgctxt "#32034"
+msgid "Bookmarks folder name"
+msgstr "Имя папки закладок"
+
+msgctxt "#32035"
+msgid "User name"
+msgstr "Имя пользователя"
+
+msgctxt "#32036"
+msgid "Registration date"
+msgstr "Дата регистрации"
+
+msgctxt "#32037"
+msgid "Subscription days remaining"
+msgstr "Остаток дней подписки"
+
+msgctxt "#32038"
+msgid "Account data"
+msgstr "Информация об учётной записи"
+
+msgctxt "#32039"
+msgid "It's empty here"
+msgstr "Пока тут пусто"
+
+msgctxt "#32040"
+msgid "Comments"
+msgstr "Комментарии"
+
+msgctxt "#32042"
+msgid "inputstream helper has been installed"
+msgstr "inputstream helper установлен"
+
+msgctxt "#32043"
+msgid "Choose video quality"
+msgstr "Выберите качество видео"
+
+msgctxt "#32044"
+msgid "HLS stream is not supported"
+msgstr "HLS поток не поддерживается"
+
+msgctxt "#32045"
+msgid "ended"
+msgstr "окончен"
+
+msgctxt "#32046"
+msgid "on air"
+msgstr "в эфире"
+
+msgctxt "#32047"
+msgid "Profile"
+msgstr "Профиль"
+
+msgctxt "#32048"
+msgid "Bookmarks"
+msgstr "Закладки"
+
+msgctxt "#32049"
+msgid "I'm watching"
+msgstr "Я смотрю"
+
+msgctxt "#32050"
+msgid "Watching movies"
+msgstr "Недосмотренные"
+
+msgctxt "#32051"
+msgid "TV"
+msgstr "ТВ"
+
+msgctxt "#32052"
+msgid "Collections"
+msgstr "Подборки"
+
+msgctxt "#32053"
+msgid "Movies"
+msgstr "Фильмы"
+
+msgctxt "#32054"
+msgid "TV Series"
+msgstr "Сериалы"
+
+msgctxt "#32055"
+msgid "TV Show"
+msgstr "ТВ шоу"
+
+msgctxt "#32056"
+msgid "Concerts"
+msgstr "Концерты"
+
+msgctxt "#32057"
+msgid "Documentary"
+msgstr "Документальные фильмы"
+
+msgctxt "#32058"
+msgid "Documentary series"
+msgstr "Документальные сериалы"
+
+msgctxt "#32059"
+msgid "last update"
+msgstr "дате обновления"
+
+msgctxt "#32060"
+msgid "adding date"
+msgstr "дате добавления"
+
+msgctxt "#32061"
+msgid "year"
+msgstr "году"
+
+msgctxt "#32062"
+msgid "title"
+msgstr "названию"
+
+msgctxt "#32063"
+msgid "rating"
+msgstr "рейтингу"
+
+msgctxt "#32064"
+msgid "Kinopoisk rating"
+msgstr "Кинопоиску"
+
+msgctxt "#32065"
+msgid "views"
+msgstr "просмотрам"
+
+msgctxt "#32066"
+msgid "watchers"
+msgstr "зрителям"
+
+msgctxt "#32067"
+msgid "desc"
+msgstr "по убыванию"
+
+msgctxt "#32068"
+msgid "asc"
+msgstr "по возрастанию"
+
+msgctxt "#32069"
+msgid "General"
+msgstr "Общие"
+
+msgctxt "#32070"
+msgid "Video quality"
+msgstr "Качество видео"
+
+msgctxt "#32071"
+msgid "Streaming type"
+msgstr "Тип стриминга"
+
+msgctxt "#32072"
+msgid "CDN location"
+msgstr "Локация CDN"
+
+msgctxt "#32073"
+msgid "Russia"
+msgstr "Россия"
+
+msgctxt "#32074"
+msgid "Netherlands"
+msgstr "Нидерланды"
+
+msgctxt "#32075"
+msgid "Ask about video quality"
+msgstr "Спрашивать о качестве видео"
+
+msgctxt "#32076"
+msgid "Mark videos with ads"
+msgstr "Отмечать видео с рекламой"
+
+msgctxt "#32077"
+msgid "Exclude anime"
+msgstr "Исключить аниме"
+
+msgctxt "#32078"
+msgid "InputStream Adaptive required"
+msgstr "Требуется InputStream Adaptive"
+
+msgctxt "#32079"
+msgid "Use InputStream Adaptive"
+msgstr "Использовать InputStream Adaptive"
+
+msgctxt "#32080"
+msgid "Install InputStream helper"
+msgstr "Установить InputStream helper"
+
+msgctxt "#32081"
+msgid "Sorting"
+msgstr "Сортировка"
+
+msgctxt "#32082"
+msgid "Sort by"
+msgstr "Сортировать по"
+
+msgctxt "#32083"
+msgid "Sort direction"
+msgstr "Направление сортировки"
+
+msgctxt "#32084"
+msgid "Search history settings"
+msgstr "Настройки истории поиска"
+
+msgctxt "#32085"
+msgid "Search history entries"
+msgstr "Количество записей в истории поиска"
+
+msgctxt "#32086"
+msgid "Reset search history"
+msgstr "Сбросить историю поиска"
+
+msgctxt "#32087"
+msgid "Reset auth"
+msgstr "Сбросить аутентификацию"
+
+msgctxt "#32088"
+msgid "Main menu elements"
+msgstr "Элементы главного меню"
+
+msgctxt "#32089"
+msgid "By"
+msgstr "По"
+
+msgctxt "#32090"
+msgid "IMDB"
+msgstr ""
