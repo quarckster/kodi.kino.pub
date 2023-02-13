@@ -24,6 +24,9 @@ jobs:
 
   tests-integration:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        kodi-version: ["19", "20"]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
@@ -33,11 +36,11 @@ jobs:
       - name: Install deps
         run: pip install -r requirements_dev.txt
       - name: Pull conkodi container image
-        run: podman pull quay.io/quarck/conkodi:19
+        run: podman pull quay.io/quarck/conkodi:${{ matrix.kodi-version }}
       - name: Pull mockserver container image
         run: podman pull docker.io/mockserver/mockserver:mockserver-5.11.2
       - name: Set permissions
-        run: sudo chmod -R a+rwx tests/data
+        run: sudo chmod -R a+rw tests/data
       - name: Integration tests
         run: make test_integration
       - name: Kodi logs analysis
