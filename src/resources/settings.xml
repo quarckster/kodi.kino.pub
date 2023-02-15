@@ -26,10 +26,9 @@
                         <dependency type="enable" setting="ask_quality">false</dependency>
                     </dependencies>
                     <level>0</level>
-                    <default>http</default>
+                    <default>hls4</default>
                     <constraints>
                         <options>
-                            <option>http</option>
                             <option>hls</option>
                             <option>hls2</option>
                             <option>hls4</option>
