@@ -26,3 +26,13 @@ def test_settings_locs(monkeypatch, loc, settings_mod):
     monkeypatch.setattr(settings_mod.xbmcaddon, "Addon", addon_mock_class)
     settings = settings_mod.Settings()
     assert settings.loc == loc
+
+
+@pytest.mark.parametrize("direction", ["asc", "desc"])
+def test_settings_sorting_direction_param(monkeypatch, direction, settings_mod):
+    addon_mock = MagicMock()
+    addon_mock.getSetting = MagicMock(return_value=direction)
+    addon_mock_class = MagicMock(return_value=addon_mock)
+    monkeypatch.setattr(settings_mod.xbmcaddon, "Addon", addon_mock_class)
+    settings = settings_mod.Settings()
+    assert settings.sorting_direction_param == "" if direction == "asc" else "-"
