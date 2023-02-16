@@ -371,3 +371,7 @@ msgstr "За"
 msgctxt "#32090"
 msgid "IMDB"
 msgstr ""
+
+msgctxt "#32091"
+msgid "3D"
+msgstr ""
