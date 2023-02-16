@@ -116,8 +116,8 @@
                     <default>desc</default>
                     <constraints>
                         <options>
-                            <option label="32067">asc</option>
-                            <option label="32068">desc</option>
+                            <option label="32067">desc</option>
+                            <option label="32068">asc</option>
                         </options>
                     </constraints>
                     <control type="list" format="string">
