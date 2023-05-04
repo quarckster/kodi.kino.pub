@@ -251,6 +251,6 @@ class Plugin:
     def is_hls_enabled(self) -> bool:
         return (
             "hls" in self.settings.stream_type
-            and self.settings.inputstream_adaptive_enabled == "true"
+            and self.settings.use_inputstream_adaptive == "true"
             and inputstreamhelper
         )
