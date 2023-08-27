@@ -85,9 +85,9 @@ class RequestHandler(BaseHTTPRequestHandler):
                 continue
 
             resolution = (
-                    str(getattr(playlist, stream_info_property_name).resolution[0])
-                    + "x"
-                    + str(getattr(playlist, stream_info_property_name).resolution[1])
+                str(getattr(playlist, stream_info_property_name).resolution[0])
+                + "x"
+                + str(getattr(playlist, stream_info_property_name).resolution[1])
             )
             # If a stream with the same resolution is occurring more than once,
             # mark its first occurrence as an HEVC stream
