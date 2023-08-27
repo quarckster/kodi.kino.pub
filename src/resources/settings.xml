@@ -99,6 +99,15 @@
                         <close>true</close>
                     </control>
                 </setting>
+                <setting id="fix_hls_stream_manifest" type="boolean" label="32093" help="">
+                    <dependencies>
+                        <dependency type="enable" on="property" name="infobool">System.HasAddon(inputstream.adaptive)</dependency>
+                        <dependency type="enable" setting="use_inputstream_adaptive">true</dependency>
+                    </dependencies>
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
             </group>
             <group id="3" label="32081">
                 <setting id="sort_by" type="string" label="32082">

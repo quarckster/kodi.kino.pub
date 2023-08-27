@@ -6,6 +6,7 @@ from typing import Union
 import xbmc
 import xbmcgui
 
+from resources.lib import proxy
 from resources.lib.listitem import ExtendedListItem
 
 
@@ -59,6 +60,7 @@ class Player(xbmc.Player):
         return data
 
     def onPlayBackStarted(self) -> None:
+        proxy.stop(self.plugin)
         self.plugin.logger.debug("Playback started")
         self.plugin.clear_window_property()
         if self.should_refresh_token:

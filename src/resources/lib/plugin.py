@@ -247,6 +247,13 @@ class Plugin:
             item._plugin = self
         return item
 
+    def fix_hls_stream_manifest(self, stream_type):
+        return (
+            self.is_hls_enabled
+            and self.settings.fix_hls_stream_manifest == "true"
+            and (stream_type == "hls4" or stream_type == "hls2")
+        )
+
     @property
     def is_hls_enabled(self) -> bool:
         return (

@@ -69,7 +69,7 @@ class ItemsCollection:
         return self.plugin.client(f"items/{item_id}").get()["item"]
 
     def instantiate_from_item_id(
-        self, item_id: str, index: Optional[int] = None
+            self, item_id: str, index: Optional[int] = None
     ) -> Union["TVShow", "Multi", "Movie"]:
         item = self.plugin.get_window_property(item_id)
         if item:
@@ -78,7 +78,7 @@ class ItemsCollection:
         return self.instantiate_from_item_data(item_data, index)
 
     def instantiate_from_item_data(
-        self, item_data: Dict, index: Optional[int] = None
+            self, item_data: Dict, index: Optional[int] = None
     ) -> Union["TVShow", "Multi", "Movie"]:
         cls = Multi if item_data.get("subtype") == "multi" else CONTENT_TYPE_MAP[item_data["type"]]
         return cast(
@@ -86,10 +86,10 @@ class ItemsCollection:
         )
 
     def get_playable(
-        self,
-        item: Union["TVShow", "Multi", "Movie"],
-        season_index: Optional[str] = None,
-        index: Optional[str] = None,
+            self,
+            item: Union["TVShow", "Multi", "Movie"],
+            season_index: Optional[str] = None,
+            index: Optional[str] = None,
     ) -> Union["SeasonEpisode", "Episode", "Movie"]:
         if isinstance(item, TVShow) and season_index and index:
             return item.seasons[int(season_index) - 1].episodes[int(index) - 1]
@@ -100,7 +100,7 @@ class ItemsCollection:
 
     @typing.no_type_check
     def _get_anime_excluded(
-        self, endpoint: str, data: Dict, collection: Optional[Dict[str, List[Dict]]] = None
+            self, endpoint: str, data: Dict, collection: Optional[Dict[str, List[Dict]]] = None
     ) -> Dict[str, List[Dict]]:
         # init items collection
         collection = collection or {"items": []}
@@ -137,10 +137,10 @@ class ItemsCollection:
             )
             collection["items"].extend(items)
             collection["pagination"]["current"] = (
-                pagination["current"] - 1
+                    pagination["current"] - 1
             )  # start from current API page
             collection["pagination"]["start_from"] = (
-                last_item_index + 1
+                    last_item_index + 1
             )  # do not include last item to next page
 
         return collection

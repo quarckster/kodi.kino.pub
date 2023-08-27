@@ -10,6 +10,7 @@ import xbmcaddon
 import xbmcgui
 import xbmcplugin
 
+from resources.lib import proxy
 from resources.lib.modeling import ItemEntity
 from resources.lib.modeling import Multi
 from resources.lib.modeling import TVShow
@@ -293,6 +294,8 @@ def play(item_id: str) -> None:
     si = plugin.kwargs.get("season_index")
     i = plugin.kwargs.get("index")
     playable_li = plugin.items.get_playable(item, season_index=si, index=i).playable_list_item
+    if plugin.is_hls_enabled:
+        proxy.start(plugin)
     player = Player(list_item=playable_li)
     xbmcplugin.setResolvedUrl(plugin.handle, True, playable_li)
     while player.is_playing:

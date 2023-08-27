@@ -6,6 +6,7 @@
     <setting id="mark_advert" default="true">false</setting>
     <setting id="exclude_anime" default="true">false</setting>
     <setting id="inputstream_adaptive_enabled" default="true">false</setting>
+    <setting id="fix_hls_stream_manifest" default="true">false</setting>
     <setting id="inputstream_helper_install" default="true" />
     <setting id="sort_by" default="true">рейтингу</setting>
     <setting id="sort_direction" default="true">по убыванию</setting>

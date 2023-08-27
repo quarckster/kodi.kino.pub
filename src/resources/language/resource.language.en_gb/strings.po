@@ -379,3 +379,7 @@ msgstr ""
 msgctxt "#32092"
 msgid "Configure InputStream Adaptive"
 msgstr ""
+
+msgctxt "#32093"
+msgid "Fix HLS2/4 Stream-Manifest"
+msgstr ""
