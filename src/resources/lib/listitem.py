@@ -53,6 +53,13 @@ class ExtendedListItem(ListItem):
         if addContextMenuItems:
             self.addPredefinedContextMenuItems()
 
+    def _addInputstreamadaptivesettingsContextMenuItem(
+        self, menu_items: List[Tuple[str, str]]
+    ) -> None:
+        label = "InputStream Adaptive settings"
+        url = self.plugin.routing.build_url("inputstream_adaptive_settings", self.getProperty("id"))
+        menu_items.append((label, f"Container.Update({url})"))
+
     def _addWatchlistContextMenuItem(self, menu_items: List[Tuple[str, str]]) -> None:
         is_subscribed = self.getProperty("is_subscribed")
         if is_subscribed == "":
@@ -115,7 +122,19 @@ class ExtendedListItem(ListItem):
         menu_items.append(("─" * 21, ""))
 
     def addPredefinedContextMenuItems(self, items: Optional[List[str]] = None) -> None:
-        items = items or ["watched", "watchlist", "bookmarks", "comments", "similar", "separator"]
+        items = items or (
+            [
+                "watched",
+                "watchlist",
+                "bookmarks",
+                "comments",
+                "similar",
+                "inputstreamadaptivesettings",
+                "separator",
+            ]
+            if self.plugin.is_hls_enabled
+            else ["watched", "watchlist", "bookmarks", "comments", "similar", "separator"]
+        )
         menu_items: List[str] = []
         for item in items:
             getattr(self, f"_add{item.capitalize()}ContextMenuItem")(menu_items)

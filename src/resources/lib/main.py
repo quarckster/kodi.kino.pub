@@ -495,6 +495,11 @@ def profile() -> None:
     dialog.ok(localize(32038), message)
 
 
+@plugin.routing.route("/inputstream_adaptive_settings/<item_id>")
+def inputstream_adaptive_settings(item_id: str) -> None:
+    xbmcaddon.Addon("inputstream.adaptive").openSettings()
+
+
 @plugin.routing.route("/comments/<item_id>")
 def comments(item_id: str) -> None:
     response = plugin.client("items/comments").get(data={"id": item_id})
