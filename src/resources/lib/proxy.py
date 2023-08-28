@@ -71,13 +71,30 @@ class RequestHandler(BaseHTTPRequestHandler):
 
         # Update playlists only if none of playlist is defined as HEVC stream
         if not hdr_defined:
-            RequestHandler.update_playlists(master_playlist.playlists, "stream_info")
-            RequestHandler.update_playlists(master_playlist.iframe_playlists, "iframe_stream_info")
-
+            RequestHandler.update_stream_info(master_playlist.playlists, "stream_info")
+            RequestHandler.update_stream_info(
+                master_playlist.iframe_playlists, "iframe_stream_info"
+            )
+        RequestHandler.update_subtitle_info(master_playlist)
         return master_playlist.dumps().encode("utf-8")
 
     @staticmethod
-    def update_playlists(playlists, stream_info_property_name):
+    def update_subtitle_info(playlist):
+        # find base host to be used if subtitles uri is relative
+        base_host = None
+        for media_index, media in enumerate(playlist.media):
+            if media.type == "AUDIO":
+                uri = urllib.parse.urlparse(media.uri)
+                base_host = uri.scheme + "://" + uri.hostname
+
+        for media_index, media in enumerate(playlist.media):
+            if media.type == "SUBTITLES" and media.language is None:
+                media.language = media.name[:3]
+            if media.uri.startswith("/") and base_host is not None:
+                media.uri = base_host + media.uri
+
+    @staticmethod
+    def update_stream_info(playlists, stream_info_property_name):
         existed_streams = {}
         for index, playlist in enumerate(playlists):
             if getattr(playlist, stream_info_property_name).codecs == "hvc1.2.4.L150.B0,mp4a.40.2":
