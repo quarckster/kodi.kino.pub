@@ -269,7 +269,7 @@ class PlayableItem(ItemEntity):
 
         # filter-out the http-urls
         for quality, urls in files.items():
-            files[quality] = list(filter(lambda x: (x[0] != "http"), urls.items()))
+            files[quality] = dict(filter(lambda x: (x[0] != "http"), urls.items()))
 
         flatten_urls_dict = {
             f"{quality}@{stream}": url
