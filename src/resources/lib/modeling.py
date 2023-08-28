@@ -266,11 +266,17 @@ class PlayableItem(ItemEntity):
             return sorted(lines, key=alphanum_key)
 
         files = {f["quality"]: f["url"] for f in self.video_data["files"]}
+
+        # filter-out the http-urls
+        for quality, urls in files.items():
+            files[quality] = list(filter(lambda x: (x[0] != "http"), urls.items()))
+
         flatten_urls_dict = {
             f"{quality}@{stream}": url
             for quality, urls in files.items()
-            for stream, url in list(filter(lambda x: (x[0] != "http"), urls.items()))
+            for stream, url in urls.items()
         }
+
         urls_list = natural_sort(list(flatten_urls_dict.keys()))
         if ask_quality == "true":
             dialog = xbmcgui.Dialog()
