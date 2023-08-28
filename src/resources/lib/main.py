@@ -494,9 +494,8 @@ def profile() -> None:
     # Account data
     dialog.ok(localize(32038), message)
 
-
-@plugin.routing.route("/inputstream_adaptive_settings/<item_id>")
-def inputstream_adaptive_settings(item_id: str) -> None:
+@plugin.routing.route("/inputstream_adaptive_settings/")
+def inputstream_adaptive_settings() -> None:
     xbmcaddon.Addon("inputstream.adaptive").openSettings()
 
 

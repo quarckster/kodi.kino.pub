@@ -57,7 +57,7 @@ class ExtendedListItem(ListItem):
         self, menu_items: List[Tuple[str, str]]
     ) -> None:
         label = "InputStream Adaptive settings"
-        url = self.plugin.routing.build_url("inputstream_adaptive_settings", self.getProperty("id"))
+        url = self.plugin.routing.build_url("inputstream_adaptive_settings/")
         menu_items.append((label, f"Container.Update({url})"))
 
     def _addWatchlistContextMenuItem(self, menu_items: List[Tuple[str, str]]) -> None:
