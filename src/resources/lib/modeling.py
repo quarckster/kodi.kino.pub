@@ -1,6 +1,7 @@
+import base64
 import sys
 import typing
-import urllib
+import urllib.parse
 from collections import namedtuple
 from typing import Any
 from typing import cast
@@ -20,6 +21,9 @@ if TYPE_CHECKING:
 from resources.lib.utils import cached_property, natural_sort
 from resources.lib.utils import localize
 from resources.lib.utils import popup_warning
+from resources.lib.proxy import HOST
+from resources.lib.proxy import PORT
+from resources.lib.proxy import QUERY_KEY
 
 
 try:
@@ -274,12 +278,17 @@ class PlayableItem(ItemEntity):
             return self._get_media_url_from_dialog()
         files = {file_["quality"]: file_["url"] for file_ in self.video_data["files"]}
         try:
-            return self._choose_cdn_loc(files[desired_quality][desired_stream_type])
+            url = self._choose_cdn_loc(files[desired_quality][desired_stream_type])
         except KeyError:
             # if there is no such quality then return a link with the highest available quality
-            return self._choose_cdn_loc(
+            url = self._choose_cdn_loc(
                 files[natural_sort(list(files.keys()))[-1]][desired_stream_type]
             )
+        if self.plugin.fix_hls_stream_manifest(desired_stream_type):
+            encoded_url = base64.urlsafe_b64encode(url.encode("utf-8")).decode("utf-8")
+            query = urllib.parse.urlencode({QUERY_KEY: encoded_url})
+            return urllib.parse.urlunsplit(("http", f"{HOST}:{PORT}", "", query, ""))
+        return url
 
     @property
     def list_item(self) -> ExtendedListItem:

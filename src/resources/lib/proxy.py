@@ -1,4 +1,5 @@
 import base64
+import re
 import threading
 import urllib.parse
 import urllib.request
@@ -76,7 +77,17 @@ class RequestHandler(BaseHTTPRequestHandler):
                 master_playlist.iframe_playlists, "iframe_stream_info"
             )
         RequestHandler.update_subtitle_info(master_playlist)
+        RequestHandler.update_audio_info(master_playlist)
         return master_playlist.dumps().encode("utf-8")
+
+    @staticmethod
+    def update_language_from_name(media, regexp):
+        if media.language is None:
+            # try to extract the language code from audio-stream name
+            # (as example "3. Original (ENG) " -> "eng")
+            match = re.match(regexp, media.name)
+            if match and match.group(1) is not None:
+                media.language = match.group(1).lower()
 
     @staticmethod
     def update_subtitle_info(playlist):
@@ -88,10 +99,16 @@ class RequestHandler(BaseHTTPRequestHandler):
                 base_host = uri.scheme + "://" + uri.hostname
 
         for media_index, media in enumerate(playlist.media):
-            if media.type == "SUBTITLES" and media.language is None:
-                media.language = media.name[:3]
+            if media.type == "SUBTITLES":
+                RequestHandler.update_language_from_name(media, r"([A-Z]{3}) .*")
             if media.uri.startswith("/") and base_host is not None:
                 media.uri = base_host + media.uri
+
+    @staticmethod
+    def update_audio_info(playlist):
+        for media_index, media in enumerate(playlist.media):
+            if media.type == "AUDIO":
+                RequestHandler.update_language_from_name(media, r".*\(([A-Z]{3})\).*")
 
     @staticmethod
     def update_stream_info(playlists, stream_info_property_name):
