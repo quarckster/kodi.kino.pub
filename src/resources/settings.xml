@@ -6,9 +6,10 @@
 				<setting id="video_quality" type="string" label="32070">
                     <dependencies>
                         <dependency type="enable" setting="ask_quality">false</dependency>
+                        <dependency type="enable" setting="stream_type">hls</dependency>
                     </dependencies>
                     <level>0</level>
-                    <default>720p</default>
+                    <default>1080p</default>
                     <constraints>
                         <options>
                             <option>2160p</option>
@@ -22,9 +23,6 @@
                     </control>
                 </setting>
                 <setting id="stream_type" type="string" label="32071">
-                    <dependencies>
-                        <dependency type="enable" setting="ask_quality">false</dependency>
-                    </dependencies>
                     <level>0</level>
                     <default>hls4</default>
                     <constraints>
@@ -39,9 +37,6 @@
                     </control>
                 </setting>
                 <setting id="loc" type="string" label="32072">
-                    <dependencies>
-                        <dependency type="enable" setting="ask_quality">false</dependency>
-                    </dependencies>
                     <level>0</level>
                     <default>ru</default>
                     <constraints>
@@ -55,6 +50,9 @@
                     </control>
                 </setting>
                 <setting id="ask_quality" type="boolean" label="32075" help="">
+                    <dependencies>
+                        <dependency type="enable" setting="stream_type">hls</dependency>
+                    </dependencies>
                     <level>0</level>
                     <default>false</default>
                     <control type="toggle"/>
