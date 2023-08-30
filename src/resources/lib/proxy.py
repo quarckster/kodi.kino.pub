@@ -147,6 +147,7 @@ class ProxyServer(HTTPServer):
 
     @classmethod
     def start_in_thread(cls, plugin):
+        cls.stop_all_threads(plugin)
         proxy = cls((HOST, PORT), RequestHandler)
         thread = threading.Thread(target=proxy.serve_forever)
         cls.threads[proxy] = thread
