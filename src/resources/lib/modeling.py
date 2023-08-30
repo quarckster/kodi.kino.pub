@@ -1,4 +1,3 @@
-import re
 import sys
 import typing
 import urllib
@@ -18,7 +17,7 @@ from resources.lib.listitem import ExtendedListItem
 
 if TYPE_CHECKING:
     from resources.lib.plugin import Plugin
-from resources.lib.utils import cached_property
+from resources.lib.utils import cached_property, natural_sort
 from resources.lib.utils import localize
 from resources.lib.utils import popup_warning
 
@@ -237,7 +236,7 @@ class PlayableItem(ItemEntity):
     def video_data(self):
         return self.item
 
-    def _choose_cdn_loc(self, url) -> str:
+    def _choose_cdn_loc(self, url: str) -> str:
         parsed = urllib.parse.urlparse(url)
         return urllib.parse.urlunparse(
             (
@@ -250,44 +249,37 @@ class PlayableItem(ItemEntity):
             )
         )
 
+    def _get_media_url_from_dialog(self) -> str:
+        urls = {}
+        for file_ in self.video_data["files"]:
+            for stream_type, url in file_["url"].items():
+                if stream_type != "hls":
+                    continue
+                quality = file_["quality"]
+                urls[quality] = url
+        qualities = natural_sort(list(urls.keys()))
+        dialog = xbmcgui.Dialog()
+        # Choose video quality
+        result = dialog.select(localize(32043), qualities)
+        if result == -1:
+            sys.exit()
+        return self._choose_cdn_loc(urls[qualities[result]])
+
     @property
     def media_url(self) -> str:
-        quality = self.plugin.settings.video_quality
-        stream_type = self.plugin.settings.stream_type
+        desired_quality = self.plugin.settings.video_quality
+        desired_stream_type = self.plugin.settings.stream_type
         ask_quality = self.plugin.settings.ask_quality
-
-        def natural_sort(lines: List[str]) -> List[str]:
-            def convert(text: str) -> Union[str, int]:
-                return int(text) if text.isdigit() else text.lower()
-
-            def alphanum_key(key: str) -> List[Union[str, int]]:
-                return [convert(c) for c in re.split("([0-9]+)", key)]
-
-            return sorted(lines, key=alphanum_key)
-
-        files = {f["quality"]: f["url"] for f in self.video_data["files"]}
-        flatten_urls_dict = {
-            f"{quality}@{stream}": url
-            for quality, urls in files.items()
-            for stream, url in urls.items()
-        }
-        urls_list = natural_sort(list(flatten_urls_dict.keys()))
-        if ask_quality == "true":
-            dialog = xbmcgui.Dialog()
-            # Choose video quality
-            result = dialog.select(localize(32043), urls_list)
-            if result == -1:
-                sys.exit()
-            else:
-                return self._choose_cdn_loc(flatten_urls_dict[urls_list[result]])
-        else:
-            try:
-                return self._choose_cdn_loc(files[quality][stream_type])
-            except KeyError:
-                # if there is no such quality then return a link with the highest available quality
-                return self._choose_cdn_loc(
-                    files[natural_sort(list(files.keys()))[-1]][stream_type]
-                )
+        if ask_quality == "true" and desired_stream_type == "hls":
+            return self._get_media_url_from_dialog()
+        files = {file_["quality"]: file_["url"] for file_ in self.video_data["files"]}
+        try:
+            return self._choose_cdn_loc(files[desired_quality][desired_stream_type])
+        except KeyError:
+            # if there is no such quality then return a link with the highest available quality
+            return self._choose_cdn_loc(
+                files[natural_sort(list(files.keys()))[-1]][desired_stream_type]
+            )
 
     @property
     def list_item(self) -> ExtendedListItem:
