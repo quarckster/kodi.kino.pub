@@ -64,10 +64,10 @@ class Settings:
 
     @property
     def api_url(self) -> str:
-        return "http://localhost:1080/v1" if self.is_testing else "https://api.service-kp.com/v1"
+        return "http://localhost:1080/v1" if self.is_testing else "https://api.srvkp.com/v1"
 
     @property
     def oauth_api_url(self) -> str:
         if self.is_testing:
             return "http://localhost:1080/v1/oauth2/device"
-        return "https://api.service-kp.com/oauth2/device"
+        return "https://api.srvkp.com/oauth2/device"
