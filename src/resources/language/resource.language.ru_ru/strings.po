@@ -375,3 +375,7 @@ msgstr ""
 msgctxt "#32091"
 msgid "3D"
 msgstr ""
+
+msgctxt "#32092"
+msgid "Configure InputStream Adaptive"
+msgstr "Настроить InputStream Adaptive"
