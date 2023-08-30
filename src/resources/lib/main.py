@@ -537,3 +537,8 @@ def install_inputstream_helper() -> None:
         popup_info(localize(32042))
     except RuntimeError:
         xbmc.executebuiltin("InstallAddon(script.module.inputstreamhelper)")
+
+
+@plugin.routing.route("/inputstream_adaptive_settings/")
+def inputstream_adaptive_settings() -> None:
+    xbmcaddon.Addon("inputstream.adaptive").openSettings()

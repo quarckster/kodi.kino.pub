@@ -80,9 +80,21 @@
                 <setting id="inputstream_helper_install" type="action" label="32080" help="">
                     <dependencies>
                         <dependency type="enable" on="property" name="infobool">System.HasAddon(inputstream.adaptive)</dependency>
+                        <dependency type="enable" setting="use_inputstream_adaptive">true</dependency>
                     </dependencies>
                     <level>0</level>
                     <data>RunPlugin(plugin://$ID/inputstream_helper_install/)</data>
+                    <control type="button" format="action">
+                        <close>true</close>
+                    </control>
+                </setting>
+                <setting id="inputstream_adaptive_settings" type="action" label="32092" help="">
+                    <dependencies>
+                        <dependency type="enable" on="property" name="infobool">System.HasAddon(inputstream.adaptive)</dependency>
+                        <dependency type="enable" setting="use_inputstream_adaptive">true</dependency>
+                    </dependencies>
+                    <level>0</level>
+                    <data>RunPlugin(plugin://$ID/inputstream_adaptive_settings/)</data>
                     <control type="button" format="action">
                         <close>true</close>
                     </control>
