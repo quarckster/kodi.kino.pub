@@ -15,7 +15,7 @@ repos:
         args: [--safe, --quiet, --line-length, "100"]
         require_serial: true
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: trailing-whitespace
         language_version: python3
@@ -32,12 +32,12 @@ repos:
           - --max-line-length=100
           - --ignore=W503,E203
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.14.0
+    rev: v3.15.0
     hooks:
       - id: pyupgrade
         language_version: python3
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.5.1
+    rev: v1.6.0
     hooks:
       - id: mypy
         language_version: python3
