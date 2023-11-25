@@ -80,7 +80,7 @@ class Auth:
         try:
             headers = {
                 "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                              "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
             }
             response = urllib.request.urlopen(
                 urllib.request.Request(self.plugin.settings.oauth_api_url, headers=headers),
