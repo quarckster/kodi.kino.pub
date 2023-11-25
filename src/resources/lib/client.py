@@ -36,7 +36,8 @@ class KinoApiRequestProcessor(urllib.request.BaseHandler):
         request.add_header("Authorization", f"Bearer {self.plugin.settings.access_token}")
         request.add_header(
             "user-agent",
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
         )
         return request
 
@@ -144,7 +145,8 @@ class KinoPubClient:
         request.recursion_counter_429 = 0  # type: ignore[attr-defined]
         request.add_header(
             "user-agent",
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
         )
         try:
             response = self.opener.open(request, timeout=TIMEOUT)
