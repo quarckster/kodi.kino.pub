@@ -1,6 +1,8 @@
 import http
 import json
 import sys
+import socks
+import socket
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -12,6 +14,7 @@ from typing import NoReturn
 from typing import Optional
 from typing import TYPE_CHECKING
 from typing import Union
+from resources.lib.xbmc_settings import XbmcProxySettings
 
 import xbmc
 
@@ -39,7 +42,51 @@ class KinoApiRequestProcessor(urllib.request.BaseHandler):
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
             "(KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
         )
+        proxy_settings = XbmcProxySettings(self.plugin)
+        self.plugin.logger.debug(
+            f"Get system proxy settings: type={proxy_settings.type}, "
+            f"host={proxy_settings.host}, port={proxy_settings.port}"
+        )
+        if proxy_settings.enabled:
+            self.set_http_proxy(request=request, proxy_settings=proxy_settings)
+            self.set_socks_proxy(proxy_settings=proxy_settings)
         return request
+
+    # HTTP / HTTPS proxy
+    def set_http_proxy(self, request: urllib.request.Request, proxy_settings: XbmcProxySettings) -> None:
+        if proxy_settings.is_correct() and proxy_settings.is_http():
+            self.plugin.logger.debug(f"Set {proxy_settings.type} proxy from system settings")
+            request.set_proxy(f"{proxy_settings.host}:{proxy_settings.port}", 'http')
+            request.set_proxy(f"{proxy_settings.host}:{proxy_settings.port}", 'https')
+            # Proxy with username and password
+            if proxy_settings.with_auth():
+                self.plugin.logger.debug(f"Use username and password for {proxy_settings.type} proxy")
+                proxy_auth_handler = urllib.request.ProxyBasicAuthHandler()
+                proxy_auth_handler.add_password(
+                    realm = None,
+                    uri = proxy_settings.host,
+                    user = proxy_settings.username,
+                    passwd = proxy_settings.password,
+                )
+        return None
+
+    # SOCKS proxy
+    def set_socks_proxy(self, proxy_settings: XbmcProxySettings) -> None:
+        if proxy_settings.is_correct() and proxy_settings.is_socks():
+            self.plugin.logger.debug(
+                f"Set {proxy_settings.type} proxy from system settings, "
+                f"auth: {proxy_settings.with_auth()}"
+            )
+            socks.set_default_proxy(
+                proxy_type = socks.SOCKS4 if proxy_settings.is_socks4() else socks.SOCKS5,
+                addr = proxy_settings.host,
+                port = proxy_settings.port,
+                rdns = True if proxy_settings.type == 'socks5r' else False,
+                username = proxy_settings.username if proxy_settings.with_auth() else None,
+                password = proxy_settings.password if proxy_settings.with_auth() else None,
+            )
+            socket.socket = socks.socksocket
+        return None
 
     http_request = https_request
 
