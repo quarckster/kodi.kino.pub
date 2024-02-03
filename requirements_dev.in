@@ -3,3 +3,4 @@ pytest
 kodi-json
 Kodistubs
 wait_for
+PySocks
