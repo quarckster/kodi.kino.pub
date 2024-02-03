@@ -1,8 +1,7 @@
 import http
 import json
-import sys
-import socks
 import socket
+import sys
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -14,9 +13,11 @@ from typing import NoReturn
 from typing import Optional
 from typing import TYPE_CHECKING
 from typing import Union
-from resources.lib.xbmc_settings import XbmcProxySettings
 
+import socks
 import xbmc
+
+from resources.lib.xbmc_settings import XbmcProxySettings
 
 if TYPE_CHECKING:
     from resources.lib.plugin import Plugin
@@ -53,20 +54,24 @@ class KinoApiRequestProcessor(urllib.request.BaseHandler):
         return request
 
     # HTTP / HTTPS proxy
-    def set_http_proxy(self, request: urllib.request.Request, proxy_settings: XbmcProxySettings) -> None:
+    def set_http_proxy(
+        self, request: urllib.request.Request, proxy_settings: XbmcProxySettings
+    ) -> None:
         if proxy_settings.is_correct() and proxy_settings.is_http():
             self.plugin.logger.debug(f"Set {proxy_settings.type} proxy from system settings")
-            request.set_proxy(f"{proxy_settings.host}:{proxy_settings.port}", 'http')
-            request.set_proxy(f"{proxy_settings.host}:{proxy_settings.port}", 'https')
+            request.set_proxy(f"{proxy_settings.host}:{proxy_settings.port}", "http")
+            request.set_proxy(f"{proxy_settings.host}:{proxy_settings.port}", "https")
             # Proxy with username and password
             if proxy_settings.with_auth():
-                self.plugin.logger.debug(f"Use username and password for {proxy_settings.type} proxy")
+                self.plugin.logger.debug(
+                    f"Use username and password for {proxy_settings.type} proxy"
+                )
                 proxy_auth_handler = urllib.request.ProxyBasicAuthHandler()
                 proxy_auth_handler.add_password(
-                    realm = None,
-                    uri = proxy_settings.host,
-                    user = proxy_settings.username,
-                    passwd = proxy_settings.password,
+                    realm=None,
+                    uri=proxy_settings.host,
+                    user=proxy_settings.username,
+                    passwd=proxy_settings.password,
                 )
         return None
 
@@ -78,12 +83,12 @@ class KinoApiRequestProcessor(urllib.request.BaseHandler):
                 f"auth: {proxy_settings.with_auth()}"
             )
             socks.set_default_proxy(
-                proxy_type = socks.SOCKS4 if proxy_settings.is_socks4() else socks.SOCKS5,
-                addr = proxy_settings.host,
-                port = proxy_settings.port,
-                rdns = True if proxy_settings.type == 'socks5r' else False,
-                username = proxy_settings.username if proxy_settings.with_auth() else None,
-                password = proxy_settings.password if proxy_settings.with_auth() else None,
+                proxy_type=socks.SOCKS4 if proxy_settings.is_socks4() else socks.SOCKS5,
+                addr=proxy_settings.host,
+                port=proxy_settings.port,
+                rdns=True if proxy_settings.type == "socks5r" else False,
+                username=proxy_settings.username if proxy_settings.with_auth() else None,
+                password=proxy_settings.password if proxy_settings.with_auth() else None,
             )
             socket.socket = socks.socksocket
         return None

@@ -1,12 +1,13 @@
-import xbmc
 import json
 from typing import TYPE_CHECKING
+
+import xbmc
 
 if TYPE_CHECKING:
     from resources.lib.plugin import Plugin
 
 
-class XbmcSettings():
+class XbmcSettings:
     def __init__(self, plugin: "Plugin") -> None:
         self.plugin = plugin
         super().__init__()
@@ -16,19 +17,19 @@ class XbmcSettings():
         try:
             self.plugin.logger.debug(f"Try to get system setting: {setting_id}")
             response = xbmc.executeJSONRPC(
-                '{'
-                    '"jsonrpc": "2.0",'
-                    '"method": "Settings.GetSettingValue",'
-                    '"params": '
-                        f'{{ "setting": "{setting_id}" }},'
-                    '"id": 1'
-                '}'
+                "{"
+                '"jsonrpc": "2.0",'
+                '"method": "Settings.GetSettingValue",'
+                '"params": '
+                f'{{ "setting": "{setting_id}" }},'
+                '"id": 1'
+                "}"
             )
             # Response example:
             # { "id": 1, "jsonrpc": "2.0", "result": { "value": "some data" } }
             self.plugin.logger.debug(f"JSON RPC Response: {response}")
             setting = json.loads(str(response))
-            return setting['result']['value']
+            return setting["result"]["value"]
         except Exception as exception:
             self.plugin.logger.error(f"JSON RPC Exception: {exception}")
             return None
@@ -37,12 +38,12 @@ class XbmcSettings():
 class XbmcProxySettings(XbmcSettings):
     def proxy_type(self, type: int) -> str:
         proxy_types = {
-            0: 'http',
-            1: 'socks4',
-            2: 'socks4a',
-            3: 'socks5',
-            4: 'socks5h', # SOCKS5 with remote DNS resolving
-            5: 'https',
+            0: "http",
+            1: "socks4",
+            2: "socks4a",
+            3: "socks5",
+            4: "socks5h",  # SOCKS5 with remote DNS resolving
+            5: "https",
         }
         try:
             self.plugin.logger.debug(f"Parsing system proxy type: {type} -> {proxy_types[type]}")
@@ -53,42 +54,42 @@ class XbmcProxySettings(XbmcSettings):
 
     @property
     def enabled(self) -> bool:
-        return self.get_setting('network.usehttpproxy') or False
+        return self.get_setting("network.usehttpproxy") or False
 
     @property
     def type(self) -> str:
-        return self.proxy_type(int(self.get_setting('network.httpproxytype'))) or ""
+        return self.proxy_type(int(self.get_setting("network.httpproxytype"))) or ""
 
     @property
     def host(self) -> str:
-        return self.get_setting('network.httpproxyserver') or ""
-    
+        return self.get_setting("network.httpproxyserver") or ""
+
     @property
     def port(self) -> int:
-        return int(self.get_setting('network.httpproxyport')) or 0
+        return int(self.get_setting("network.httpproxyport")) or 0
 
     @property
     def username(self) -> str:
-        return self.get_setting('network.httpproxyusername') or ""
+        return self.get_setting("network.httpproxyusername") or ""
 
     @property
     def password(self) -> str:
-        return self.get_setting('network.httpproxypassword') or ""
+        return self.get_setting("network.httpproxypassword") or ""
 
     def is_correct(self):
         return True if self.enabled and len(self.host) > 3 and self.port > 0 else False
 
     def is_http(self) -> bool:
-        return True if self.type in ['http','https'] else False
+        return True if self.type in ["http", "https"] else False
 
     def is_socks(self) -> bool:
-        return True if self.type in ['socks4','socks4a','socks5','socks5r'] else False
+        return True if self.type in ["socks4", "socks4a", "socks5", "socks5r"] else False
 
     def is_socks4(self) -> bool:
-        return True if self.type in ['socks4','socks4a'] else False
+        return True if self.type in ["socks4", "socks4a"] else False
 
     def is_socks5(self) -> bool:
-        return True if self.type in ['socks5','socks5r'] else False
+        return True if self.type in ["socks5", "socks5r"] else False
 
     def with_auth(self) -> bool:
         return True if self.username and self.password else False
