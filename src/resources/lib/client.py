@@ -90,7 +90,7 @@ class KinoApiRequestProcessor(urllib.request.BaseHandler):
                 username=proxy_settings.username if proxy_settings.with_auth() else None,
                 password=proxy_settings.password if proxy_settings.with_auth() else None,
             )
-            socket.socket = socks.socksocket
+            socket.socket = socks.socksocket  # type: ignore[misc]
         return None
 
     http_request = https_request
