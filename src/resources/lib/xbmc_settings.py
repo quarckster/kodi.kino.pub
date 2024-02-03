@@ -50,7 +50,7 @@ class XbmcProxySettings(XbmcSettings):
             return proxy_types[type]
         except KeyError:
             self.plugin.logger.warning(f"Proxy type '{type}' is unknown")
-            return None
+            return ""
 
     @property
     def enabled(self) -> bool:
