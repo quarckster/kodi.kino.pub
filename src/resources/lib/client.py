@@ -68,7 +68,7 @@ class KinoApiRequestProcessor(urllib.request.BaseHandler):
                 )
                 proxy_auth_handler = urllib.request.ProxyBasicAuthHandler()
                 proxy_auth_handler.add_password(
-                    None,
+                    "",
                     proxy_settings.host,
                     proxy_settings.username,
                     proxy_settings.password,
