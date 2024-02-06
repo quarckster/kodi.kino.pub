@@ -1,6 +1,7 @@
 import json
-import xbmc
 from typing import TYPE_CHECKING
+
+import xbmc
 
 if TYPE_CHECKING:
     from resources.lib.plugin import Plugin
