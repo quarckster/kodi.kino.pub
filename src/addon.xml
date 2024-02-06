@@ -3,6 +3,7 @@
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.inputstreamhelper" version="0.5.7" optional="true"/>
+    <import addon="script.module.pysocks" version="1.7.0"/>
   </requires>
   <extension point="xbmc.python.pluginsource" library="addon.py">
     <provides>video</provides>
