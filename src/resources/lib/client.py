@@ -43,14 +43,13 @@ class KinoApiRequestProcessor(urllib.request.BaseHandler):
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
             "(KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
         )
-        proxy_settings = XbmcProxySettings(self.plugin)
         self.plugin.logger.debug(
-            f"Get system proxy settings: type={proxy_settings.type}, "
-            f"host={proxy_settings.host}, port={proxy_settings.port}"
+            f"Get system proxy settings: type={self.plugin.proxy_settings.type}, "
+            f"host={self.plugin.proxy_settings.host}, port={self.plugin.proxy_settings.port}"
         )
-        if proxy_settings.enabled:
-            self.set_http_proxy(request=request, proxy_settings=proxy_settings)
-            self.set_socks_proxy(proxy_settings=proxy_settings)
+        if self.plugin.proxy_settings.enabled:
+            self.set_http_proxy(request=request, proxy_settings=self.plugin.proxy_settings)
+            self.set_socks_proxy(proxy_settings=self.plugin.proxy_settings)
         return request
 
     # HTTP / HTTPS proxy

@@ -26,6 +26,7 @@ from resources.lib.routing import Routing
 from resources.lib.search_history import SearchHistory
 from resources.lib.settings import Settings
 from resources.lib.utils import localize
+from resources.lib.xbmc_settings import XbmcProxySettings
 
 
 try:
@@ -53,6 +54,7 @@ class Plugin:
         self.main_menu_items = self._main_menu_items()
         self.items = ItemsCollection(self)
         self.client = KinoPubClient(self)
+        self.proxy_settings = XbmcProxySettings(self)
 
     def list_item(
         self,
