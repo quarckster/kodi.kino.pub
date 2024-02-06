@@ -57,12 +57,12 @@ class KinoApiRequestProcessor(urllib.request.BaseHandler):
     def set_http_proxy(
         self, request: urllib.request.Request, proxy_settings: XbmcProxySettings
     ) -> None:
-        if proxy_settings.is_correct() and proxy_settings.is_http():
+        if proxy_settings.is_correct and proxy_settings.is_http:
             self.plugin.logger.debug(f"Set {proxy_settings.type} proxy from system settings")
             request.set_proxy(f"{proxy_settings.host}:{proxy_settings.port}", "http")
             request.set_proxy(f"{proxy_settings.host}:{proxy_settings.port}", "https")
             # Proxy with username and password
-            if proxy_settings.with_auth():
+            if proxy_settings.with_auth:
                 self.plugin.logger.debug(
                     f"Use username and password for {proxy_settings.type} proxy"
                 )
@@ -77,18 +77,18 @@ class KinoApiRequestProcessor(urllib.request.BaseHandler):
 
     # SOCKS proxy
     def set_socks_proxy(self, proxy_settings: XbmcProxySettings) -> None:
-        if proxy_settings.is_correct() and proxy_settings.is_socks():
+        if proxy_settings.is_correct and proxy_settings.is_socks:
             self.plugin.logger.debug(
                 f"Set {proxy_settings.type} proxy from system settings, "
-                f"auth: {proxy_settings.with_auth()}"
+                f"auth: {proxy_settings.with_auth}"
             )
             socks.set_default_proxy(
-                proxy_type=socks.SOCKS4 if proxy_settings.is_socks4() else socks.SOCKS5,
+                proxy_type=socks.SOCKS4 if proxy_settings.is_socks4 else socks.SOCKS5,
                 addr=proxy_settings.host,
                 port=proxy_settings.port,
                 rdns=True if proxy_settings.type == "socks5r" else False,
-                username=proxy_settings.username if proxy_settings.with_auth() else None,
-                password=proxy_settings.password if proxy_settings.with_auth() else None,
+                username=proxy_settings.username if proxy_settings.with_auth else None,
+                password=proxy_settings.password if proxy_settings.with_auth else None,
             )
             socket.socket = socks.socksocket  # type: ignore[misc]
         return None

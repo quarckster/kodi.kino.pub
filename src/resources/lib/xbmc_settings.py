@@ -76,20 +76,26 @@ class XbmcProxySettings(XbmcSettings):
     def password(self) -> str:
         return self.get_setting("network.httpproxypassword") or ""
 
+    @property
     def is_correct(self):
         return True if self.enabled and len(self.host) > 3 and self.port > 0 else False
 
+    @property
     def is_http(self) -> bool:
         return True if self.type in ["http", "https"] else False
 
+    @property
     def is_socks(self) -> bool:
         return True if self.type in ["socks4", "socks4a", "socks5", "socks5r"] else False
 
+    @property
     def is_socks4(self) -> bool:
         return True if self.type in ["socks4", "socks4a"] else False
 
+    @property
     def is_socks5(self) -> bool:
         return True if self.type in ["socks5", "socks5r"] else False
 
+    @property
     def with_auth(self) -> bool:
         return True if self.username and self.password else False
