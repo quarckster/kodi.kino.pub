@@ -1,17 +1,8 @@
 import json
-from typing import TYPE_CHECKING
-
 import xbmc
-
-if TYPE_CHECKING:
-    from resources.lib.plugin import Plugin
 
 
 class XbmcSettings:
-    def __init__(self, plugin: "Plugin") -> None:
-        self.plugin = plugin
-        super().__init__()
-
     def get_setting(self, setting_id: str):
         # https://kodi.wiki/view/JSON-RPC_API/v13#Settings.GetSettingValue
         try:
