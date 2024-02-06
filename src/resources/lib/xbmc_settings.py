@@ -97,4 +97,4 @@ class XbmcProxySettings(XbmcSettings):
 
     @property
     def with_auth(self) -> bool:
-        return self.username and self.password
+        return True if self.username and self.password else False
