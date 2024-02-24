@@ -12,11 +12,16 @@ from typing import TYPE_CHECKING
 import xbmc
 import xbmcgui
 
+from resources.lib.client import KinoApiRequestProcessor
+
 if TYPE_CHECKING:
     from resources.lib.plugin import Plugin
 from resources.lib.utils import cached_property
 from resources.lib.utils import localize
 from resources.lib.utils import popup_error
+
+
+TIMEOUT = 60
 
 
 class AuthException(Exception):
@@ -74,19 +79,24 @@ class Auth:
     def __init__(self, plugin: "Plugin") -> None:
         self._auth_dialog = AuthDialog(plugin)
         self.plugin = plugin
+        self.opener = urllib.request.build_opener(
+            KinoApiRequestProcessor(self.plugin),
+        )
 
     def _make_request(self, payload):
         self.plugin.logger.debug(f"Sending payload {payload} to oauth api")
         try:
-            headers = {
-                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
-            }
-            response = urllib.request.urlopen(
-                urllib.request.Request(self.plugin.settings.oauth_api_url, headers=headers),
-                urllib.parse.urlencode(payload).encode("utf-8"),
-            ).read()
-            return json.loads(response)
+            request = urllib.request.Request(
+                self.plugin.settings.oauth_api_url,
+                data=urllib.parse.urlencode(payload or {}).encode("utf-8"),
+            )
+            request.add_header(
+                "user-agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+            )
+            response = self.opener.open(request, timeout=TIMEOUT)
+            return json.loads(response.read())
         except urllib.error.HTTPError as e:
             if e.code == 400:
                 response = json.loads(e.read())
