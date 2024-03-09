@@ -58,6 +58,16 @@ def run_kodi_pod(build_plugin):
         f"--volume={HOST_DIR}/fake_api/:/fake_api",
         "docker.io/mockserver/mockserver:mockserver-5.11.2",
     )
+    podman(
+        "run",
+        "--detach",
+        "--pod=kodipod",
+        "--name=proxy",
+        "docker.io/nadoo/glider:0.16",
+        "-listen",
+        ":8443",
+        "-verbose",
+    )
     yield
     podman("pod", "stop", "kodipod")
 

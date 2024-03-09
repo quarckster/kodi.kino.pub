@@ -52,7 +52,7 @@ class XbmcProxySettings(XbmcSettings):
             return ""
 
     @property
-    def enabled(self) -> bool:
+    def is_enabled(self) -> bool:
         return self.get_setting("network.usehttpproxy") or False
 
     @property
@@ -68,16 +68,16 @@ class XbmcProxySettings(XbmcSettings):
         return int(self.get_setting("network.httpproxyport")) or 0
 
     @property
-    def username(self) -> str:
-        return self.get_setting("network.httpproxyusername") or ""
+    def username(self) -> str | None:
+        return self.get_setting("network.httpproxyusername") or None
 
     @property
-    def password(self) -> str:
-        return self.get_setting("network.httpproxypassword") or ""
+    def password(self) -> str | None:
+        return self.get_setting("network.httpproxypassword") or None
 
     @property
     def is_correct(self):
-        return self.enabled and len(self.host) > 3 and self.port > 0
+        return len(self.host) > 3 and self.port > 0
 
     @property
     def is_http(self) -> bool:
