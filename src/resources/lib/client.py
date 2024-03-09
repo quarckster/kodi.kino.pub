@@ -1,5 +1,7 @@
+import base64
 import http
 import json
+import socket
 import sys
 import urllib.error
 import urllib.parse
@@ -13,7 +15,9 @@ from typing import Optional
 from typing import TYPE_CHECKING
 from typing import Union
 
+import socks
 import xbmc
+
 
 if TYPE_CHECKING:
     from resources.lib.plugin import Plugin
@@ -39,7 +43,46 @@ class KinoApiRequestProcessor(urllib.request.BaseHandler):
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
             "(KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
         )
+        self.plugin.logger.debug(
+            f"Get system proxy settings: type={self.plugin.proxy_settings.type}, "
+            f"host={self.plugin.proxy_settings.host}, port={self.plugin.proxy_settings.port}"
+        )
+        if self.plugin.proxy_settings.is_enabled:
+            if not self.plugin.proxy_settings.is_correct:
+                self.plugin.logger.error("http proxy settings are not correct")
+                return request
+            self.plugin.logger.debug(
+                f"Set {self.plugin.proxy_settings.type} proxy from system settings, "
+                f"auth: {self.plugin.proxy_settings.with_auth}"
+            )
+            if self.plugin.proxy_settings.is_http:
+                self.set_http_proxy(request=request)
+            if self.plugin.proxy_settings.is_socks:
+                self.set_socks_proxy()
         return request
+
+    def set_http_proxy(self, request: urllib.request.Request) -> None:
+        proxy_settings = self.plugin.proxy_settings
+        request.set_proxy(f"{proxy_settings.host}:{proxy_settings.port}", proxy_settings.type)
+        if proxy_settings.with_auth:
+            self.plugin.logger.debug(f"Use username and password for {proxy_settings.type} proxy")
+            user_pass = f"{proxy_settings.username}:{proxy_settings.password}"
+            creds = base64.b64encode(user_pass.encode()).decode("ascii")
+            request.add_header("Proxy-authorization", f"Basic {creds}")
+        return None
+
+    def set_socks_proxy(self) -> None:
+        proxy_settings = self.plugin.proxy_settings
+        socks.set_default_proxy(
+            proxy_type=socks.SOCKS4 if proxy_settings.is_socks4 else socks.SOCKS5,
+            addr=proxy_settings.host,
+            port=proxy_settings.port,
+            rdns=proxy_settings.type == "socks5r",
+            username=proxy_settings.username,
+            password=proxy_settings.password,
+        )
+        socket.socket = socks.socksocket  # type: ignore[misc]
+        return None
 
     http_request = https_request
 
@@ -143,11 +186,6 @@ class KinoPubClient:
     def _make_request(self, request: urllib.request.Request) -> Dict[str, Any]:
         request.recursion_counter_401 = 0  # type: ignore[attr-defined]
         request.recursion_counter_429 = 0  # type: ignore[attr-defined]
-        request.add_header(
-            "user-agent",
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-            "(KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
-        )
         try:
             response = self.opener.open(request, timeout=TIMEOUT)
         except Exception:
