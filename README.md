@@ -16,6 +16,7 @@ The most notable features:
 * support of 4k
 * support of [inputstream.adaptive](https://github.com/peak3d/inputstream.adaptive) add-on
 * search history
+* HTTP and SOCKS proxy support
 * localization on en_gb, ru_ru, uk_ua
 
 ## Kodi add-on repository
