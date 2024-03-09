@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 from typing import TYPE_CHECKING
 
 import xbmc
@@ -68,11 +69,11 @@ class XbmcProxySettings(XbmcSettings):
         return int(self.get_setting("network.httpproxyport")) or 0
 
     @property
-    def username(self) -> str | None:
+    def username(self) -> Optional[str]:
         return self.get_setting("network.httpproxyusername") or None
 
     @property
-    def password(self) -> str | None:
+    def password(self) -> Optional[str]:
         return self.get_setting("network.httpproxypassword") or None
 
     @property
