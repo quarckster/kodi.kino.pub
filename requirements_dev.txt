@@ -133,9 +133,9 @@ kodi-json==1.0.0 \
     --hash=sha256:797a6f051760dcfc8872c6f18e31edaeae14800914c621fd742a724256b80e27 \
     --hash=sha256:ccca09a7ff92781a8c87ac4db345bae30c6bb0f09b4bfcba3e1bcdb63a566053
     # via -r requirements_dev.in
-kodistubs==20.0.1 \
-    --hash=sha256:5b56e2ac09336350c365959997deccf6842cf4adff70ed032496c7b1f72f60fd \
-    --hash=sha256:e0e6df282bf89985b252f83711700043193be8c347f8478a104036e124eabba4
+kodistubs==21.0.0 \
+    --hash=sha256:2c342eebf6c85c690788e6a4156a76d8eaa21b4e19e73df601ced0ca28d23576 \
+    --hash=sha256:b82cf094648ad5c75cf532bc377e1255c71730011d23d664b7df8ac96aedd3e0
     # via -r requirements_dev.in
 nodeenv==1.8.0 \
     --hash=sha256:d51e0c37e64fbf47d017feac3145cdbb58836d7eee8c6f6d3b6880c5456227d2 \
