@@ -8,14 +8,14 @@ repos:
         args:
           - --application-directories=.:src:tests
   - repo: https://github.com/psf/black
-    rev: 24.8.0
+    rev: 24.10.0
     hooks:
       - id: black
         language_version: python3
         args: [--safe, --quiet, --line-length, "100"]
         require_serial: true
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
       - id: trailing-whitespace
         language_version: python3
