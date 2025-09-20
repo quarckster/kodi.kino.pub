@@ -483,7 +483,7 @@ def create_bookmarks_folder() -> None:
 @plugin.routing.route("/profile/")
 def profile() -> None:
     user_data = plugin.client("user").get()["user"]
-    reg_date = date.fromtimestamp(user_data["reg_date"])
+    reg_date = date.fromtimestamp(int(user_data["reg_date"]))
     dialog = xbmcgui.Dialog()
     # User name, Registration date, Subscription days remaining
     message = (
