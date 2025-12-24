@@ -238,8 +238,9 @@ def search(content_type: str) -> None:
 
 @plugin.routing.route("/search/<content_type>/results/")
 def search_results(content_type: str) -> None:
+    type_param = {} if content_type == "all" else {"type": content_type.rstrip("s")}
     data = {
-        "type": None if content_type == "all" else content_type.rstrip("s"),
+        **type_param,
         **plugin.kwargs,
         **plugin.sorting_params,
     }
