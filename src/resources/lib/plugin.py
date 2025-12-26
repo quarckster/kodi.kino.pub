@@ -127,27 +127,6 @@ class Plugin:
                 True,
             ),
             MainMenuItem(
-                localize(32020),
-                self.routing.build_url("items", "all", "fresh/"),
-                self.routing.build_icon_path("fresh"),
-                True,
-                self.settings.show_last,
-            ),
-            MainMenuItem(
-                localize(32022),
-                self.routing.build_url("items", "all", "popular/"),
-                self.routing.build_icon_path("popular"),
-                True,
-                self.settings.show_popular,
-            ),
-            MainMenuItem(
-                localize(32021),
-                self.routing.build_url("items", "all", "hot/"),
-                self.routing.build_icon_path("hot"),
-                True,
-                self.settings.show_hot,
-            ),
-            MainMenuItem(
                 self.sorting_title,
                 self.routing.build_url("items", "all", "sort/"),
                 self.routing.build_icon_path("sort"),
