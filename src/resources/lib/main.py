@@ -141,7 +141,7 @@ def items(content_type: str, heading: str) -> None:
     elif heading == "search":
         search(content_type)
     else:
-        data = {"type": None if content_type == "all" else content_type.rstrip("s")}
+        data = {} if content_type == "all" else {"type": content_type.rstrip("s")}
         data.update(plugin.kwargs)
         exclude_anime = plugin.settings.exclude_anime == "true"
         if heading == "sort":

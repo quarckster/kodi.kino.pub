@@ -175,21 +175,6 @@
                     <default>true</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="show_last" type="boolean" label="32020">
-                    <level>0</level>
-                    <default>true</default>
-                    <control type="toggle"/>
-                </setting>
-                <setting id="show_hot" type="boolean" label="32021">
-                    <level>0</level>
-                    <default>true</default>
-                    <control type="toggle"/>
-                </setting>
-                <setting id="show_popular" type="boolean" label="32022">
-                    <level>0</level>
-                    <default>true</default>
-                    <control type="toggle"/>
-                </setting>
                 <setting id="show_sort" type="boolean" label="32081">
                     <level>0</level>
                     <default>true</default>

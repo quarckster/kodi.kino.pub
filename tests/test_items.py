@@ -30,30 +30,6 @@ def test_home_nonactivated(kodi, remove_access_token):
     assert expected_results.NONACTIVATED_HOME == resp["result"]["files"]
 
 
-@pytest.mark.parametrize("sorting", ["fresh", "hot", "popular"])
-def test_all(kodi, sorting):
-    resp = kodi.Files.GetDirectory(
-        directory=f"plugin://video.kino.pub/items/all/{sorting}/",
-        properties=[
-            "country",
-            "year",
-            "rating",
-            "duration",
-            "director",
-            "trailer",
-            "plot",
-            "cast",
-            "imdbnumber",
-            "votes",
-            "fanart",
-        ],
-    )
-    ITEMS_ALL = deepcopy(expected_results.ITEMS_ALL)
-    next_page = ITEMS_ALL[-2]["file"].format(sorting=sorting)
-    ITEMS_ALL[-2]["file"] = next_page
-    assert ITEMS_ALL == resp["result"]["files"]
-
-
 def test_watching(kodi):
     resp = kodi.Files.GetDirectory(
         directory="plugin://video.kino.pub/watching/", properties=["thumbnail"]

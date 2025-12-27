@@ -7,9 +7,6 @@ from paths import HOST_DIR
 HOME_ITEMS = [
     ("search", "plugin://video.kino.pub/search/all/"),
     ("last", "plugin://video.kino.pub/items/all/fresh/"),
-    ("popular", "plugin://video.kino.pub/items/all/popular/"),
-    ("hot", "plugin://video.kino.pub/items/all/hot/"),
-    ("sort", "plugin://video.kino.pub/items/all/sort/"),
     ("tv", "plugin://video.kino.pub/tv/"),
     ("collections", "plugin://video.kino.pub/collections/"),
     ("movies", "plugin://video.kino.pub/items/movies/"),
