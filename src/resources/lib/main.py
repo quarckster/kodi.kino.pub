@@ -18,7 +18,6 @@ from resources.lib.plugin import Plugin
 from resources.lib.utils import localize
 from resources.lib.utils import popup_info
 
-
 content_type_map = {
     "all": "tvshow",
     "serial": "tvshow",

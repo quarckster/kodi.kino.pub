@@ -28,7 +28,6 @@ from resources.lib.settings import Settings
 from resources.lib.utils import localize
 from resources.lib.xbmc_settings import XbmcProxySettings
 
-
 try:
     import inputstreamhelper
 except ImportError:

@@ -20,7 +20,6 @@ from resources.lib.utils import cached_property
 from resources.lib.utils import localize
 from resources.lib.utils import popup_error
 
-
 TIMEOUT = 60
 
 

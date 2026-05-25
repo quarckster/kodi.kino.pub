@@ -3,7 +3,6 @@ import pytest
 from expected_results import ACTIVATED_HOME
 from paths import HOST_DIR
 
-
 HOME_ITEMS = [
     ("search", "plugin://video.kino.pub/search/all/"),
     ("last", "plugin://video.kino.pub/items/all/fresh/"),

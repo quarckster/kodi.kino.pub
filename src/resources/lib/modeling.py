@@ -21,7 +21,6 @@ from resources.lib.utils import cached_property, natural_sort
 from resources.lib.utils import localize
 from resources.lib.utils import popup_warning
 
-
 try:
     import inputstreamhelper
 except ImportError:
