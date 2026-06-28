@@ -86,11 +86,12 @@ def run_kodi_pod(build_plugin):
     podman("pod", "stop", "kodipod")
 
 
+def _jsonrpc_ready(kodi):
+    return kodi.JSONRPC.Ping().get("result") == "pong"
+
+
 @pytest.fixture(scope="session")
 def kodi(run_kodi_pod):
-    # Kodi 20+ takes noticeably longer than Kodi 19 to bring up its web server on
-    # first boot (database migration/creation), so allow a generous startup window.
-    wait_for(urlopen, func_args=[JSON_RPC_URL], timeout=90, handle_exception=True)
     wait_for(
         urlopen,
         func_args=[f"{MOCKSERVER_URL}/"],
@@ -98,6 +99,12 @@ def kodi(run_kodi_pod):
         handle_exception=True,
     )
     kodi = Kodi(JSON_RPC_URL)
+    # Wait until the JSON-RPC API actually answers a request, not just until the
+    # web server binds the port -- Kodi 20+ accepts connections well before it has
+    # finished starting. (The conkodi image also drops the version-check service,
+    # whose startup call to kodi.tv hangs in the isolated pod and otherwise wedges
+    # the web server.)
+    wait_for(_jsonrpc_ready, func_args=[kodi], timeout=90, handle_exception=True, delay=1)
     # Enable the add-on at runtime instead of relying on a pre-seeded Addons
     # database. The Addons schema version can differ between Kodi releases, so
     # this keeps the suite working across Kodi 20/21/22 without per-version DBs.
