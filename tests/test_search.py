@@ -9,7 +9,6 @@ import expected_results
 from helpers import close_keyboard
 from paths import HOST_DIR
 
-
 history_path = Path(f"{HOST_DIR}/addon_data/history")
 
 

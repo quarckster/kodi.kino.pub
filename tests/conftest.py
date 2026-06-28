@@ -10,7 +10,6 @@ from helpers import podman
 from paths import CON_DIR
 from paths import HOST_DIR
 
-
 JSON_RPC_URL = "http://127.0.0.1:8080/jsonrpc"
 MOCKSERVER_URL = "http://127.0.0.1:1080/v1"
 KODI_VERSION = os.getenv("KODI_VERSION", "20")

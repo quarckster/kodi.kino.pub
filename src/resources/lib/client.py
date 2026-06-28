@@ -18,12 +18,10 @@ from typing import Union
 import socks
 import xbmc
 
-
 if TYPE_CHECKING:
     from resources.lib.plugin import Plugin
 from resources.lib.utils import localize
 from resources.lib.utils import popup_error
-
 
 TIMEOUT = 60
 
