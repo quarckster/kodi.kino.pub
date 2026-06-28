@@ -12,19 +12,16 @@ Python.
 * enter the directory: `cd kodi.kino.pub`
 * add upstream repo: `git remote add upstream https://github.com/quarckster/kodi.kino.pub`
 
-## Setting up your own virtual environment
-
-Run `python3 -m venv <PATH>` to create a virtual environment. Then activate it with
-`source <PATH>/bin/activate`.
-
 ## Install development dependencies
 
-Run `pip install -r requirements_dev.txt` to install python development dependencies. You also need
-[`podman`](https://podman.io) to run tests.
+This project uses [uv](https://docs.astral.sh/uv/) to manage the development environment. After
+[installing uv](https://docs.astral.sh/uv/getting-started/installation/), run `uv sync` to create a
+virtual environment and install the development dependencies pinned in `uv.lock`. You also need
+[`podman`](https://podman.io) to run the integration tests.
 
 ## Run the tests to ensure everything is working
 
-Run `pytest` to run the tests.
+Run `uv run pytest` (or `uv run make test_unit` / `uv run make test_integration`).
 
 ## Create a new branch to work on your contribution
 
@@ -36,11 +33,11 @@ Edit the files using your preferred editor.
 
 ## Run pre-commit
 
-`pre-commit run --all`
+`uv run pre-commit run --all`
 
 ## Test your changes
 
-Run `pytest` to test your changes.
+Run `uv run pytest` to test your changes.
 
 ## Push your changes to your fork
 

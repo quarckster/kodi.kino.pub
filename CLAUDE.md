@@ -13,15 +13,17 @@ for local dev / type-checking, not real pip packages). Add-on source under `src/
 
 ## Commands
 
-Setup: `pip install -r requirements_dev.txt` (and install [`podman`](https://podman.io) for
-integration tests).
+Setup: install [`uv`](https://docs.astral.sh/uv/), then `uv sync` to create `.venv` and install the
+dev tooling (and install [`podman`](https://podman.io) for integration tests). Dependencies are
+locked in `uv.lock` (dev group in `pyproject.toml`); bump them with `uv lock --upgrade`. Prefix the
+commands below with `uv run` (e.g. `uv run make test_unit`) or activate `.venv` first.
 
-- **Lint / format / type-check:** `pre-commit run --all` (black @ line-length 100, flake8, mypy,
-  reorder-python-imports, pyupgrade).
-- **Unit tests:** `make test_unit` → `pytest -v tests/test_unit.py`. These mock `xbmc*` and need no
+- **Lint / format / type-check:** `uv run pre-commit run --all` (black @ line-length 100, flake8,
+  mypy, reorder-python-imports, pyupgrade).
+- **Unit tests:** `make test_unit` → `pytest -v -m "not integration"`. These mock `xbmc*` and need no
   containers.
-- **Integration tests:** `make test_integration` → `pytest -v -k "(not test_unit)"`. Requires podman;
-  spins up real Kodi + a mock API server (see Testing below). CI runs these against Kodi 19 and 20.
+- **Integration tests:** `make test_integration` → `pytest -v -m integration`. Requires podman;
+  spins up real Kodi + a mock API server (see Testing below). CI runs these against Kodi 20, 21, 22.
 - **Single test:** `pytest tests/test_items.py::test_watching`.
 - **Build add-on zip:** `make video_addon VERSION=4.99.0` (VERSION is required; substituted into
   `addon.xml`). `make repo VERSION=...` also builds the Kodi-repository structure. `make deploy`

@@ -1,0 +1,25 @@
+[project]
+name = "kodi-kino-pub"
+version = "0"
+description = "Development tooling environment for the video.kino.pub Kodi add-on."
+requires-python = ">=3.10"
+
+# The add-on itself runs under Kodi's embedded Python (3.8+) and is not a
+# pip-installable package, so this project ships no runtime dependencies -- only
+# the dev/test tooling, kept in a PEP 735 dependency group.
+[dependency-groups]
+dev = [
+    "pre-commit",
+    "pytest",
+    "kodi-json",
+    # Pin to the 20.x stubs: Kodi 20 is the minimum supported version, so
+    # type-checking against the v20 API surfaces accidental use of symbols that
+    # only exist in 21+ (or were removed in 20).
+    "Kodistubs<21",
+    "wait-for",
+]
+
+# Not a package: don't try to build/install the project root, just manage the
+# tooling environment.
+[tool.uv]
+package = false
