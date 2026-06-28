@@ -27,8 +27,8 @@ def remove_access_token():
 
 @pytest.mark.skip(
     reason="Kodi 20+ caches add-on settings for its whole lifetime, so removing the "
-    "access token from settings.xml mid-session has no effect. The non-activated "
-    "home (login screen) branch is covered by a unit test instead."
+    "access token from settings.xml mid-session has no effect (the add-on still "
+    "sees the cached token and renders the activated home)."
 )
 def test_home_nonactivated(kodi, remove_access_token):
     resp = kodi.Files.GetDirectory(directory="plugin://video.kino.pub")

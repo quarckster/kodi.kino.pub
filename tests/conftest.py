@@ -17,6 +17,21 @@ KODI_VERSION = os.getenv("KODI_VERSION", "20")
 KODI_IMAGE = f"ghcr.io/quarckster/conkodi:{KODI_VERSION}"
 
 
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers", "integration: test drives a running Kodi container over JSON-RPC"
+    )
+
+
+def pytest_collection_modifyitems(items):
+    # Any test that needs the `kodi` fixture (directly or transitively) talks to a
+    # real Kodi container, so mark it as an integration test. This lets the unit
+    # and integration suites be selected with `-m "not integration"` / `-m integration`.
+    for item in items:
+        if "kodi" in getattr(item, "fixturenames", ()):
+            item.add_marker("integration")
+
+
 @pytest.fixture(scope="session")
 def build_plugin():
     shutil.copytree("src", f"{HOST_DIR}/addons/video.kino.pub")

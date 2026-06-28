@@ -44,10 +44,10 @@ deploy: repo
 	podman run -t -e NETLIFY_AUTH_TOKEN -e NETLIFY_SITE_ID -v $(PWD):/mnt -w /mnt quay.io/quarck/netlify netlify deploy --dir=repo/ --prod
 
 test_integration:
-	pytest -v -k "(not test_unit)"
+	pytest -v -m integration
 
 test_unit:
-	pytest -v tests/test_unit.py
+	pytest -v -m "not integration"
 
 clean:
 	rm -rf video.kino.pub-*.zip repo.kino.pub.zip repo/
