@@ -24,9 +24,12 @@ jobs:
 
   tests-integration:
     runs-on: ubuntu-latest
+    # Kodi 22 is not released yet, so it is tested against a nightly image and must not fail the CI.
+    continue-on-error: ${{ matrix.kodi-version == '22' }}
     strategy:
+      fail-fast: false
       matrix:
-        kodi-version: ["19", "20"]
+        kodi-version: ["20", "21", "22"]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
@@ -36,12 +39,12 @@ jobs:
       - name: Install deps
         run: pip install -r requirements_dev.txt
       - name: Pull conkodi container image
-        run: podman pull quay.io/quarck/conkodi:${{ matrix.kodi-version }}
+        run: podman pull ghcr.io/quarckster/conkodi:${{ matrix.kodi-version }}
       - name: Pull mockserver container image
         run: podman pull docker.io/mockserver/mockserver:mockserver-5.11.2
-      - name: Set permissions
-        run: sudo chmod -R a+rw tests/data
       - name: Integration tests
+        env:
+          KODI_VERSION: ${{ matrix.kodi-version }}
         run: make test_integration
       - name: Kodi logs analysis
         if: failure()

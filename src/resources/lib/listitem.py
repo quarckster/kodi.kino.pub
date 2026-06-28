@@ -5,12 +5,97 @@ from typing import Optional
 from typing import Tuple
 from typing import TYPE_CHECKING
 
+import xbmc
 from xbmcgui import ListItem
 
 if TYPE_CHECKING:
     from resources.lib.plugin import Plugin
 
 from resources.lib.utils import localize
+
+
+def _split_info_values(value: Any) -> List[str]:
+    if isinstance(value, list):
+        return [str(item).strip() for item in value if str(item).strip()]
+    if value is None:
+        return []
+    return [item.strip() for item in str(value).split(",") if item.strip()]
+
+
+def populate_video_info_tag(info_tag: Any, video_info: Dict[str, Any]) -> None:
+    title = video_info.get("title")
+    if title:
+        info_tag.setTitle(title)
+
+    plot = video_info.get("plot")
+    if plot:
+        info_tag.setPlot(plot)
+
+    year = video_info.get("year")
+    if year is not None:
+        info_tag.setYear(int(year))
+
+    duration = video_info.get("duration")
+    if duration is not None:
+        info_tag.setDuration(int(duration))
+
+    genres = _split_info_values(video_info.get("genre"))
+    if genres:
+        info_tag.setGenres(genres)
+
+    votes = video_info.get("votes")
+    rating = video_info.get("rating")
+    if rating is not None:
+        info_tag.setRating(float(rating), int(votes or 0), "default", True)
+
+    cast = _split_info_values(video_info.get("cast"))
+    if cast:
+        info_tag.setCast([xbmc.Actor(name) for name in cast])
+
+    directors = _split_info_values(video_info.get("director"))
+    if directors:
+        info_tag.setDirectors(directors)
+
+    imdb_number = video_info.get("imdbnumber")
+    if imdb_number:
+        imdb_number = str(imdb_number)
+        info_tag.setIMDBNumber(imdb_number)
+        info_tag.setUniqueIDs({"imdb": imdb_number}, "imdb")
+
+    if votes is not None:
+        info_tag.setVotes(int(votes))
+
+    countries = _split_info_values(video_info.get("country"))
+    if countries:
+        info_tag.setCountries(countries)
+
+    trailer = video_info.get("trailer")
+    if trailer:
+        info_tag.setTrailer(trailer)
+
+    media_type = video_info.get("mediatype")
+    if media_type:
+        info_tag.setMediaType(media_type)
+
+    season = video_info.get("season")
+    if season is not None:
+        info_tag.setSeason(int(season))
+
+    episode = video_info.get("episode")
+    if episode is not None:
+        info_tag.setEpisode(int(episode))
+
+    tvshowtitle = video_info.get("tvshowtitle")
+    if tvshowtitle:
+        info_tag.setTvShowTitle(tvshowtitle)
+
+    playcount = video_info.get("playcount")
+    if playcount is not None:
+        info_tag.setPlaycount(int(playcount))
+
+    status = video_info.get("status")
+    if status:
+        info_tag.setTvShowStatus(status)
 
 
 class ExtendedListItem(ListItem):
@@ -38,8 +123,8 @@ class ExtendedListItem(ListItem):
         if properties:
             self.setProperties(**properties)
         if video_info:
-            self.setInfo("video", video_info)
-            self.setResumeTime(video_info.get("time", 0))
+            populate_video_info_tag(self.getVideoInfoTag(), video_info)
+            self.setResumeTime(video_info.get("time", 0), video_info.get("duration", 0))
         if poster:
             self.setArt({"poster": poster})
         if fanart:
@@ -126,16 +211,17 @@ class ExtendedListItem(ListItem):
             self.setProperty(prop, str(value))
 
     def setResumeTime(self, resumetime: int, totaltime: float = 0.0) -> None:
-        totaltime = float(totaltime or self.getVideoInfoTag().getDuration())
-        if (
-            resumetime > 0
-            and totaltime > 0
-            and 100 * resumetime / totaltime
-            <= self.plugin.settings.advanced("video", "playcountminimumpercent")
-            and resumetime > self.plugin.settings.advanced("video", "ignoresecondsatstart")
-            or resumetime == 0
-        ):
-            self.setProperties(resumetime=resumetime, totaltime=totaltime)
+        info_tag = self.getVideoInfoTag()
+        totaltime = float(totaltime or info_tag.getDuration() or 0)
+        should_set_resume_point = resumetime == 0
+        if resumetime > 0 and totaltime > 0:
+            progress = 100 * resumetime / totaltime
+            should_set_resume_point = progress <= self.plugin.settings.advanced(
+                "video", "playcountminimumpercent"
+            ) and resumetime > self.plugin.settings.advanced("video", "ignoresecondsatstart")
+
+        if should_set_resume_point:
+            info_tag.setResumePoint(float(resumetime), totaltime)
 
     def markAdvert(self, has_advert: bool) -> None:
         if self.plugin.settings.mark_advert == "true" and has_advert:

@@ -36,6 +36,8 @@ repos:
     hooks:
       - id: pyupgrade
         language_version: python3
+        args:
+          - --py38-plus
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.19.1
     hooks:

@@ -1,3 +1,4 @@
+import os
 import shutil
 from urllib.request import urlopen
 
@@ -12,6 +13,8 @@ from paths import HOST_DIR
 
 JSON_RPC_URL = "http://127.0.0.1:8080/jsonrpc"
 MOCKSERVER_URL = "http://127.0.0.1:1080/v1"
+KODI_VERSION = os.getenv("KODI_VERSION", "20")
+KODI_IMAGE = f"ghcr.io/quarckster/conkodi:{KODI_VERSION}"
 
 
 @pytest.fixture(scope="session")
@@ -28,6 +31,12 @@ def build_plugin():
 
 @pytest.fixture(scope="session")
 def run_kodi_pod(build_plugin):
+    # The Kodi container runs as a non-root, rootless-mapped user and must be able to
+    # write the bind-mounted databases/settings (otherwise it aborts on boot with
+    # "SqliteDatabase ... is read only"). Running chmod inside `podman unshare` fixes
+    # the permissions in the user namespace, which also covers files left over from a
+    # previous run (owned by a mapped sub-uid). This replaces a manual/CI chmod step.
+    podman("unshare", "chmod", "-R", "a+rwX", HOST_DIR)
     podman("pod", "rm", "-f", "kodipod")
     podman(
         "pod",
@@ -47,7 +56,7 @@ def run_kodi_pod(build_plugin):
         f"--volume={HOST_DIR}/addons/:{CON_DIR}/addons",
         f"--volume={HOST_DIR}/Database/:{CON_DIR}/userdata/Database",
         f"--volume={HOST_DIR}/addon_data/:{CON_DIR}/userdata/addon_data/video.kino.pub",
-        "quay.io/quarck/conkodi:19",
+        KODI_IMAGE,
     )
     podman(
         "run",
@@ -64,11 +73,13 @@ def run_kodi_pod(build_plugin):
 
 @pytest.fixture(scope="session")
 def kodi(run_kodi_pod):
-    wait_for(urlopen, func_args=[JSON_RPC_URL], timeout=10, handle_exception=True)
+    # Kodi 20+ takes noticeably longer than Kodi 19 to bring up its web server on
+    # first boot (database migration/creation), so allow a generous startup window.
+    wait_for(urlopen, func_args=[JSON_RPC_URL], timeout=90, handle_exception=True)
     wait_for(
         urlopen,
         func_args=[f"{MOCKSERVER_URL}/"],
-        timeout=10,
+        timeout=60,
         handle_exception=True,
     )
     return Kodi(JSON_RPC_URL)

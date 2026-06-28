@@ -2,7 +2,7 @@
 
 kodi.kino.pub welcomes contributions from the community.
 
-The code is written to be compatible with Python 3.6. Development can be done with more modern
+The code is written to be compatible with Python 3.8. Development can be done with more modern
 Python.
 
 ## Setting up your own fork of this repo
