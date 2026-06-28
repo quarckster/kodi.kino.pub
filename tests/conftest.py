@@ -82,4 +82,14 @@ def kodi(run_kodi_pod):
         timeout=60,
         handle_exception=True,
     )
-    return Kodi(JSON_RPC_URL)
+    kodi = Kodi(JSON_RPC_URL)
+    # Enable the add-on at runtime instead of relying on a pre-seeded Addons
+    # database. The Addons schema version can differ between Kodi releases, so
+    # this keeps the suite working across Kodi 20/21/22 without per-version DBs.
+    wait_for(
+        kodi.Addons.SetAddonEnabled,
+        func_kwargs={"addonid": "video.kino.pub", "enabled": True},
+        timeout=30,
+        handle_exception=True,
+    )
+    return kodi

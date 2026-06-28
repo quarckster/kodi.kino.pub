@@ -115,3 +115,8 @@ dmypy.json
 
 # builds
 *.zip
+
+# Kodi creates its databases (per-version) at test time; the add-on is enabled
+# via JSON-RPC, so none of these need to be committed.
+/tests/data/Database/*
+!/tests/data/Database/.gitkeep
