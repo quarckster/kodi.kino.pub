@@ -23,7 +23,7 @@ integration tests).
 - **Integration tests:** `make test_integration` → `pytest -v -k "(not test_unit)"`. Requires podman;
   spins up real Kodi + a mock API server (see Testing below). CI runs these against Kodi 19 and 20.
 - **Single test:** `pytest tests/test_items.py::test_watching`.
-- **Build add-on zip:** `make video_addon VERSION=3.99.0` (VERSION is required; substituted into
+- **Build add-on zip:** `make video_addon VERSION=4.99.0` (VERSION is required; substituted into
   `addon.xml`). `make repo VERSION=...` also builds the Kodi-repository structure. `make deploy`
   publishes to Netlify (needs `NETLIFY_*` env vars). Releases are normally driven by git tags via
   `.github/workflows/deploy.yaml`.

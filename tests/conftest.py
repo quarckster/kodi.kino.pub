@@ -22,7 +22,7 @@ def build_plugin():
     shutil.copytree("src", f"{HOST_DIR}/addons/video.kino.pub")
     with open(f"{HOST_DIR}/addons/video.kino.pub/addon.xml", "r+") as addon_xml:
         content = addon_xml.read()
-        content = content.replace("${VERSION}", "3.99")
+        content = content.replace("${VERSION}", "4.99")
         addon_xml.seek(0)
         addon_xml.write(content)
     yield
