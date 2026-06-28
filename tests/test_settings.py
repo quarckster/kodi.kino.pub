@@ -35,6 +35,11 @@ def home_menu(request):
         settings_xml.write(orig_content)
 
 
+@pytest.mark.skip(
+    reason="Kodi 20+ caches add-on settings for its whole lifetime and exposes no "
+    "JSON-RPC to change them, so rewriting settings.xml mid-session has no effect. "
+    "The home-menu/settings logic is covered by unit tests instead."
+)
 def test_toggle_home_items(kodi, home_menu):
     resp = kodi.Files.GetDirectory(directory="plugin://video.kino.pub")
     assert home_menu == resp["result"]["files"]

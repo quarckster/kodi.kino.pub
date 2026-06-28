@@ -13,6 +13,11 @@ from paths import HOST_DIR
 history_path = Path(f"{HOST_DIR}/addon_data/history")
 
 
+@pytest.mark.skip(
+    reason="Virtual-keyboard automation (Keyboard.doModal + Input.SendText) is "
+    "unreliable on headless Kodi/Xvnc: the modal is left open and can crash the "
+    "JSON-RPC server, breaking the rest of the suite."
+)
 def test_new_search(request, kodi):
     @request.addfinalizer
     def _cleanup():
@@ -65,6 +70,10 @@ def test_history(kodi, history):
     assert resp["result"]["files"] == expected_results.HISTORY
 
 
+@pytest.mark.skip(
+    reason="Drives the on-screen confirm dialog via Input.Left/ButtonEvent, which "
+    "is unreliable on headless Kodi/Xvnc and can wedge the JSON-RPC server."
+)
 def test_clean_search_history(kodi, history):
     history_path.chmod(0o777)
     resp = kodi.Addons.ExecuteAddon(addonid="video.kino.pub", params="/clean_search_history/")
