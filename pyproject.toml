@@ -15,7 +15,7 @@ dev = [
     # Pin to the 20.x stubs: Kodi 20 is the minimum supported version, so
     # type-checking against the v20 API surfaces accidental use of symbols that
     # only exist in 21+ (or were removed in 20).
-    "Kodistubs<21",
+    "Kodistubs<22",
     "wait-for",
 ]
 
