@@ -5,7 +5,6 @@ from unittest.mock import MagicMock
 
 import pytest
 
-
 RESOURCES = (pathlib.Path(".").parent / "src").absolute()
 
 TOGGLEABLE = [

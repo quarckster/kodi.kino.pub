@@ -4,7 +4,6 @@ import sys
 import types
 from copy import copy
 
-
 RESOURCES = (pathlib.Path(".").parent / "src").absolute()
 
 
