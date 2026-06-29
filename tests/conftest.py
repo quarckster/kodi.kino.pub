@@ -39,6 +39,11 @@ def build_plugin():
         content = content.replace("${VERSION}", "4.99")
         addon_xml.seek(0)
         addon_xml.write(content)
+        # The replacement shortens the file, so truncate the leftover bytes.
+        # Otherwise stale trailing text (e.g. "ddon>") survives after </addon>;
+        # Kodi 22's stricter TinyXML2 rejects it (XML_ERROR_PARSING_TEXT) and the
+        # add-on fails to load, while Kodi 20/21 tolerated the trailing junk.
+        addon_xml.truncate()
     yield
     shutil.rmtree(f"{HOST_DIR}/addons/video.kino.pub")
 
