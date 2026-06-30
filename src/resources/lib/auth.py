@@ -82,11 +82,12 @@ class Auth:
             KinoApiRequestProcessor(self.plugin),
         )
 
-    def _make_request(self, payload):
+    def _make_request(self, payload, url=None):
+        url = url or self.plugin.settings.oauth_api_url
         self.plugin.logger.debug(f"Sending payload {payload} to oauth api")
         try:
             request = urllib.request.Request(
-                self.plugin.settings.oauth_api_url,
+                url,
                 data=urllib.parse.urlencode(payload or {}).encode("utf-8"),
             )
             request.add_header(
@@ -117,7 +118,7 @@ class Auth:
             elif e.code == 429:
                 for _ in range(2):
                     time.sleep(3)
-                    return self._make_request(payload)
+                    return self._make_request(payload, url)
             else:
                 self._auth_dialog.close(cancel=True)
                 self.plugin.logger.fatal(
@@ -161,7 +162,7 @@ class Auth:
             "client_secret": self.CLIENT_SECRET,
         }
         try:
-            resp = self._make_request(payload)
+            resp = self._make_request(payload, url=self.plugin.settings.oauth_token_url)
         except AuthExpiredException:
             self._activate()
             return

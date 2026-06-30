@@ -86,6 +86,14 @@ class Settings:
         return "https://api.srvkp.com/oauth2/device"
 
     @property
+    def oauth_token_url(self) -> str:
+        # The device-code/device-token grants use the /oauth2/device endpoint;
+        # the refresh_token grant uses the /oauth2/token endpoint per the API docs.
+        if self.is_testing:
+            return "http://localhost:1080/v1/oauth2/token"
+        return "https://api.srvkp.com/oauth2/token"
+
+    @property
     def concurrent_requests(self) -> int:
         # Worker count for parallel list-data prefetching; at least 1.
         return max(1, self._addon().getSettingInt("concurrent_requests"))
