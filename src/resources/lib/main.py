@@ -244,12 +244,9 @@ def alphabet_items(content_type: str, letter: str) -> None:
 
 @plugin.routing.route("/new_search/<content_type>/")
 def new_search(content_type: str) -> None:
-    kbd = xbmc.Keyboard()
     # Search
-    kbd.setHeading(localize(32019))
-    kbd.doModal()
-    if kbd.isConfirmed():
-        title = kbd.getText()
+    title = xbmcgui.Dialog().input(localize(32019))
+    if title:
         plugin.search_history.save(title)
         url = plugin.routing.build_url("search", content_type, "results/", title=title)
         plugin.routing.redirect(url)
@@ -529,12 +526,9 @@ def remove_bookmarks_folder(folder_id: str) -> None:
 
 @plugin.routing.route("/create_bookmarks_folder")
 def create_bookmarks_folder() -> None:
-    kbd = xbmc.Keyboard()
     # Bookmarks folder name
-    kbd.setHeading(localize(32034))
-    kbd.doModal()
-    if kbd.isConfirmed():
-        title = kbd.getText()
+    title = xbmcgui.Dialog().input(localize(32034))
+    if title:
         plugin.client("bookmarks/create").post(data={"title": title})
         xbmc.executebuiltin("Container.Refresh")
 
