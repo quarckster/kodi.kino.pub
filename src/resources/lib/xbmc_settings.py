@@ -6,6 +6,7 @@ import xbmc
 
 if TYPE_CHECKING:
     from resources.lib.plugin import Plugin
+from resources.lib.utils import cached_property
 
 
 class XbmcSettings:
@@ -52,27 +53,30 @@ class XbmcProxySettings(XbmcSettings):
             self.plugin.logger.warning(f"Proxy type '{type}' is unknown")
             return ""
 
-    @property
+    # Cached: a single plugin invocation (one process) makes many API requests,
+    # and the system proxy config can't change underneath it -- so read each
+    # value from Kodi over JSON-RPC at most once instead of per request.
+    @cached_property
     def is_enabled(self) -> bool:
         return self.get_setting("network.usehttpproxy") or False
 
-    @property
+    @cached_property
     def type(self) -> str:
         return self.proxy_type(int(self.get_setting("network.httpproxytype"))) or ""
 
-    @property
+    @cached_property
     def host(self) -> str:
         return self.get_setting("network.httpproxyserver") or ""
 
-    @property
+    @cached_property
     def port(self) -> int:
         return int(self.get_setting("network.httpproxyport")) or 0
 
-    @property
+    @cached_property
     def username(self) -> Optional[str]:
         return self.get_setting("network.httpproxyusername") or None
 
-    @property
+    @cached_property
     def password(self) -> Optional[str]:
         return self.get_setting("network.httpproxypassword") or None
 
