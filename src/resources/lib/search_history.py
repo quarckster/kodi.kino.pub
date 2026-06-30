@@ -33,14 +33,12 @@ class SearchHistory:
         self._save_history()
 
     def _load_history(self) -> None:
-        f = xbmcvfs.File(self.path, "a+")
-        try:
-            self.items = json.loads(f.read())
-        except ValueError:
-            self.items = []
-        f.close()
+        with xbmcvfs.File(self.path, "a+") as f:
+            try:
+                self.items = json.loads(f.read())
+            except ValueError:
+                self.items = []
 
     def _save_history(self) -> None:
-        f = xbmcvfs.File(self.path, "w+")
-        f.write(json.dumps(self.items))
-        f.close()
+        with xbmcvfs.File(self.path, "w+") as f:
+            f.write(json.dumps(self.items))

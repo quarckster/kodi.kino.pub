@@ -25,6 +25,7 @@ def make_history(mod, max_qty="10", initial="[]"):
     plugin.settings.history_max_qty = max_qty
     fake_file = MagicMock()
     fake_file.read.return_value = initial
+    fake_file.__enter__.return_value = fake_file  # SearchHistory uses it as a context manager
     mod.xbmcvfs.File.return_value = fake_file
     return mod.SearchHistory(plugin)
 
