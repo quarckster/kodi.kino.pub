@@ -32,6 +32,11 @@ Response = namedtuple("Response", ["items", "pagination"])
 # kino.pub genre id for anime, filtered out when the user enables "exclude anime".
 ANIME_GENRE_ID = 25
 
+# The add-on streams only HLS through inputstream.adaptive (the stream_type
+# options hls/hls2/hls4 are all HLS variants), so ISA is always given the
+# canonical HLS mime type to detect the manifest from.
+HLS_MIME_TYPE = "application/vnd.apple.mpegurl"
+
 
 class ItemsCollection:
     def __init__(self, plugin: "Plugin"):
@@ -305,20 +310,21 @@ class PlayableItem(ItemEntity):
             return 0
         return self.watching_info["time"]
 
-    @property
-    def hls_properties(self) -> Dict[str, str]:
-        if self.plugin.is_hls_enabled:
-            helper = inputstreamhelper.Helper("hls")
-            if not helper.check_inputstream():
-                # HLS stream is not supported
-                popup_warning(localize(32044))
-                return {}
-            else:
-                return {
-                    "inputstream": helper.inputstream_addon,
-                    "inputstream.adaptive.manifest_type": "hls",
-                }
-        return {}
+    def _setup_inputstream(self, li: ExtendedListItem) -> None:
+        if not self.plugin.is_hls_enabled:
+            return
+        helper = inputstreamhelper.Helper("hls")
+        if not helper.check_inputstream():
+            # HLS stream is not supported
+            popup_warning(localize(32044))
+            return
+        li.setProperty("inputstream", helper.inputstream_addon)
+        # inputstream.adaptive detects the manifest from the mime type. The old
+        # inputstream.adaptive.manifest_type property was deprecated on Kodi 21
+        # and removed on Kodi 22, so set the HLS mime type instead.
+        # setContentLookup(False) skips Kodi's redundant HTTP HEAD request.
+        li.setMimeType(HLS_MIME_TYPE)
+        li.setContentLookup(False)
 
     @property
     def playable_list_item(self) -> ExtendedListItem:
@@ -329,9 +335,8 @@ class PlayableItem(ItemEntity):
             "playcount": self.video_info["playcount"],
             "imdbnumber": self.video_info["imdbnumber"],
             **self.properties,
-            **self.hls_properties,
         }
-        return self.plugin.list_item(
+        li = self.plugin.list_item(
             name=getattr(self, "li_title", self.title),
             path=self.media_url,
             properties=properties,
@@ -340,6 +345,8 @@ class PlayableItem(ItemEntity):
             poster=self.item.get("posters", {}).get("big"),
             subtitles=[subtitle.get("url") for subtitle in self.video_data["subtitles"]],
         )
+        self._setup_inputstream(li)
+        return li
 
 
 class TVShow(ItemEntity):
