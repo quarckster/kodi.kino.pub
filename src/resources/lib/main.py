@@ -337,9 +337,13 @@ def play(item_id: str) -> None:
     playable_li = plugin.items.get_playable(item, season_index=si, index=i).playable_list_item
     player = Player(list_item=playable_li)
     xbmcplugin.setResolvedUrl(plugin.handle, True, playable_li)
+    monitor = xbmc.Monitor()
     while player.is_playing:
         player.set_marktime()
-        xbmc.sleep(1000)
+        # Doubles as the 1s tick and returns True when Kodi is shutting down, so
+        # the loop exits cleanly instead of risking a hang (xbmc.sleep does not).
+        if monitor.waitForAbort(1):
+            break
 
 
 @plugin.routing.route("/trailer/<item_id>")
