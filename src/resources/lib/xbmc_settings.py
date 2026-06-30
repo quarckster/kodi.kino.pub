@@ -86,7 +86,7 @@ class XbmcProxySettings(XbmcSettings):
 
     @property
     def is_socks(self) -> bool:
-        return self.type in ["socks4", "socks4a", "socks5", "socks5r"]
+        return self.type in ["socks4", "socks4a", "socks5", "socks5h"]
 
     @property
     def is_socks4(self) -> bool:
@@ -94,7 +94,7 @@ class XbmcProxySettings(XbmcSettings):
 
     @property
     def is_socks5(self) -> bool:
-        return self.type in ["socks5", "socks5r"]
+        return self.type in ["socks5", "socks5h"]
 
     @property
     def with_auth(self) -> bool:

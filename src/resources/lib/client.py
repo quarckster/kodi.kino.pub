@@ -70,7 +70,7 @@ class KinoApiRequestProcessor(urllib.request.BaseHandler):
             proxy_type=socks.SOCKS4 if proxy_settings.is_socks4 else socks.SOCKS5,
             addr=proxy_settings.host,
             port=proxy_settings.port,
-            rdns=proxy_settings.type == "socks5r",
+            rdns=proxy_settings.type == "socks5h",
             username=proxy_settings.username,
             password=proxy_settings.password,
         )
