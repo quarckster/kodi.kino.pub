@@ -69,10 +69,12 @@ def render_items(items: List[ItemEntity], content_type: str) -> None:
     container_content_type = f"{content_type_map[content_type.rstrip('s')]}s"
     xbmcplugin.setContent(plugin.handle, container_content_type)
     playback_data = {}
+    directory_items = []
     for item in items:
         if not item.isdir:
             playback_data[item.item_id] = item
-        xbmcplugin.addDirectoryItem(plugin.handle, item.url, item.list_item, item.isdir)
+        directory_items.append((item.url, item.list_item, item.isdir))
+    xbmcplugin.addDirectoryItems(plugin.handle, directory_items, len(directory_items))
     plugin.set_window_property(playback_data)
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_UNSORTED)
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_VIDEO_RATING)
@@ -103,12 +105,14 @@ def index() -> None:
         )
         xbmcplugin.addDirectoryItem(plugin.handle, plugin.routing.build_url("login/"), li, False)
     else:
+        directory_items = []
         for menu_item in plugin.main_menu_items:
             if menu_item.is_displayed:
                 li = plugin.list_item(
                     name=menu_item.title, iconImage=menu_item.icon, thumbnailImage=menu_item.icon
                 )
-                xbmcplugin.addDirectoryItem(plugin.handle, menu_item.url, li, menu_item.is_dir)
+                directory_items.append((menu_item.url, li, menu_item.is_dir))
+        xbmcplugin.addDirectoryItems(plugin.handle, directory_items, len(directory_items))
     xbmcplugin.endOfDirectory(plugin.handle)
 
 
@@ -155,18 +159,22 @@ def items(content_type: str, heading: str) -> None:
 @plugin.routing.route("/tv/")
 def tv() -> None:
     response = plugin.client("tv/index").get()
+    directory_items = []
     for ch in response["channels"]:
         li = plugin.list_item(name=ch["title"], iconImage=ch["logos"]["s"])
-        xbmcplugin.addDirectoryItem(plugin.handle, ch["stream"], li, False)
+        directory_items.append((ch["stream"], li, False))
+    xbmcplugin.addDirectoryItems(plugin.handle, directory_items, len(directory_items))
     xbmcplugin.endOfDirectory(plugin.handle)
 
 
 def genres(content_type: str) -> None:
     response = plugin.client("genres").get(data={"type": content_type.rstrip("s")})
+    directory_items = []
     for genre in response["items"]:
         li = plugin.list_item(name=genre["title"])
         url = plugin.routing.build_url("items", content_type, "genres", f"{genre['id']}/")
-        xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
+        directory_items.append((url, li, True))
+    xbmcplugin.addDirectoryItems(plugin.handle, directory_items, len(directory_items))
     xbmcplugin.endOfDirectory(plugin.handle)
 
 
@@ -188,12 +196,14 @@ def alphabet(content_type: str) -> None:
         "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
     ]
     # fmt: on
+    directory_items = []
     for letter in letters:
         li = plugin.list_item(name=letter)
         url = plugin.routing.build_url(
             "items", content_type, "alphabet", f"{letter}/", sort="title"
         )
-        xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
+        directory_items.append((url, li, True))
+    xbmcplugin.addDirectoryItems(plugin.handle, directory_items, len(directory_items))
     xbmcplugin.endOfDirectory(plugin.handle)
 
 
@@ -261,8 +271,10 @@ def clean_search_history() -> None:
 def seasons(item_id: str) -> None:
     tvshow = cast(TVShow, plugin.items.instantiate_from_item_id(item_id))
     xbmcplugin.setContent(plugin.handle, "tvshows")
+    directory_items = []
     for season in tvshow.seasons:
-        xbmcplugin.addDirectoryItem(plugin.handle, season.url, season.list_item, True)
+        directory_items.append((season.url, season.list_item, True))
+    xbmcplugin.addDirectoryItems(plugin.handle, directory_items, len(directory_items))
     plugin.set_window_property({tvshow.item_id: tvshow})
     xbmcplugin.endOfDirectory(plugin.handle, cacheToDisc=False)
 
@@ -271,8 +283,10 @@ def seasons(item_id: str) -> None:
 def episodes(item_id: str) -> None:
     collection = cast(Multi, plugin.items.instantiate_from_item_id(item_id))
     xbmcplugin.setContent(plugin.handle, "episodes")
+    directory_items = []
     for video in collection.videos:
-        xbmcplugin.addDirectoryItem(plugin.handle, video.url, video.list_item, False)
+        directory_items.append((video.url, video.list_item, False))
+    xbmcplugin.addDirectoryItems(plugin.handle, directory_items, len(directory_items))
     plugin.set_window_property({collection.item_id: collection})
     xbmcplugin.endOfDirectory(plugin.handle, cacheToDisc=False)
 
@@ -281,8 +295,10 @@ def episodes(item_id: str) -> None:
 def season_episodes(item_id: str, season_number: str) -> None:
     tvshow = cast(TVShow, plugin.items.instantiate_from_item_id(item_id))
     xbmcplugin.setContent(plugin.handle, "episodes")
+    directory_items = []
     for episode in tvshow.seasons[int(season_number) - 1].episodes:
-        xbmcplugin.addDirectoryItem(plugin.handle, episode.url, episode.list_item, False)
+        directory_items.append((episode.url, episode.list_item, False))
+    xbmcplugin.addDirectoryItems(plugin.handle, directory_items, len(directory_items))
     plugin.set_window_property({tvshow.item_id: tvshow})
     xbmcplugin.endOfDirectory(plugin.handle, cacheToDisc=False)
 
@@ -317,6 +333,7 @@ def bookmarks() -> None:
     url = plugin.routing.build_url("create_bookmarks_folder")
     xbmcplugin.addDirectoryItem(plugin.handle, url, li, False)
     response = plugin.client("bookmarks").get()
+    directory_items = []
     for folder in response["items"]:
         img = plugin.routing.build_icon_path("bookmark")
         li = plugin.list_item(
@@ -329,7 +346,8 @@ def bookmarks() -> None:
         # Delete
         li.addContextMenuItems([(localize(32029), f"RunPlugin({url})")])
         url = plugin.routing.build_url("bookmarks", f"{folder['id']}/")
-        xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
+        directory_items.append((url, li, True))
+    xbmcplugin.addDirectoryItems(plugin.handle, directory_items, len(directory_items))
     xbmcplugin.endOfDirectory(plugin.handle)
 
 
@@ -343,8 +361,10 @@ def show_bookmark_folder(folder_id: str) -> None:
 @plugin.routing.route("/watching/")
 def watching() -> None:
     xbmcplugin.setContent(plugin.handle, "tvshows")
+    directory_items = []
     for tvshow in plugin.items.watching_tvshows:
-        xbmcplugin.addDirectoryItem(plugin.handle, tvshow.url, tvshow.list_item, True)
+        directory_items.append((tvshow.url, tvshow.list_item, True))
+    xbmcplugin.addDirectoryItems(plugin.handle, directory_items, len(directory_items))
     xbmcplugin.endOfDirectory(plugin.handle)
 
 
@@ -352,10 +372,12 @@ def watching() -> None:
 def watching_movies() -> None:
     xbmcplugin.setContent(plugin.handle, "movies")
     playback_data = {}
+    directory_items = []
     for movie in plugin.items.watching_movies:
         if not movie.isdir:
             playback_data[movie.item_id] = movie
-        xbmcplugin.addDirectoryItem(plugin.handle, movie.url, movie.list_item, movie.isdir)
+        directory_items.append((movie.url, movie.list_item, movie.isdir))
+    xbmcplugin.addDirectoryItems(plugin.handle, directory_items, len(directory_items))
     plugin.set_window_property(playback_data)
     xbmcplugin.endOfDirectory(plugin.handle)
 
@@ -388,10 +410,12 @@ def sorted_collections(sorting: str) -> None:
     data = {"sort": f"-{sorting}", **plugin.kwargs}
     response = plugin.client("collections/index").get(data=data)
     xbmcplugin.setContent(plugin.handle, "movies")
+    directory_items = []
     for item in response["items"]:
         li = plugin.list_item(name=item["title"], thumbnailImage=item["posters"]["medium"])
         url = plugin.routing.build_url("collection", f"{item['id']}/")
-        xbmcplugin.addDirectoryItem(plugin.handle, url, li, True)
+        directory_items.append((url, li, True))
+    xbmcplugin.addDirectoryItems(plugin.handle, directory_items, len(directory_items))
     render_pagination(response["pagination"])
 
 
