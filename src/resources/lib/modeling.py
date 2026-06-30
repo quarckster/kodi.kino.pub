@@ -30,9 +30,6 @@ except ImportError:
 
 Response = namedtuple("Response", ["items", "pagination"])
 
-# Upper bound on concurrent items/{id} fetches for the "I'm watching" movies list.
-WATCHING_MOVIES_WORKERS = 8
-
 
 class ItemsCollection:
     def __init__(self, plugin: "Plugin"):
@@ -59,7 +56,7 @@ class ItemsCollection:
         item_ids = [item_data["id"] for item_data in response["items"]]
         if not item_ids:
             return []
-        workers = min(WATCHING_MOVIES_WORKERS, len(item_ids))
+        workers = min(self.plugin.settings.concurrent_requests, len(item_ids))
         with ThreadPoolExecutor(max_workers=workers) as executor:
             movies = list(executor.map(self.instantiate_from_item_id, item_ids))
         return cast(List["Movie"], movies)

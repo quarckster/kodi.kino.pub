@@ -84,3 +84,8 @@ class Settings:
         if self.is_testing:
             return "http://localhost:1080/v1/oauth2/device"
         return "https://api.srvkp.com/oauth2/device"
+
+    @property
+    def concurrent_requests(self) -> int:
+        # Worker count for parallel list-data prefetching; at least 1.
+        return max(1, self._addon().getSettingInt("concurrent_requests"))

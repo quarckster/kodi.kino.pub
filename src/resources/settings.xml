@@ -67,6 +67,18 @@
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>
+                <setting id="concurrent_requests" type="integer" label="32093" help="32094">
+                    <level>0</level>
+                    <default>8</default>
+                    <constraints>
+                        <minimum>1</minimum>
+                        <step>1</step>
+                        <maximum>16</maximum>
+                    </constraints>
+                    <control type="slider" format="integer">
+                        <popup>true</popup>
+                    </control>
+                </setting>
             </group>
             <group id="2" label="32078">
                 <setting id="use_inputstream_adaptive" type="boolean" label="32079" help="">

@@ -379,3 +379,11 @@ msgstr ""
 msgctxt "#32092"
 msgid "Configure InputStream Adaptive"
 msgstr "Налаштувати InputStream Adaptive"
+
+msgctxt "#32093"
+msgid "Concurrent requests"
+msgstr "Паралельні запити"
+
+msgctxt "#32094"
+msgid "How many list items to load in parallel. Higher values load lists faster but may trigger rate limiting."
+msgstr "Скільки елементів списку завантажувати паралельно. Більші значення пришвидшують завантаження, але можуть спричинити обмеження частоти запитів."

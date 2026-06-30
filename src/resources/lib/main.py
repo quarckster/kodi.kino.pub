@@ -33,9 +33,6 @@ content_type_map = {
 
 plugin = Plugin()
 
-# Upper bound on concurrent "watching" prefetch requests (see _prefetch_watching_info).
-WATCHING_PREFETCH_WORKERS = 8
-
 
 def _prefetch_watching_info(items: List[ItemEntity]) -> None:
     """Warm each playable item's watching_info concurrently.
@@ -51,7 +48,7 @@ def _prefetch_watching_info(items: List[ItemEntity]) -> None:
     pending = [item for item in items if not isinstance(item, TVShow)]
     if len(pending) < 2:
         return
-    workers = min(WATCHING_PREFETCH_WORKERS, len(pending))
+    workers = min(plugin.settings.concurrent_requests, len(pending))
     with ThreadPoolExecutor(max_workers=workers) as executor:
         futures = [executor.submit(getattr, item, "watching_info") for item in pending]
         for future in futures:
