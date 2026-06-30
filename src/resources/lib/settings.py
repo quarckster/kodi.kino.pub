@@ -30,17 +30,27 @@ class Settings:
         "watchers": localize(32066),
     }
 
+    def _addon(self) -> xbmcaddon.Addon:
+        # Reuse one Addon wrapper instead of constructing a new one on every
+        # attribute access (settings are read many times per invocation). Stored
+        # directly in __dict__ to bypass the custom __setattr__ below.
+        addon = self.__dict__.get("_addon_instance")
+        if addon is None:
+            addon = xbmcaddon.Addon()
+            self.__dict__["_addon_instance"] = addon
+        return addon
+
     def __getattr__(self, name):
         if name == "advanced":
             return self._get_adv_setting
         if name.startswith("show_"):
-            return eval(xbmcaddon.Addon().getSetting(name).title())
-        return xbmcaddon.Addon().getSetting(name)
+            return self._addon().getSetting(name) == "true"
+        return self._addon().getSetting(name)
 
     def __setattr__(self, name: str, value: str) -> None:
         if value is not None:
             value = str(value)
-        xbmcaddon.Addon().setSetting(name, value)
+        self._addon().setSetting(name, value)
 
     def _get_adv_setting(self, *args):
         try:
