@@ -2,6 +2,7 @@ import sys
 import typing
 import urllib
 from collections import namedtuple
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 from typing import cast
 from typing import ClassVar
@@ -29,6 +30,9 @@ except ImportError:
 
 Response = namedtuple("Response", ["items", "pagination"])
 
+# Upper bound on concurrent items/{id} fetches for the "I'm watching" movies list.
+WATCHING_MOVIES_WORKERS = 8
+
 
 class ItemsCollection:
     def __init__(self, plugin: "Plugin"):
@@ -47,11 +51,18 @@ class ItemsCollection:
 
     @property
     def watching_movies(self) -> List["Movie"]:
-        movies = []
-        for item_data in self.plugin.client("watching/movies").get()["items"]:
-            movie = cast(Movie, self.instantiate_from_item_id(item_data["id"]))
-            movies.append(movie)
-        return movies
+        # watching/movies returns only ids + minimal metadata, so each movie needs
+        # its own full items/{id} response. Fetch them concurrently rather than in
+        # a blocking loop (executor.map preserves order). KinoPubClient is
+        # thread-safe and the proxy/addon settings are warmed by the call below.
+        response = self.plugin.client("watching/movies").get()
+        item_ids = [item_data["id"] for item_data in response["items"]]
+        if not item_ids:
+            return []
+        workers = min(WATCHING_MOVIES_WORKERS, len(item_ids))
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            movies = list(executor.map(self.instantiate_from_item_id, item_ids))
+        return cast(List["Movie"], movies)
 
     @property
     def watching_tvshows(self) -> List["TVShow"]:
