@@ -25,6 +25,7 @@ from resources.lib.modeling import TVShow
 from resources.lib.routing import Routing
 from resources.lib.search_history import SearchHistory
 from resources.lib.settings import Settings
+from resources.lib.utils import cached_property
 from resources.lib.utils import localize
 from resources.lib.xbmc_settings import XbmcProxySettings
 
@@ -50,7 +51,6 @@ class Plugin:
         self.logger = Logger(self)
         self.routing = Routing(self)
         self.search_history = SearchHistory(self)
-        self.main_menu_items = self._main_menu_items()
         self.items = ItemsCollection(self)
         self.client = KinoPubClient(self)
         self.proxy_settings = XbmcProxySettings(self)
@@ -87,6 +87,13 @@ class Plugin:
 
     def run(self) -> None:
         self.routing.dispatch(self.path)
+
+    @cached_property
+    def main_menu_items(self) -> List[MainMenuItem]:
+        # Built lazily: only the home screen (index view) renders the menu, but
+        # __init__ runs on every navigation. Each item reads a show_* setting and
+        # builds a URL + icon path, so this is wasted work on play/list/actions.
+        return self._main_menu_items()
 
     def _main_menu_items(self) -> List[MainMenuItem]:
         return [
