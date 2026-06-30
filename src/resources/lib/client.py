@@ -163,9 +163,12 @@ class KinoPubClient:
             KinoApiDefaultErrorHandler(self.plugin),
         )
 
-    def __call__(self, endpoint: str) -> "KinoPubClient":
-        self.endpoint = endpoint
-        return self
+    def __call__(self, endpoint: str) -> "_Endpoint":
+        # Return a fresh per-endpoint object instead of mutating shared state on
+        # self, so the client is safe to use from several threads at once (see the
+        # watching_info prefetch in main.render_items). The opener and response
+        # handling below are shared and reentrant for concurrent open() calls.
+        return _Endpoint(self, endpoint)
 
     def _handle_response(
         self, response: http.client.HTTPResponse
@@ -197,15 +200,29 @@ class KinoPubClient:
             raise
         return self._handle_response(response)
 
+
+class _Endpoint:
+    """A KinoPubClient bound to a single endpoint, returned by ``client(endpoint)``.
+
+    A fresh instance per call keeps the endpoint off the shared client, so
+    concurrent requests don't clobber each other.
+    """
+
+    def __init__(self, client: "KinoPubClient", endpoint: str) -> None:
+        self.client = client
+        self.endpoint = endpoint
+
     def get(self, data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         urlencoded_data = urllib.parse.urlencode(data or {})
         query = f"?{urlencoded_data}" if urlencoded_data else ""
-        request = urllib.request.Request(f"{self.plugin.settings.api_url}/{self.endpoint}{query}")
-        return self._make_request(request)
+        request = urllib.request.Request(
+            f"{self.client.plugin.settings.api_url}/{self.endpoint}{query}"
+        )
+        return self.client._make_request(request)
 
     def post(self, data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         encoded_data = urllib.parse.urlencode(data or {}).encode("utf-8")
         request = urllib.request.Request(
-            f"{self.plugin.settings.api_url}/{self.endpoint}", data=encoded_data
+            f"{self.client.plugin.settings.api_url}/{self.endpoint}", data=encoded_data
         )
-        return self._make_request(request)
+        return self.client._make_request(request)
