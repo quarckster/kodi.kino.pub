@@ -513,6 +513,18 @@ class Movie(PlayableItem):
 
     @cached_property
     def watching_info(self) -> Dict:
+        # A full items/{id} response embeds the per-user watch state in its video
+        # entry, so reuse it instead of an extra "watching" request (the
+        # "I'm watching" screen already fetched items/{id} per movie). List
+        # endpoints omit it, so fall back to the API call when it's absent.
+        videos = self.item.get("videos")
+        if videos and "watching" in videos[0]:
+            video = videos[0]
+            return {
+                "time": video["watching"]["time"],
+                "status": video["watching"]["status"],
+                "duration": video["duration"],
+            }
         return self.plugin.client("watching").get(data={"id": self.item_id})["item"]["videos"][0]
 
 
