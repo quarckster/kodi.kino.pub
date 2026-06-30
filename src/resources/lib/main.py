@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from typing import Any
 from typing import cast
@@ -31,6 +32,33 @@ content_type_map = {
 
 
 plugin = Plugin()
+
+# Upper bound on concurrent "watching" prefetch requests (see _prefetch_watching_info).
+WATCHING_PREFETCH_WORKERS = 8
+
+
+def _prefetch_watching_info(items: List[ItemEntity]) -> None:
+    """Warm each playable item's watching_info concurrently.
+
+    Building a list item reads ``watching_info``, which for an item that doesn't
+    carry embedded watch state makes a per-item "watching" request. Done in the
+    render loop that is one blocking round-trip per item; fetch them in parallel
+    instead so the wall-clock is roughly a single round-trip. TVShows don't read
+    watching_info when listed, so they're skipped -- warming them would add
+    requests, not remove them. A failed prefetch leaves the value uncached, so
+    the lazy fetch (and its error handling) still runs when the item is built.
+    """
+    pending = [item for item in items if not isinstance(item, TVShow)]
+    if len(pending) < 2:
+        return
+    workers = min(WATCHING_PREFETCH_WORKERS, len(pending))
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        futures = [executor.submit(getattr, item, "watching_info") for item in pending]
+        for future in futures:
+            try:
+                future.result()
+            except Exception:
+                pass
 
 
 def render_pagination(pagination: Optional[Dict[str, Any]]) -> None:
@@ -68,6 +96,7 @@ def render_items(items: List[ItemEntity], content_type: str) -> None:
     """
     container_content_type = f"{content_type_map[content_type.rstrip('s')]}s"
     xbmcplugin.setContent(plugin.handle, container_content_type)
+    _prefetch_watching_info(items)
     playback_data = {}
     directory_items = []
     for item in items:
