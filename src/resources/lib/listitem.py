@@ -127,14 +127,17 @@ class ExtendedListItem(ListItem):
         if video_info:
             populate_video_info_tag(self.getVideoInfoTag(), video_info)
             self.setResumeTime(video_info.get("time", 0), video_info.get("duration", 0))
+        art = {}
         if poster:
-            self.setArt({"poster": poster})
+            art["poster"] = poster
         if fanart:
-            self.setArt({"fanart": fanart})
+            art["fanart"] = fanart
         if thumbnailImage:
-            self.setArt({"thumb": thumbnailImage})
+            art["thumb"] = thumbnailImage
         if iconImage:
-            self.setArt({"icon": iconImage})
+            art["icon"] = iconImage
+        if art:
+            self.setArt(art)
         if subtitles:
             self.setSubtitles(subtitles)
         if addContextMenuItems:
@@ -209,8 +212,7 @@ class ExtendedListItem(ListItem):
         self.addContextMenuItems(menu_items)
 
     def setProperties(self, **properties) -> None:
-        for prop, value in properties.items():
-            self.setProperty(prop, str(value))
+        super().setProperties({prop: str(value) for prop, value in properties.items()})
 
     def setResumeTime(self, resumetime: int, totaltime: float = 0.0) -> None:
         info_tag = self.getVideoInfoTag()
