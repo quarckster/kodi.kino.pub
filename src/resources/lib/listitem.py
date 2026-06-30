@@ -100,7 +100,9 @@ def populate_video_info_tag(info_tag: Any, video_info: Dict[str, Any]) -> None:
 
 class ExtendedListItem(ListItem):
     def __new__(cls, name: str, label2: str = "", path: str = "", **kwargs) -> "ExtendedListItem":
-        return super().__new__(cls, name, label2, path)
+        # offscreen=True skips GUI locking: these items are always built off-screen
+        # for directory listings / setResolvedUrl, never managed in a live window.
+        return super().__new__(cls, name, label2, path, offscreen=True)
 
     def __init__(
         self,
@@ -118,7 +120,7 @@ class ExtendedListItem(ListItem):
         addContextMenuItems: bool = False,
         subtitles: Optional[List[str]] = None,
     ) -> None:
-        super().__init__(name, label2, path)
+        super().__init__(name, label2, path, offscreen=True)
         self.plugin = plugin
         if properties:
             self.setProperties(**properties)
