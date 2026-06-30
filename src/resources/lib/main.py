@@ -345,7 +345,12 @@ def play(item_id: str) -> None:
 @plugin.routing.route("/trailer/<item_id>")
 def trailer(item_id: str) -> None:
     response = plugin.client("items/trailer").get(data={"id": item_id})
-    url = response["trailer"][0]["url"]
+    # The API returns "trailer" as an object: {"id", "url" (external link),
+    # "files": [{"url", "quality", ...}]}. Prefer the first direct file (playable
+    # by Kodi), falling back to the external url.
+    trailer_data = response["trailer"]
+    files = trailer_data.get("files") or []
+    url = files[0]["url"] if files else trailer_data["url"]
     # Trailer
     li = plugin.list_item(name=localize(32027), path=url)
     xbmcplugin.setResolvedUrl(plugin.handle, True, li)
