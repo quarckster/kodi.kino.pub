@@ -36,13 +36,6 @@ repo: video_addon repo_addon
 	@mv "$(VIDEO_ADDON_ARCHIVE)" repo/video.kino.pub/
 	@echo
 
-deploy: repo
-	@test -n "$(NETLIFY_AUTH_TOKEN)" || (echo "Missing NETLIFY_AUTH_TOKEN variable" && exit 1)
-	@test -n "$(NETLIFY_SITE_ID)" || (echo "Missing NETLIFY_SITE_ID variable" && exit 1)
-	@echo "Deploying files to Netlify"
-	@echo "=========================="
-	podman run -t -e NETLIFY_AUTH_TOKEN -e NETLIFY_SITE_ID -v $(PWD):/mnt -w /mnt quay.io/quarck/netlify netlify deploy --dir=repo/ --prod
-
 test_integration:
 	pytest -v -m integration
 

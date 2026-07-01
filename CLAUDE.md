@@ -26,9 +26,9 @@ commands below with `uv run` (e.g. `uv run make test_unit`) or activate `.venv` 
   spins up real Kodi + a mock API server (see Testing below). CI runs these against Kodi 20, 21, 22.
 - **Single test:** `pytest tests/test_items.py::test_watching`.
 - **Build add-on zip:** `make video_addon VERSION=4.99.0` (VERSION is required; substituted into
-  `addon.xml`). `make repo VERSION=...` also builds the Kodi-repository structure. `make deploy`
-  publishes to Netlify (needs `NETLIFY_*` env vars). Releases are normally driven by git tags via
-  `.github/workflows/deploy.yaml`.
+  `addon.xml`). `make repo VERSION=...` also builds the Kodi-repository structure. Releases are
+  driven by git tags via `.github/workflows/deploy.yaml`, which builds the repo and publishes it to
+  Netlify with the official `netlify-cli` (`npx netlify-cli deploy`, needs `NETLIFY_*` secrets).
 
 ## Architecture
 

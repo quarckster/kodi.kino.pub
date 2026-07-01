@@ -30,9 +30,12 @@ jobs:
         # gh errors out if the asset file is missing, covering the old
         # action's fail_on_unmatched_files behaviour.
         run: gh release create "$VERSION" "video.kino.pub-$VERSION.zip" --generate-notes
+      - name: Build the repository
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: make repo
       - name: Deploy to Netlify
         env:
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          VERSION: ${{ github.ref_name }}
-        run: make deploy
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: npx --yes netlify-cli deploy --dir=repo/ --prod
