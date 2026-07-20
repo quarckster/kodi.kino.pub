@@ -225,11 +225,11 @@ msgid "Movies"
 msgstr "Фильмы"
 
 msgctxt "#32054"
-msgid "TV Series"
+msgid "TV series"
 msgstr "Сериалы"
 
 msgctxt "#32055"
-msgid "TV Show"
+msgid "TV show"
 msgstr "ТВ шоу"
 
 msgctxt "#32056"
