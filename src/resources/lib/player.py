@@ -102,6 +102,6 @@ class Player(xbmc.Player):
             self.plugin.logger.debug("Marking as watched")
             self.plugin.client("watching/toggle").get(data=data)
 
-    def onPlaybackError(self) -> None:
+    def onPlayBackError(self) -> None:
         self.plugin.logger.error("Playback error")
         self.is_playing = False
