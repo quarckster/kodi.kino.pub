@@ -36,3 +36,23 @@ def test_settings_sorting_direction_param(monkeypatch, direction, settings_mod):
     monkeypatch.setattr(settings_mod.xbmcaddon, "Addon", addon_mock_class)
     settings = settings_mod.Settings()
     assert settings.sorting_direction_param == "" if direction == "asc" else "-"
+
+
+@pytest.mark.parametrize(
+    "xml, expected",
+    [
+        ("<video><playcountminimumpercent>95</playcountminimumpercent></video>", 95.0),
+        ("<video><playcountminimumpercent> 80.5 </playcountminimumpercent></video>", 80.5),
+        ("<video><playcountminimumpercent>abc</playcountminimumpercent></video>", 90),
+        ("<video><playcountminimumpercent/></video>", 90),
+        ("<video/>", 90),
+    ],
+)
+def test_settings_advanced_numbers(monkeypatch, tmp_path, xml, expected, settings_mod):
+    advancedsettings = tmp_path / "advancedsettings.xml"
+    advancedsettings.write_text(f"<advancedsettings>{xml}</advancedsettings>")
+    monkeypatch.setattr(settings_mod.Settings, "advancedsettings_file", str(advancedsettings))
+    value = settings_mod.Settings().advanced("video", "playcountminimumpercent")
+    assert value == expected
+    # the values are compared with numbers in listitem.py / player.py
+    assert 100 * 700 / 2500 <= value

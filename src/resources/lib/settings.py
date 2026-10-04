@@ -61,7 +61,14 @@ class Settings:
         # `if elem` is falsy for a childless element, which every leaf setting is
         # (e.g. <playcountminimumpercent>90</...>), so it must be `is not None`;
         # otherwise the user's advancedsettings.xml values are silently ignored.
-        return elem.text if elem is not None else self.defaults.get(args)
+        if elem is None or elem.text is None:
+            return self.defaults.get(args)
+        # The values are compared with numbers (watched percent, resume seconds),
+        # but ElementTree returns text, so convert it like Kodi does.
+        try:
+            return float(elem.text)
+        except ValueError:
+            return self.defaults.get(args)
 
     @property
     def sorting_direction_title(self) -> str:
